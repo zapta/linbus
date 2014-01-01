@@ -73,8 +73,7 @@ namespace leds {
     DDRB |= (internal::kLedMask | internal::kLed3Mask | internal::kLed4Mask);
     DDRD |= (internal::kLed1Mask | internal::kLed2Mask);
 
-    on();
-    off();  // @@@@@@@@@@@@
+    off();
     off1();
     off2();
     off3();
