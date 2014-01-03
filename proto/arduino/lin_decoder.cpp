@@ -15,6 +15,19 @@
 #include "leds.h"
 #include "clock.h"
 
+// ----- Baud rate related parameters. ---
+
+// The nominal baud rate.
+#define BAUD 20000
+
+// The pre scaler of timer 2 for generating serial bit ticks.
+#define PRE_SCALER 8
+
+// Timer 2 counts for a single serial data tick. Should be <= 256.
+#define COUNTS_PER_BIT (16000000/PRE_SCALER/BAUD)
+
+// ----- Debugging outputs
+
 // High while servicing the ISR.
 #define DEBUG_LED_IN_ISR_ON leds::on1()
 #define DEBUG_LED_IN_ISR_OFF leds::off1()
@@ -30,15 +43,10 @@
 // A short pulse when incrementing the error counter.
 #define DEBUG_LED_ERROR_ON leds::on4()
 #define DEBUG_LED_ERROR_OFF leds::off4()
-
-
-
   
 namespace lin_decoder {
-  // TODO: these are for 9600. Change to 19200.
-  static const uint8 kCountsPerTick = 208;
-  // 9600 -> 26. 19200 -> 13.
-  static const uint8 kClockTicksPerBit = clock::kHardwareTicksPerSecond / 9600;
+  // 10k -> 25, 20000 baud -> 12.
+  static const uint8 kClockTicksPerBit = clock::kHardwareTicksPerSecond / BAUD;
 
   // Pins for communicating with the LIN transceiver.
   static const uint8 kRxPinMask  = H(PIND2);
@@ -113,14 +121,20 @@ namespace lin_decoder {
     // Fast PWM mode, OC2B output active high.
     TCCR2A = L(COM2A1) | L(COM2A0) | H(COM2B1) | H(COM2B0) | H(WGM21) | H(WGM20);
     // Prescaler: X8.
+    #if (PRE_SCALER != 8)
+    #error "Prescaler mismatch"
+    #endif
     TCCR2B = L(FOC2A) | L(FOC2B) | H(WGM22) | L(CS22) | H(CS21) | L(CS20);
     // Clear counter.
     TCNT2 = 0;
     // Determines baud rate.
-    OCR2A = kCountsPerTick - 1;
+    #if (COUNTS_PER_BIT > 256) 
+    #error "Baud too low, counts does not fit in a byte, needs a larger prescaler."
+    #endif
+    OCR2A = COUNTS_PER_BIT - 1;
     // A short 8 clocks pulse on OC2B at the end of each cycle,
     // just before triggering the ISR.
-    OCR2B = kCountsPerTick - 2; 
+    OCR2B = COUNTS_PER_BIT - 2; 
     // Interrupt on A match.
     TIMSK2 = L(OCIE2B) | H(OCIE2A) | L(TOIE2);
     // Clear pending Compare A interrupts.
@@ -145,10 +159,14 @@ namespace lin_decoder {
     TCNT2 = 0;
   }
 
-  // Set timer value to hals a tick.
+  // Set timer value to half a tick. Called at the begining of the
+  // start bit to generate sampling ticks at the middle of the next
+  // 10 bits (start, 8 * data, stop).
   static inline void setTimerToHalfTick() {
-    // TODO: also clear timer2 prescaler.
-    TCNT2 = kCountsPerTick / 2;
+    // Adding 1 to compensate for pre calling delay. The goal is
+    // to have the next ISR data sampling at the middle of the start
+    // bit.
+    TCNT2 = (COUNTS_PER_BIT / 2) + 1;
   }
 
   // Return non zero if RX is high (passive), return zero if 
@@ -158,9 +176,9 @@ namespace lin_decoder {
   }
 
   // Perform a tight busy loop until RX is low or the given number
-  // of clock ticks passed (timeout). Retuns true if RX is low,
+  // of clock ticks passed (timeout). Retuns true if ok,
   // false if timeout. Keeps timer reset during the wait.
-  static inline boolean waitForRxLow(uint8 maxClockTicks) {
+  static inline boolean waitForRxLow(uint16 maxClockTicks) {
     const uint16 base_clock = clock::hardware_ticks_mod_16_bit();
     for(;;) {
       resetTimer();
@@ -177,7 +195,7 @@ namespace lin_decoder {
 
   // Same as waitForRxLow but with reversed polarity.
   // We clone to code for time optimization.
-  static inline boolean waitForRxHigh(uint8 maxClockTicks) {
+  static inline boolean waitForRxHigh(uint16 maxClockTicks) {
     const uint16 base_clock = clock::hardware_ticks_mod_16_bit();
     for(;;) {
       resetTimer();
@@ -265,17 +283,29 @@ namespace lin_decoder {
       return;
     }  
     
+    // TODO: if byte 0, verify sync 0x55.
+    
     // Preper for next byte.
     bytes_read_++;
     bits_read_in_byte_ = 0;
     
-    // TODO: if start bit not found, enter detect break mode.
-    // TODO: set actual max count
-    waitForRxLow(255);
+    // TODO: detect byte overflow (more than 8)
+    
+    if (!waitForRxLow(kClockTicksPerBit * 4)) {
+      // No more data bytes. 
+      // TODO: verify checksum
+      StateDetectBreak::enter();
+      return;
+    }
+    
+    // Noe more than 11 bytes (sync, id, 8*data, checksum)
+    if (bits_read_in_byte_ >= 11) {
+      increment_error_counter();
+      StateDetectBreak::enter();
+      return;  
+    }
     
     setTimerToHalfTick();
-    
-    // TODO: veryfiy not more than 8 bytes per frame.
   }
 
   // ----- ISR Handler -----
@@ -300,10 +330,4 @@ namespace lin_decoder {
     DEBUG_LED_IN_ISR_OFF;
   }
 }
-
-
-
-
-
-
 
