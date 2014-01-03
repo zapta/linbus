@@ -14,11 +14,15 @@
 #define LIN_DECODER_H
 
 #include <arduino.h>
+#include "avr_util.h"
 
 // Uses Timer2 with interrupts, PB2, PD2, PD3, PD4.
 namespace lin_decoder {
   // Call once in program setup. 
   extern void init();
+  
+  // Return a 16 bit error count since last init, module 16 bit.
+  extern uint16 error_count();
 }
 
 #endif  
