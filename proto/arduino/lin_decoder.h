@@ -17,14 +17,16 @@
 #include "avr_util.h"
 
 // Uses Timer2 with interrupts, PB2, PD2, PD3, PD4.
+// TODO: specify used pins and their functions.
+// TODO: refactor all pin definitions into a single file.
 namespace lin_decoder {
   // A buffer for a single recieved frame.
   typedef struct RxFrameBuffer {
-    // 1 ID byte + up to 8 data bytes + 1 checksum byte. 
-    static const uint8 kMaxBytes = 10;
-    // Number of bytes in bytes[].
+    // 1 sync byte + 1 ID byte + up to 8 data bytes + 1 checksum byte. 
+    static const uint8 kMaxBytes = 11;
+    // Number of valid bytes in begining of the bytes[] array.
     uint8 num_bytes;
-    // Recieved bytes. Includes id, data and checksum but not sync.
+    // Recieved frame bytes. Includes sync, id, data and checksum.
     uint8 bytes[kMaxBytes];
   } RxFrameBuffer;
   
@@ -32,10 +34,13 @@ namespace lin_decoder {
   extern void init();
   
   // Try to read next available rx frame. If available, return true and set
-  // given buffer. Otherwise, return false and buffer content is unspecified. 
+  // given buffer. Otherwise, return false and leave *buffer unmodified. 
+  // The sync, id and checksum bytes of the frame as well as the total byte
+  // count are not verified. 
   extern boolean readNextFrame(RxFrameBuffer* buffer);
   
-  // Error status.
+  // Error status. Raized whenever an error is detected.
+  // TODO: make the read/clear atomic.
   extern boolean hasErrors();
   extern void clearErrors();
 }

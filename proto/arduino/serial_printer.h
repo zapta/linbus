@@ -64,6 +64,11 @@ public:
   bool is_empty() {
     return !_count;
   }
+  
+  void printHexByte(uint8 b) {
+    printHexDigit(b >> 4);
+    printHexDigit(b & 0xf);
+  }
 
 private:
   // Max transmit queue size. Should be less than 255/2 to 
@@ -101,6 +106,15 @@ private:
     }
     _count--;
     return b;  
+  }
+  
+  // Assuming n is in [0, 15].
+  void printHexDigit(uint8 n) {
+    if (n < 10) {
+      print((char)('0' + n));
+    } else {
+      print((char)(('a' - 10) + n));
+    }    
   }
 };
 

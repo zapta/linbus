@@ -47,7 +47,7 @@
 #define DEBUG_LED_ERROR_OFF leds::off4()
   
 namespace lin_decoder {
-  // 10k -> 25, 20000 baud -> 12.
+  // 9600 baud -> 26, 20000 baud -> 12. Not bothering with rounding.
   static const uint8 kClockTicksPerBit = clock::kHardwareTicksPerSecond / BAUD;
 
   // Pins for communicating with the LIN transceiver.
@@ -57,13 +57,15 @@ namespace lin_decoder {
   
   // ----- ISR To Main Data Transfer -----
 
-  // When true, request_buffer has data that should be read by main.
+  // When true, request_buffer has data that should be read by main. When false, ISR
+  // can fill buffer with data, if available.
   static volatile boolean request_buffer_has_data;
   
-  // TODO: why making this volatile breaks the compilation?
+  // The ISR to main transfer buffer. 
+  // TODO: why having volatile here breaks the compilation?
   static RxFrameBuffer request_buffer;
   
-    // Public. Called from main.
+  // Public. Called from main. See .h for description.
   boolean readNextFrame(RxFrameBuffer* buffer) {
     if (request_buffer_has_data) {
       *buffer = request_buffer;
@@ -138,31 +140,38 @@ namespace lin_decoder {
     // Number of complete bytes read so far. Includes all bytes, even
     // sync, id and checksum.
     static uint8 bytes_read_;
-    // Number of bits read so far in the current byte. Includes all bits,
-    // even start and stop bits.
+    // Number of bits read so far in the current byte. Includes start bit, 
+    // 8 data bits and one stop bits.
     static uint8 bits_read_in_byte_;
+    // Buffer for the current byte we collect.
+    static uint8 byte_buffer_;
+    // When collecting the data bits, this goes (1 << 0) to (1 << 7). Could
+    // be computed as (1 << (bits_read_in_byte_ - 1)). We use this cached value
+    // recude ISR computation.
+    static uint8 byte_buffer_bit_mask_;
   };
   
   // ----- Error Flag. -----
   
   // Written from ISR. Read/Write from main.
-  static volatile boolean errors_flag;
+  // TODO: make this a bit or of multiple error types.
+  static volatile boolean error_flag;
   
   // Private. Called from ISR.
-  static inline void set_errors_flag() {
+  static inline void setErrorFlag() {
     DEBUG_LED_ERROR_ON;
-    errors_flag = true;
+    error_flag = true;
     DEBUG_LED_ERROR_OFF;
   }
   
   // Called from main. Public.
   boolean hasErrors() {
-    return errors_flag;
+    return error_flag;
   }
   
   // Called from main. Public.
   void clearErrors() {
-    errors_flag = false;
+    error_flag = false;
   }
 
   // ----- Initialization -----
@@ -278,12 +287,10 @@ namespace lin_decoder {
     //  If request buffer is empty and queue has an RX frame then move it to
     // the request buffer. 
     if (!request_buffer_has_data && tail_frame_buffer != head_frame_buffer) {
-      leds::on();  // @@@ remove
       // This copies the request buffer struct.
       request_buffer = rx_frame_buffers[tail_frame_buffer];
       incrementTailFrameBuffer();
       request_buffer_has_data = true;
-      leds::off();   // @@@ remove
     }
   }
   
@@ -320,79 +327,111 @@ namespace lin_decoder {
   
   uint8 StateReadData::bytes_read_;
   uint8 StateReadData::bits_read_in_byte_;
-  
+  uint8 StateReadData::byte_buffer_;
+  uint8 StateReadData::byte_buffer_bit_mask_;
+
+  // Called after a long break changed to high.
   inline void StateReadData::enter() {
     state = READ_DATA;
     bytes_read_ = 0;
     bits_read_in_byte_ = 0;
+    rx_frame_buffers[head_frame_buffer].num_bytes = 0;
     
-    // TODO: handle timeout errors.
+    // TODO: handle post break timeout errors.
+    // TODO: set a reasonable time limit.
     waitForRxLow(255);
-    setTimerToHalfTick();
+    setTimerToHalfTick();   
   }
   
   inline void StateReadData::handle_isr() {
-    // Sample data bit
+    // Sample data bit ASAP to avoid jitter.
     DEBUG_LED_DATA_BIT_ON;
     const uint8 is_rx_high = isRxHigh();
     DEBUG_LED_DATA_BIT_OFF;
     
-    // Start bit. Rx should be low.
+    // Handle start bit.
     if (bits_read_in_byte_ == 0) {
+      // Start bit error.
       if (is_rx_high) {
-        set_errors_flag();
+        setErrorFlag();
         StateDetectBreak::enter();
         return;
       }  
+      // Start bit ok.
       bits_read_in_byte_++;
+      // Prepare buffer and mask for data bit collection.
+      byte_buffer_ = 0;
+      byte_buffer_bit_mask_ = (1 << 0);
       return;
     }
 
-    // Data bit. 
+    // Handle next, out of 8, data bits. Collect the current bit into byte_buffer_, lsb first.
     if (bits_read_in_byte_ <= 8) {
+      if (is_rx_high) {
+        byte_buffer_ |= byte_buffer_bit_mask_;
+      }
+      byte_buffer_bit_mask_ = byte_buffer_bit_mask_ << 1;
       bits_read_in_byte_++;
       return;
     }
     
-    // Stop bit
+    // Here when stop bit. Error if not high.
     if (!is_rx_high) {
-      set_errors_flag();
+      setErrorFlag();
       StateDetectBreak::enter();
       return;
     }  
     
-    // TODO: if byte 0, verify sync 0x55.
+    // Append the byte to the frame buffer. The byte limit count is enforeced somewhere
+    // else. We can assume safely that there is not overflow here.
+    RxFrameBuffer* const frame_buffer = &rx_frame_buffers[head_frame_buffer];
+    frame_buffer->bytes[frame_buffer->num_bytes++] = byte_buffer_;
     
-    // Preper for next byte.
+    // Preper for next byte. We will reset the byte_buffer in the next start
+    // bit, not here.
     bytes_read_++;
     bits_read_in_byte_ = 0;
+      
+    // Wait for the high to low transition of start bit of next byte.
+    const boolean has_more_bytes =  waitForRxLow(kClockTicksPerBit * 4);
     
-    // TODO: detect byte overflow (more than 8)
-    
-    if (!waitForRxLow(kClockTicksPerBit * 4)) {
-      // No more data bytes. 
-      // TODO: verify checksum
-      incrementHeadFrameBuffer();
-      if (tail_frame_buffer == head_frame_buffer) {
-        incrementTailFrameBuffer();
+    // Handle the case of last byte in the frame.
+    if (!has_more_bytes) {
+      // A valid frame should have at least 4 bytes (sync, id, data, checksum). If not
+      // enough, drop this frame.
+      if (bytes_read_ < 4) {
+         setErrorFlag();
+         StateDetectBreak::enter();
+         return;
       }
       
-      // TODO: fill actual data.
-      RxFrameBuffer* tail = &rx_frame_buffers[tail_frame_buffer];
-      tail->num_bytes = 1;
-      tail->bytes[0] = tail_frame_buffer;
+      // Frame looks ok so far. Move to next one.
+      // NOTE: we will reset the byte_count of the new frame buffer next time we will enter data detect state.
+      // NOTE: verification of sync byte, id, checksum, etc is done latter by the main code, not the ISR.
+      incrementHeadFrameBuffer();
+      if (tail_frame_buffer == head_frame_buffer) {
+        // Frame buffer overrun.        
+        setErrorFlag();
+        incrementTailFrameBuffer();
+      }
     
       StateDetectBreak::enter();
       return;
     }
     
-    // Avoid more than 11 bytes (sync, id, 8*data, checksum)
-    if (bits_read_in_byte_ >= 11) {
-      set_errors_flag();
+    // Here when there is at least one more byte in this frame. Error if we already had
+    // the max number of bytes.
+    if (frame_buffer->num_bytes >= RxFrameBuffer::kMaxBytes) {
+      setErrorFlag();
       StateDetectBreak::enter();
       return;  
     }
-        
+    
+    // Everything is ready for the next byte. Have a tick in the middle of its
+    // start bit.
+    //
+    // TODO: move this to above the num_bytes check above for more accurate 
+    // timing of mid bit tick?    
     setTimerToHalfTick();
   }
 
@@ -412,7 +451,7 @@ namespace lin_decoder {
         StateReadData::handle_isr();
         break;
       default:
-        set_errors_flag();
+        setErrorFlag();
         StateDetectBreak::enter();
     }
    

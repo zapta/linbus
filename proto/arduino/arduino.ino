@@ -47,14 +47,24 @@ void loop()
   const uint32_t time_millis = clock::update_millis();
 
   if (time_millis >= (last_reported_millis + 1000 )) {
-    SerialPrinter.println(time_millis);
     last_reported_millis = time_millis;
+    SerialPrinter.println(time_millis);
+    const boolean had_errors = lin_decoder::hasErrors();
+    // NOTE: not 100% atomic. We may loose errors.
+    lin_decoder::clearErrors();
+    SerialPrinter.println(had_errors? F("ERRORS!") : F("OK"));
   }
   
   lin_decoder::RxFrameBuffer buffer;
   if (readNextFrame(&buffer)) {
-    // TODO: dump the actual frame data
-    SerialPrinter.println(F("X"));
+    // Dump frame.
+    for (int i = 0; i < buffer.num_bytes; i++) {
+      if (i > 0) {
+        SerialPrinter.print(' ');  
+      }
+      SerialPrinter.printHexByte(buffer.bytes[i]);  
+    }
+    SerialPrinter.println();
   }
 }
 
