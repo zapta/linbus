@@ -18,11 +18,26 @@
 
 // Uses Timer2 with interrupts, PB2, PD2, PD3, PD4.
 namespace lin_decoder {
+  // A buffer for a single recieved frame.
+  typedef struct RxFrameBuffer {
+    // 1 ID byte + up to 8 data bytes + 1 checksum byte. 
+    static const uint8 kMaxBytes = 10;
+    // Number of bytes in bytes[].
+    uint8 num_bytes;
+    // Recieved bytes. Includes id, data and checksum but not sync.
+    uint8 bytes[kMaxBytes];
+  } RxFrameBuffer;
+  
   // Call once in program setup. 
   extern void init();
   
-  // Return a 16 bit error count since last init, module 16 bit.
-  extern uint16 error_count();
+  // Try to read next available rx frame. If available, return true and set
+  // given buffer. Otherwise, return false and buffer content is unspecified. 
+  extern boolean readNextFrame(RxFrameBuffer* buffer);
+  
+  // Error status.
+  extern boolean hasErrors();
+  extern void clearErrors();
 }
 
 #endif  

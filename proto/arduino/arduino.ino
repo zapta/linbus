@@ -46,9 +46,15 @@ void loop()
   static uint32_t last_reported_millis = 0;
   const uint32_t time_millis = clock::update_millis();
 
-  if (time_millis >= (last_reported_millis + 200 )) {
+  if (time_millis >= (last_reported_millis + 1000 )) {
     SerialPrinter.println(time_millis);
     last_reported_millis = time_millis;
+  }
+  
+  lin_decoder::RxFrameBuffer buffer;
+  if (readNextFrame(&buffer)) {
+    // TODO: dump the actual frame data
+    SerialPrinter.println(F("X"));
   }
 }
 
