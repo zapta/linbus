@@ -261,22 +261,23 @@
 <wire x1="15.24" y1="-30.48" x2="-15.24" y2="-30.48" width="0.254" layer="94"/>
 <wire x1="-15.24" y1="-30.48" x2="-15.24" y2="30.48" width="0.254" layer="94"/>
 <pin name="LIN_RXI" x="-20.32" y="20.32" length="middle" direction="in"/>
-<pin name="LIN_TXO" x="-20.32" y="15.24" length="middle" direction="out"/>
-<pin name="LIN_ENO" x="-20.32" y="10.16" length="middle" direction="out"/>
 <pin name="+5V" x="0" y="35.56" length="middle" direction="pwr" rot="R270"/>
-<pin name="GND1" x="-2.54" y="-35.56" length="middle" direction="pwr" rot="R90"/>
-<pin name="GND2" x="2.54" y="-35.56" length="middle" direction="pwr" rot="R90"/>
+<pin name="GND1" x="-5.08" y="-35.56" length="middle" direction="pwr" rot="R90"/>
+<pin name="GND2" x="5.08" y="-35.56" length="middle" direction="pwr" rot="R90"/>
 <pin name="RXI" x="20.32" y="17.78" length="middle" direction="out" rot="R180"/>
 <pin name="TXO" x="20.32" y="20.32" length="middle" direction="in" rot="R180"/>
-<pin name="LED1" x="20.32" y="-12.7" length="middle" direction="out" rot="R180"/>
-<pin name="LED2" x="20.32" y="-15.24" length="middle" direction="out" rot="R180"/>
-<pin name="LED3" x="20.32" y="-17.78" length="middle" direction="out" rot="R180"/>
-<pin name="LED4" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
+<pin name="STATUS1_LED" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
+<pin name="STATUS2_LED" x="20.32" y="-12.7" length="middle" direction="out" rot="R180"/>
+<pin name="FRAME_LED" x="20.32" y="-15.24" length="middle" direction="out" rot="R180"/>
+<pin name="ERROR_LED" x="20.32" y="-17.78" length="middle" direction="out" rot="R180"/>
 <pin name="RST" x="-20.32" y="-25.4" length="middle" direction="in" function="dot"/>
 <text x="12.7" y="-38.1" size="1.778" layer="96">&gt;VALUE</text>
 <text x="12.7" y="-35.56" size="1.778" layer="95">&gt;NAME</text>
-<pin name="LIN_TICK" x="-20.32" y="25.4" length="middle" direction="out"/>
-<pin name="LED" x="-20.32" y="-2.54" length="middle" direction="out"/>
+<pin name="LIN_TICK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
+<pin name="LED" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
+<pin name="LIN_BREAK" x="20.32" y="2.54" length="middle" direction="out" rot="R180"/>
+<pin name="LIN_SAMPLE" x="20.32" y="0" length="middle" direction="out" rot="R180"/>
+<pin name="LIN_ERROR" x="20.32" y="-2.54" length="middle" direction="out" rot="R180"/>
 </symbol>
 <symbol name="PUSH_BUTTON">
 <circle x="0" y="-1.524" radius="0.915809375" width="0.254" layer="94"/>
@@ -354,19 +355,20 @@
 <device name="DIP24-6" package="ARDUINO-PRO-MINI">
 <connects>
 <connect gate="G$1" pin="+5V" pad="9"/>
+<connect gate="G$1" pin="ERROR_LED" pad="24"/>
+<connect gate="G$1" pin="FRAME_LED" pad="23"/>
 <connect gate="G$1" pin="GND1" pad="11"/>
 <connect gate="G$1" pin="GND2" pad="16"/>
 <connect gate="G$1" pin="LED" pad="4"/>
-<connect gate="G$1" pin="LED1" pad="21"/>
-<connect gate="G$1" pin="LED2" pad="22"/>
-<connect gate="G$1" pin="LED3" pad="23"/>
-<connect gate="G$1" pin="LED4" pad="24"/>
-<connect gate="G$1" pin="LIN_ENO" pad="19"/>
+<connect gate="G$1" pin="LIN_BREAK" pad="5"/>
+<connect gate="G$1" pin="LIN_ERROR" pad="7"/>
 <connect gate="G$1" pin="LIN_RXI" pad="17"/>
+<connect gate="G$1" pin="LIN_SAMPLE" pad="6"/>
 <connect gate="G$1" pin="LIN_TICK" pad="18"/>
-<connect gate="G$1" pin="LIN_TXO" pad="1"/>
 <connect gate="G$1" pin="RST" pad="10"/>
 <connect gate="G$1" pin="RXI" pad="14"/>
+<connect gate="G$1" pin="STATUS1_LED" pad="21"/>
+<connect gate="G$1" pin="STATUS2_LED" pad="22"/>
 <connect gate="G$1" pin="TXO" pad="13"/>
 </connects>
 <technologies>
