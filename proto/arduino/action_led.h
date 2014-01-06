@@ -39,12 +39,12 @@ public:
       break;
 
       case ACTIVE_ON:
-        if (timer_.timeMillis() > 100) {
+        if (timer_.timeMillis() > 20) {
           enterActiveOffState();
         }
       break;
       case ACTIVE_OFF:
-      if (timer_.timeMillis() > 300) {
+      if (timer_.timeMillis() > 30) {
           // NOTE: if pending_actions_ then will enter ACTIVE_ON on next iteration.
           enterIdleState();
         }

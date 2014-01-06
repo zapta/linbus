@@ -30,6 +30,54 @@ static ActionLed error_led(PORTB, 1);
 // Arduino standard LED.
 static io_pins::OutputPin led(PORTB, 5);
 
+// Compute frame checksum. 
+static uint8 frameChecksum(const lin_decoder::RxFrameBuffer& buffer) {
+  // LIN V1 and V2 have slightly different checksum formulas.
+  static const boolean kV2Checksum = false;
+ 
+  // LIN V2 includes ID byte in checksum, V1 does not.
+  const uint8 startByte = kV2Checksum ? 1 : 2;
+  const uint8* p = &buffer.bytes[startByte];
+  // Exclude also the checksum at the end.
+  uint8 nBytes = buffer.num_bytes - (startByte + 1);
+
+  // Sum bytes. We should not have 16 bit overflow here since the frame has a limited size.
+  uint16 sum = 0;
+  while (nBytes-- > 0) {
+    sum += *(p++);
+  }
+
+  // Keep adding the high and low bytes until no carry.
+  for (;;) {
+    const uint8 highByte = (uint8)(sum >> 8);
+    if (!highByte) {
+      break;  
+    }
+    // NOTE: this can add additional carry.  
+    sum = (sum & 0xff) + highByte; 
+  }
+
+  return (uint8)(~sum);
+}
+
+static boolean isFrameValid(const lin_decoder::RxFrameBuffer& buffer) {
+  const uint8 n = buffer.num_bytes;
+  // Check minimum length.
+  if (n < 4) {
+    return false;
+  }
+  // Check sync byte.
+  if (buffer.bytes[0] != 0x55) {
+    return false;
+  }
+  // Check checksum
+  if (buffer.bytes[n - 1] != frameChecksum(buffer)) {
+    return false;
+  }  
+  // TODO: check protected id.
+  return true;
+}
+
 void setup()
 {
   // We don't want interrupts from timer 2.
@@ -52,41 +100,63 @@ void setup()
 }
 
 // This is a quick loop that does not use delay() or other busy loops or blocking calls.
+// The iterations are are at the order of 60usec.
 void loop()
 {
-  // Periodic updates.
-  system_clock::loop();
-  SerialPrinter.loop();
-  frame_led.loop();
-  error_led.loop();
+  // Having our own loop shaves about 4 usec per iteration. It also eliminate
+  // any underlying functionality that we may not want.
+  for(;;) {
+    led.high();
 
-  // Generate periodic messages.
-  {  
-    static uint32_t last_reported_millis = 0;
-    const uint32_t time_millis = system_clock::timeMillis();
-    if (time_millis >= (last_reported_millis + 1000 )) {
-      last_reported_millis = time_millis;
-      SerialPrinter.println((uint32)time_millis);
-    }
-  }
+    // Periodic updates.
+    system_clock::loop();
+    SerialPrinter.loop();
+    frame_led.loop();
+    error_led.loop();
 
-  // Handle LIN errors.
-  if (lin_decoder::getAndClearErrorFlag()) {
-    error_led.action();
-  }
-
-  // Handle recieved LIN frames.
-  lin_decoder::RxFrameBuffer buffer;
-  if (readNextFrame(&buffer)) {
-    frame_led.action();
-    // Dump frame.
-    for (int i = 0; i < buffer.num_bytes; i++) {
-      if (i > 0) {
-        SerialPrinter.print(' ');  
+    // Generate periodic messages.
+    static PassiveTimer periodic_watch_dog;
+    static byte pending_chars = 0;
+    if (periodic_watch_dog.timeMillis() >= 1000) {
+      if (pending_chars >= 30) {
+        SerialPrinter.println();
+        pending_chars = 0;
       }
-      SerialPrinter.printHexByte(buffer.bytes[i]);  
+      periodic_watch_dog.restart();
+      SerialPrinter.print(F("."));
+      pending_chars++;
     }
-    SerialPrinter.println();
+
+    // Handle LIN errors.
+    if (lin_decoder::getAndClearErrorFlag()) {
+      error_led.action();
+    }
+
+    // Handle recieved LIN frames.
+    lin_decoder::RxFrameBuffer buffer;
+    if (readNextFrame(&buffer)) {
+      if (pending_chars) {
+        SerialPrinter.println();
+        pending_chars = 0;
+      }
+      const boolean frameOk = isFrameValid(buffer);
+      if (frameOk) {
+        frame_led.action();
+      } else {
+        error_led.action();
+      }
+      // Dump frame.
+      for (int i = 0; i < buffer.num_bytes; i++) {
+        if (i > 0) {
+          SerialPrinter.print(' ');  
+        }
+        SerialPrinter.printHexByte(buffer.bytes[i]);  
+      }
+      SerialPrinter.println(frameOk ? F(" OK") : F(" ER"));  
+      periodic_watch_dog.restart(); 
+    }
+    led.low();
   }
 }
+
 
