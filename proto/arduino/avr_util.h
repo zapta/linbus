@@ -42,7 +42,8 @@ namespace avr_util {
     TIMSK0 = 0;
     TIFR0 = 0;
   } 
-}
+
+}  // namespace avr_util
 
 #endif
 

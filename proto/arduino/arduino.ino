@@ -12,51 +12,73 @@
 
 #include "serial_printer.h"
 #include "avr_util.h"
-#include "leds.h"
-#include "clock.h"
+#include "hardware_clock.h"
+#include "system_clock.h"
 #include "lin_decoder.h"
+#include "io_pins.h"
+#include "action_led.h"
+
+// Auxilary LEDs.
+static io_pins::OutputPin status1_led(PORTD, 6);
+static io_pins::OutputPin status2_led(PORTD, 7);
+
+// Action LEDs. Indicates activity by blinking. Require periodic calls to
+// update().
+static ActionLed frame_led(PORTB, 0);
+static ActionLed error_led(PORTB, 1);
+
+// Arduino standard LED.
+static io_pins::OutputPin led(PORTB, 5);
 
 void setup()
 {
-   // Uses PB5, Arduino pin 13.
-  leds::init();
-  
   // We don't want interrupts from timer 2.
   avr_util::timer0_off();
 
-  // Uses Timer1, no interrupt.
-  clock::init();
+  // Uses Timer1, no interrupts.
+  hardware_clock::setup();
 
-  // Hard coded 115.2k baud. Uses URART0, no interrupts.
-  SerialPrinter.init();
+  // Hard coded to 115.2k baud. Uses URART0, no interrupts.
+  SerialPrinter.setup();
 
-  // Uses Timer2 with interrupts, PB2, PD2, PD3, PD4.
-  lin_decoder::init();
+  // Uses Timer2 with interrupts, and a few i/o pins. See code for details.
+  lin_decoder::setup();
 
-  // Enable interrupts.
+  // Enable global interrupts. We expect to have only timer1 interrupts by
+  // the lin decoder to reduce ISR jitter.
   sei(); 
 
   SerialPrinter.println(F("Setup completed"));
 }
 
+// This is a quick loop that does not use delay() or other busy loops or blocking calls.
 void loop()
 {
-  SerialPrinter.update();
+  // Periodic updates.
+  system_clock::loop();
+  SerialPrinter.loop();
+  frame_led.loop();
+  error_led.loop();
 
-  static uint32_t last_reported_millis = 0;
-  const uint32_t time_millis = clock::update_millis();
-
-  if (time_millis >= (last_reported_millis + 1000 )) {
-    last_reported_millis = time_millis;
-    SerialPrinter.println(time_millis);
-    const boolean had_errors = lin_decoder::hasErrors();
-    // NOTE: not 100% atomic. We may loose errors.
-    lin_decoder::clearErrors();
-    SerialPrinter.println(had_errors? F("ERRORS!") : F("OK"));
+  // Generate periodic messages.
+  {  
+    static uint32_t last_reported_millis = 0;
+    const uint32_t time_millis = system_clock::timeMillis();
+    if (time_millis >= (last_reported_millis + 1000 )) {
+      last_reported_millis = time_millis;
+      SerialPrinter.println((uint32)time_millis);
+    }
   }
-  
+
+  // Handle LIN errors.
+  if (lin_decoder::getAndClearErrorFlag()) {
+    error_led.action();
+  }
+
+  // Handle recieved LIN frames.
   lin_decoder::RxFrameBuffer buffer;
   if (readNextFrame(&buffer)) {
+    frame_led.action();
     // Dump frame.
     for (int i = 0; i < buffer.num_bytes; i++) {
       if (i > 0) {

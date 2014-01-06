@@ -16,9 +16,12 @@
 #include <arduino.h>
 #include "avr_util.h"
 
-// Uses Timer2 with interrupts, PB2, PD2, PD3, PD4.
-// TODO: specify used pins and their functions.
-// TODO: refactor all pin definitions into a single file.
+// Uses 
+// * Timer2 - used to generate the bit ticks.
+// * OC2B (PD3) - timer output ticks. For debugging. If needed, can be changed
+//   to not using this pin.
+// * PD2 - LIN RX input.
+// * PC0, PC1, PC2, PC3 - debugging outputs. See .cpp file for details.
 namespace lin_decoder {
   // A buffer for a single recieved frame.
   typedef struct RxFrameBuffer {
@@ -31,7 +34,7 @@ namespace lin_decoder {
   } RxFrameBuffer;
   
   // Call once in program setup. 
-  extern void init();
+  extern void setup();
   
   // Try to read next available rx frame. If available, return true and set
   // given buffer. Otherwise, return false and leave *buffer unmodified. 
@@ -39,10 +42,8 @@ namespace lin_decoder {
   // count are not verified. 
   extern boolean readNextFrame(RxFrameBuffer* buffer);
   
-  // Error status. Raized whenever an error is detected.
-  // TODO: make the read/clear atomic.
-  extern boolean hasErrors();
-  extern void clearErrors();
+  // Get current error flag and clear it.
+  extern boolean getAndClearErrorFlag();
 }
 
 #endif  

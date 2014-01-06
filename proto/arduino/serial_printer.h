@@ -31,7 +31,7 @@ public:
   // The singleton instance.
   static _SerialPrinter instance;
   
-  void init() {
+  void setup() {
     _start = 0;
     _count = 0;
     
@@ -55,7 +55,7 @@ public:
 
   // Called periodically from loop() to do the transmission. Non
   // blocking.
-  void update() {
+  void loop() {
     if (_count && (UCSR0A & H(UDRE0))) {
       UDR0 = dequeue();
     }

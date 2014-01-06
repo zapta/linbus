@@ -13,9 +13,9 @@
 // TODO: file is too long. Refactor.
 
 #include "lin_decoder.h"
+
 #include "avr_util.h"
-#include "leds.h"
-#include "clock.h"
+#include "hardware_clock.h"
 
 // ----- Baud rate related parameters. ---
 
@@ -26,35 +26,100 @@
 #define PRE_SCALER 8
 
 // Timer 2 counts for a single serial data tick. Should be <= 256.
-#define COUNTS_PER_BIT (16000000/PRE_SCALER/BAUD)
+#define COUNTS_PER_BIT ((16000000 / PRE_SCALER) / BAUD)
 
 // ----- Debugging outputs
-
-// High while servicing the ISR.
-#define DEBUG_LED_IN_ISR_ON leds::on1()
-#define DEBUG_LED_IN_ISR_OFF leds::off1()
-
-// High when a break was detected.
-#define DEBUG_LED_BREAK_ON leds::on2()
-#define DEBUG_LED_BREAK_OFF leds::off2()
-
-// A short pulse when sampling a data bit.
-#define DEBUG_LED_DATA_BIT_ON leds::on3()
-#define DEBUG_LED_DATA_BIT_OFF leds::off3()
-
-// A short pulse when incrementing the error counter.
-#define DEBUG_LED_ERROR_ON leds::on4()
-#define DEBUG_LED_ERROR_OFF leds::off4()
   
 namespace lin_decoder {
   // 9600 baud -> 26, 20000 baud -> 12. Not bothering with rounding.
-  static const uint8 kClockTicksPerBit = clock::kHardwareTicksPerSecond / BAUD;
+  static const uint8 kClockTicksPerBit = (hardware_clock::kTicksPerMilli * 1000) / BAUD;
 
-  // Pins for communicating with the LIN transceiver.
-  static const uint8 kRxPinMask  = H(PIND2);
-  static const uint8 kTxPinMask = H(PINB2);
-  static const uint8 kEnPinMask = H(PIND4);
+  // ----- Digital I/O pins
+  //
+  // NOTE: we use direct register access instead the abstractions in io_pins.h. 
+  // This way we shave a few cycles from the ISR.
   
+  // RX - input, PD2. Lin bus input.
+  namespace rx_pin {
+    static const uint8 kPinMask  = H(PIND2);
+    static inline void setup() {
+      DDRD &= ~kPinMask;  // input
+      PORTD |= kPinMask;  // pullup
+    }
+    static inline uint8 isHigh() {
+      return  PIND & kPinMask;
+    }
+  }  // namespace rx_pin
+  
+  // BREAK - output, PC0. Indicates detection of a break. For debugging.
+  namespace break_pin {
+    static const uint8 kPinMask  = H(PINC0);
+    static inline void setup() {
+      DDRC |= kPinMask;    // output
+      PORTC &= ~kPinMask;  // low
+    }
+    static inline void setHigh() {
+      PORTC |= kPinMask;
+    }
+    static inline void setLow() {
+      PORTC &= ~kPinMask;
+    }
+  } 
+  
+  // SAMPLE - output, PC1. Indicates input bit sampling. For debugging.
+  namespace sample_pin {
+    static const uint8 kPinMask  = H(PINC1);
+    static inline void setup() {
+      DDRC |= kPinMask;    // output
+      PORTC &= ~kPinMask;  // low
+    }
+    static inline void setHigh() {
+      PORTC |= kPinMask;
+    }
+    static inline void setLow() {
+      PORTC &= ~kPinMask;
+    }
+  } 
+  
+  // ERROR - output, PC2. Indicates errors detection. For debugging.
+  namespace error_pin {
+    static const uint8 kPinMask  = H(PINC2);
+    static inline void setup() {
+      DDRC |= kPinMask;    // output
+      PORTC &= ~kPinMask;  // low
+    }
+    static inline void setHigh() {
+      PORTC |= kPinMask;
+    }
+    static inline void setLow() {
+      PORTC &= ~kPinMask;
+    }
+  }
+  
+  // ISR - output, PC3. Indicate ISR execution period. For debugging.
+  namespace isr_pin {
+    static const uint8 kPinMask  = H(PINC3);
+    static inline void setup() {
+      DDRC |= kPinMask;    // output
+      PORTC &= ~kPinMask;  // low
+    }
+    static inline void setHigh() {
+      PORTC |= kPinMask;
+    }
+    static inline void setLow() {
+      PORTC &= ~kPinMask;
+    }
+  }
+    
+  // Called one during initialization.
+  static inline void setupPins() {
+    rx_pin::setup();
+    break_pin::setup();
+    sample_pin::setup();
+    error_pin::setup();
+    isr_pin::setup();
+  }
+    
   // ----- ISR To Main Data Transfer -----
 
   // When true, request_buffer has data that should be read by main. When false, ISR
@@ -93,7 +158,7 @@ namespace lin_decoder {
   static uint8 tail_frame_buffer;
   
   // Called once from main.
-  static inline void initBuffers() {
+  static inline void setupBuffers() {
     head_frame_buffer = 0;
     tail_frame_buffer = 0;
     request_buffer_has_data = false;
@@ -159,36 +224,22 @@ namespace lin_decoder {
   
   // Private. Called from ISR.
   static inline void setErrorFlag() {
-    DEBUG_LED_ERROR_ON;
+    error_pin::setHigh();
     error_flag = true;
-    DEBUG_LED_ERROR_OFF;
+    error_pin::setLow();
   }
   
   // Called from main. Public.
-  boolean hasErrors() {
-    return error_flag;
-  }
-  
-  // Called from main. Public.
-  void clearErrors() {
+  boolean getAndClearErrorFlag() {
+    // TODO: make this atomic, without increasing ISR jitter.
+    const boolean result = error_flag;
     error_flag = false;
+    return result;
   }
 
   // ----- Initialization -----
 
-  static void initLinPins() {
-    // RX input, pull up.
-    DDRD &= ~kRxPinMask;
-    PORTD |= kRxPinMask;
-    // TX output, default high.
-    DDRB |= kTxPinMask;
-    PORTB &= ~kTxPinMask; 
-    // Enable output, default high.
-    DDRD |= kEnPinMask;
-    PORTD |= kEnPinMask;
-  }
-
-  static void initTimer() {    
+  static void setupTimer() {    
     // OC2B cycle pulse (Arduino digital pin 3, PD3). For debugging.
     DDRD |= H(DDD3);
     // Fast PWM mode, OC2B output active high.
@@ -215,18 +266,18 @@ namespace lin_decoder {
   }
 
   // Call once from main at the begining of the program.
-  void init() {
-    initBuffers();
+  void setup() {
+    setupPins();
+    setupBuffers();
     StateDetectBreak::enter();
-    initLinPins();
-    initTimer();
-    clearErrors();
+    setupTimer();
+    error_flag = false;
   }
 
   // ----- ISR Utility Functions -----
 
   // Set timer value to zero.
-  static inline void resetTimer() {
+  static inline void resetTickTimer() {
     // TODO: also clear timer2 prescaler.
     TCNT2 = 0;
   }
@@ -241,24 +292,23 @@ namespace lin_decoder {
     TCNT2 = (COUNTS_PER_BIT / 2) + 2;
   }
 
-  // Return non zero if RX is high (passive), return zero if 
-  // asserted (low).
-  static inline uint8 isRxHigh() {
-    return PIND & kRxPinMask;
-  }
-
   // Perform a tight busy loop until RX is low or the given number
   // of clock ticks passed (timeout). Retuns true if ok,
   // false if timeout. Keeps timer reset during the wait.
   static inline boolean waitForRxLow(uint16 maxClockTicks) {
-    const uint16 base_clock = clock::hardware_ticks_mod_16_bit();
+    const uint16 base_clock = hardware_clock::ticks();
     for(;;) {
-      resetTimer();
-      if (!isRxHigh()) {
+      // Keep the tick timer not ticking (no ISR).
+      resetTickTimer();
+      
+      // If rx is low we are done.
+      if (!rx_pin::isHigh()) {
         return true;
       }
-      // Should work also in case of an clock overflow.
-      const uint16 clock_diff = clock::hardware_ticks_mod_16_bit() - base_clock;
+      
+      // Test for timeout.
+      // Should work also in case of 16 bit clock overflow.
+      const uint16 clock_diff = hardware_clock::ticks() - base_clock;
       if (clock_diff >= maxClockTicks) {
         return false; 
       }
@@ -268,14 +318,14 @@ namespace lin_decoder {
   // Same as waitForRxLow but with reversed polarity.
   // We clone to code for time optimization.
   static inline boolean waitForRxHigh(uint16 maxClockTicks) {
-    const uint16 base_clock = clock::hardware_ticks_mod_16_bit();
+    const uint16 base_clock = hardware_clock::ticks();
     for(;;) {
-      resetTimer();
-      if (isRxHigh()) {
+      resetTickTimer();
+      if (rx_pin::isHigh()) {
         return true;
       }
       // Should work also in case of an clock overflow.
-      const uint16 clock_diff = clock::hardware_ticks_mod_16_bit() - base_clock;
+      const uint16 clock_diff = hardware_clock::ticks() - base_clock;
       if (clock_diff >= maxClockTicks) {
         return false; 
       }
@@ -305,7 +355,7 @@ namespace lin_decoder {
   
   // Return true if enough time to service rx request.
   inline void StateDetectBreak::handle_isr() {
-    if (isRxHigh()) {
+    if (rx_pin::isHigh()) {
       low_bits_counter_ = 0;
       return;
     } 
@@ -316,10 +366,10 @@ namespace lin_decoder {
     }
     
     // Detected a break. Wait for rx high and enter data reading.
-    DEBUG_LED_BREAK_ON;
+    break_pin::setHigh();
     // TODO: set actual max count
     waitForRxHigh(255);
-    DEBUG_LED_BREAK_OFF;
+    break_pin::setLow();
     StateReadData::enter();
   }
 
@@ -345,9 +395,9 @@ namespace lin_decoder {
   
   inline void StateReadData::handle_isr() {
     // Sample data bit ASAP to avoid jitter.
-    DEBUG_LED_DATA_BIT_ON;
-    const uint8 is_rx_high = isRxHigh();
-    DEBUG_LED_DATA_BIT_OFF;
+    sample_pin::setHigh();
+    const uint8 is_rx_high = rx_pin::isHigh();
+    sample_pin::setLow();
     
     // Handle start bit.
     if (bits_read_in_byte_ == 0) {
@@ -440,7 +490,7 @@ namespace lin_decoder {
   // Interrupt on Timer 2 A-match.
   ISR(TIMER2_COMPA_vect)
   {
-    DEBUG_LED_IN_ISR_ON;
+    isr_pin::setHigh();
 
     // TODO: make this state a boolean instead of enum? (efficency).
     switch (state) {
@@ -459,7 +509,7 @@ namespace lin_decoder {
     // interupt period. Otherwise, we can avoid calling this in an ISR
     // cycle that called setTimerToHalfTick(). 
     maybeServiceRxRequest();
-    DEBUG_LED_IN_ISR_OFF;
+    isr_pin::setLow();
   }
-}
+}  // namespace lin_decoder
 
