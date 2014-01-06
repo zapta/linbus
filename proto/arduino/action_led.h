@@ -78,19 +78,19 @@ private:
   
   inline void enterIdleState() {
     state_ = IDLE;
-    led_.off();
+    led_.low();
   }
   
   inline void enterActiveOnState() {
     state_ = ACTIVE_ON;
-    led_.on();
+    led_.high();
     timer_.restart();
     
   }
   
   inline void enterActiveOffState() {
     state_ = ACTIVE_OFF;
-    led_.off();
+    led_.low();
     timer_.restart();
   }
 };

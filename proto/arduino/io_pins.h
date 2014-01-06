@@ -22,52 +22,47 @@ namespace io_pins {
 public:
     // port is either PORTB, PORTC, or PORTD.
     // bit index is one of [7, 6, 5, 4, 3, 2, 1, 0] (lsb).
+    // NOTE: ddr port is is always one address below portx.
+    // NOTE: pin port is is always two addresses below portx.
     OutputPin(volatile uint8& port, uint8 bitIndex) :
-      port_(port),
-      bit_mask_(1 << bitIndex), 
-      is_on_(false) {
-        // NOTE: ddr port is is always one address below port.
-        volatile uint8& ddr = *((&port)-1);
-        ddr |= bit_mask_;
-        port_ &= ~bit_mask_;
-      } 
+    port_(port),
+    pin_(*((&port)-2)),
+    bit_mask_(1 << bitIndex) {
+      // NOTE: ddr port is is always one address below port.
+      volatile uint8& ddr = *((&port)-1);
+      ddr |= bit_mask_;
+      low();  // default state.
+    } 
 
-    inline void on() {
-      is_on_ = true;
+    inline void high() {
       port_ |= bit_mask_;
     }
 
-    inline void off() {
-      is_on_ = false;
+    inline void low() {
       port_ &= ~bit_mask_;
     }
 
-    void set(boolean v) {
+    inline void set(boolean v) {
       if (v) {
-        on();
+        high();
       } 
       else {
-        off();
+        low();
       }
     }
 
-    inline boolean isOn() {
-      return is_on_;
+    inline void toggle() {
+      set(!isHigh());
     }
 
-    void toggle() {
-      if (is_on_) {
-        off();
-      } 
-      else {
-        on();
-      }
+    inline boolean isHigh() {
+      return pin_ & bit_mask_;
     }
 
 private:
     volatile uint8& port_;
+    volatile uint8& pin_;
     const uint8 bit_mask_;
-    boolean is_on_;
   };
 
   // A class to abstract an input pin that is not necesarily an arduino 
@@ -99,6 +94,7 @@ private:
 }  // namespace io_pins
 
 #endif
+
 
 
 
