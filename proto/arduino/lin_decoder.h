@@ -25,11 +25,17 @@
 namespace lin_decoder {
   // A buffer for a single recieved frame.
   typedef struct RxFrameBuffer {
-    // 1 sync byte + 1 ID byte + up to 8 data bytes + 1 checksum byte. 
-    static const uint8 kMaxBytes = 11;
-    // Number of valid bytes in begining of the bytes[] array.
+    // ID byte + 1 data byte + checksum byte.
+    static const uint8 kMinBytes = 3;
+
+    // ID byte + 8 data bytes + checksum byte.
+    static const uint8 kMaxBytes = 10;
+    
+    // Number of valid bytes in the bytes[] array.
     uint8 num_bytes;
-    // Recieved frame bytes. Includes sync, id, data and checksum.
+    
+    // Recieved frame bytes. Includes id, data and checksum. Does not 
+    // include the 0x55 sync byte.
     uint8 bytes[kMaxBytes];
   } RxFrameBuffer;
   

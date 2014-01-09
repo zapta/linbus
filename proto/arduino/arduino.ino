@@ -36,7 +36,7 @@ static uint8 frameChecksum(const lin_decoder::RxFrameBuffer& buffer) {
   static const boolean kV2Checksum = false;
 
   // LIN V2 includes ID byte in checksum, V1 does not.
-  const uint8 startByte = kV2Checksum ? 1 : 2;
+  const uint8 startByte = kV2Checksum ? 0 : 1;
   const uint8* p = &buffer.bytes[startByte];
   // Exclude also the checksum at the end.
   uint8 nBytes = buffer.num_bytes - (startByte + 1);
@@ -62,15 +62,10 @@ static uint8 frameChecksum(const lin_decoder::RxFrameBuffer& buffer) {
 
 static boolean isFrameValid(const lin_decoder::RxFrameBuffer& buffer) {
   const uint8 n = buffer.num_bytes;
-  // Check minimum length.
-  if (n < 4) {
-    return false;
-  }
-  // Check sync byte.
-  if (buffer.bytes[0] != 0x55) {
-    return false;
-  }
-  // Check checksum
+  
+  // NOTE: min and max frame sizes are already validated by the lin decoder ISR.
+  
+  // Check frame checksum byte.
   if (buffer.bytes[n - 1] != frameChecksum(buffer)) {
     return false;
   }  
