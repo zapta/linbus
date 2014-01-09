@@ -38,6 +38,3 @@ while True:
 
 os.close(fd)
 
-
-
-

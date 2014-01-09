@@ -35,7 +35,9 @@ public:
     _start = 0;
     _count = 0;
     
-    // 115.2k baud @ 16MHz, per table 20.7.
+    // For devisors see table 19-12 in the atmega328p datasheet.
+    // U2X0, 16 -> 115.2k baud @ 16MHz. 
+    // U2X0, 207 -> 9600 baud @ 16Mhz.
     UBRR0H = 0;
     UBRR0L = 16;
     UCSR0A = H(U2X0);

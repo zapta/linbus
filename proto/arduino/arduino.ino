@@ -19,7 +19,7 @@
 #include "action_led.h"
 
 // Auxilary LEDs.
-static io_pins::OutputPin status1_led(PORTD, 6);
+static ActionLed status1_led(PORTD, 6);
 static io_pins::OutputPin status2_led(PORTD, 7);
 
 // Action LEDs. Indicates activity by blinking. Require periodic calls to
@@ -34,7 +34,7 @@ static io_pins::OutputPin led(PORTB, 5);
 static uint8 frameChecksum(const lin_decoder::RxFrameBuffer& buffer) {
   // LIN V1 and V2 have slightly different checksum formulas.
   static const boolean kV2Checksum = false;
- 
+
   // LIN V2 includes ID byte in checksum, V1 does not.
   const uint8 startByte = kV2Checksum ? 1 : 2;
   const uint8* p = &buffer.bytes[startByte];
@@ -111,18 +111,28 @@ void loop()
     // Periodic updates.
     system_clock::loop();
     SerialPrinter.loop();
+    status1_led.loop();
     frame_led.loop();
     error_led.loop();
 
+    // Heart beat led.
+    {
+      static PassiveTimer heart_beat_timer;
+      if (heart_beat_timer.timeMillis() >= 3000) {
+        status1_led.action(); 
+        heart_beat_timer.restart(); 
+      }
+    }
+
     // Generate periodic messages.
-    static PassiveTimer periodic_watch_dog;
+    static PassiveTimer periodic_watchdog;
     static byte pending_chars = 0;
-    if (periodic_watch_dog.timeMillis() >= 1000) {
+    if (periodic_watchdog.timeMillis() >= 1000) {
       if (pending_chars >= 30) {
         SerialPrinter.println();
         pending_chars = 0;
       }
-      periodic_watch_dog.restart();
+      periodic_watchdog.restart();
       SerialPrinter.print(F("."));
       pending_chars++;
     }
@@ -142,7 +152,8 @@ void loop()
       const boolean frameOk = isFrameValid(buffer);
       if (frameOk) {
         frame_led.action();
-      } else {
+      } 
+      else {
         error_led.action();
       }
       // Dump frame.
@@ -153,10 +164,11 @@ void loop()
         SerialPrinter.printHexByte(buffer.bytes[i]);  
       }
       SerialPrinter.println(frameOk ? F(" OK") : F(" ER"));  
-      periodic_watch_dog.restart(); 
+      periodic_watchdog.restart(); 
     }
     led.low();
   }
 }
+
 
 
