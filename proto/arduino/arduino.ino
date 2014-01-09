@@ -91,7 +91,7 @@ void setup()
   // the lin decoder to reduce ISR jitter.
   sei(); 
 
-  SerialPrinter.println(F("Setup completed"));
+  SerialPrinter.println(F("\nSetup completed"));
 }
 
 // This is a quick loop that does not use delay() or other busy loops or blocking calls.
@@ -123,7 +123,7 @@ void loop()
     static PassiveTimer periodic_watchdog;
     static byte pending_chars = 0;
     if (periodic_watchdog.timeMillis() >= 1000) {
-      if (pending_chars >= 30) {
+      if (pending_chars >= 10) {
         SerialPrinter.println();
         pending_chars = 0;
       }

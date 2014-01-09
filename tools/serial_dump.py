@@ -58,6 +58,10 @@ def main():
   while True:
     line = read_line(fd);
     rel_time_millis = time_millis() - start_time_millis
+    # Ignore the stuff we find in the input queue upon restart. 
+    # It is junk.
+    if rel_time_millis < 200:
+      continue
     seconds = int(rel_time_millis / 1000)
     millis = rel_time_millis % 1000
     out_line = "%05d.%03d %s\n" % (seconds, millis, line)
