@@ -9,32 +9,60 @@
 # some Arduinos cause a CPU reset.
 
 import os
-import termios
-import sys
 import select
+import sys
+import termios
+import time
 
 # TODO: make these command line args.
 speed = 115200
-port = '/dev/cu.usbserial-A600dOYP'
+port = "/dev/cu.usbserial-A600dOYP"
 
-# Open port in read only mode. Call is blocking.
-fd= os.open(port, os.O_RDONLY | os.O_NOCTTY )
-
-# Setup the port.
-iflag, oflag, cflag, lflag, ispeed, ospeed, cc = termios.tcgetattr(fd) 
-ispeed = speed
-ospeed = speed
-termios.tcsetattr(fd, termios.TCSANOW, [iflag, oflag, cflag, lflag, ispeed, ospeed, cc])
-
-# Read in a loop
-# TODO: buffer lines and process one line at a time.
-while True:
+# Wait for next input character and return it as a single
+# char string.
+def read_char(fd):
   # Wait for rx data ready. Timeout of 0 indicates wait forever.
   ready,_,_ = select.select([fd],[],[], 0)
   # Read and output one character
-  buf = os.read(fd, 1)
-  sys.stdout.write(buf)
-  sys.stdout.flush()
+  return os.read(fd, 1)
 
-os.close(fd)
+# Read an return a single line, without the eol charcater.
+def read_line(fd):
+  line = [] 
+  while True:
+    char = read_char(fd)
+    if (char == "\n"):
+      return "".join(line)
+    line.append(char)
+
+# Return time now in millis. We use it to comptute relative time.
+def time_millis():
+  return int(round(time.time() * 1000))
+
+# Open the serial port for reading at the specified speed.
+# Returns the port's fd.
+def open_port():
+  # Open port in read only mode. Call is blocking.
+  fd = os.open(port, os.O_RDONLY | os.O_NOCTTY )
+
+  # Setup the port.
+  iflag, oflag, cflag, lflag, ispeed, ospeed, cc = termios.tcgetattr(fd) 
+  ispeed = speed
+  ospeed = speed
+  termios.tcsetattr(fd, termios.TCSANOW, [iflag, oflag, cflag, lflag, ispeed, ospeed, cc])
+  return fd
+
+def main():
+  fd = open_port()
+  start_time_millis = time_millis()
+  while True:
+    line = read_line(fd);
+    rel_time_millis = time_millis() - start_time_millis
+    seconds = int(rel_time_millis / 1000)
+    millis = rel_time_millis % 1000
+    out_line = "%05d.%03d %s\n" % (seconds, millis, line)
+    sys.stdout.write(out_line)
+    sys.stdout.flush()
+
+main()
 
