@@ -18,6 +18,10 @@
 #include "io_pins.h"
 #include "action_led.h"
 
+// Config pin. Sampled once during initialization does not change value
+// after that. Using alternative configuration when pin is low.
+static io_pins::ConfigInputPin alt_config_pin(PORTB, 2);
+
 // Auxilary LEDs.
 static ActionLed status1_led(PORTD, 6);
 static io_pins::OutputPin status2_led(PORTD, 7);
@@ -33,7 +37,7 @@ static io_pins::OutputPin led(PORTB, 5);
 // Compute frame checksum. Assuming buffer is not empty.
 static uint8 frameChecksum(const lin_decoder::RxFrameBuffer& buffer) {
   // LIN V1 and V2 have slightly different checksum formulas.
-  static const boolean kV2Checksum = false;
+  static const boolean kV2Checksum = alt_config_pin.isHigh();
 
   // LIN V2 includes ID byte in checksum, V1 does not.
   // Per the assumption above, we have at least one byte.
@@ -67,11 +71,11 @@ static uint8 setIdChecksumBits(uint8 id) {
   // Algorithm is optimized for CPU time (avoiding individual shifts per id bit).
   // Using registers for the two checksum bits. P1 is computed in bit 7 of p1_at_b7 
   // and p0 is comptuted in bit 6 of p0_at_b6.
-  uint8 p1_at_b7 = 0;
+  uint8 p1_at_b7 = ~0;
   uint8 p0_at_b6 = 0;
   
   // P1: id5, P0: id4
-  uint8 shifter = id << 12;
+  uint8 shifter = id << 2;
   p1_at_b7 ^= shifter;
   p0_at_b6 ^= shifter;
 
@@ -96,32 +100,45 @@ static uint8 setIdChecksumBits(uint8 id) {
   return (p1_at_b7 & 0b10000000) | (p0_at_b6 & 0b01000000) | (id & 0b00111111);
 }
 
+// We consider a single byte frame with ID only and no slave response as valid.
 static boolean isFrameValid(const lin_decoder::RxFrameBuffer& buffer) {
   const uint8 n = buffer.num_bytes;
   
   // Check frame size.
-  // One ID byte, 1-8 data bytes, 1 checksum byte.
-  if (n < 3 || n > 10) {
-    // TODO: should we enforce data size to be in {1, 2, 4, 8}?
+  // One ID byte with optional 1-8 data bytes and 1 checksum byte.
+  // TODO: should we enforce only 1, 2, 4, or 8 data bytes?  (total size 
+  // 1, 3, 4, 6, or 10)
+  if (n != 1 && (n < 3 || n > 10)) {
+    SerialPrinter.println("x1");
     return false;
   }
   
   // Check ID byte checksum bits.
   const uint8 id_byte = buffer.bytes[0];
   if (id_byte != setIdChecksumBits(id_byte)) {
+    // TODO: remove after stabilization.
+    // SerialPrinter.printHexByte(id_byte);
+    // SerialPrinter.print(" vs. ");
+    // SerialPrinter.printHexByte(setIdChecksumBits(id_byte));
+    // SerialPrinter.println();
     return false;
   }
    
-  // Check overall frame checksum byte.
-  if (buffer.bytes[n - 1] != frameChecksum(buffer)) {
-    return false;
-  }  
+  // If not an ID only frame, check also the overall checksum.
+  if (n > 1) {
+    if (buffer.bytes[n - 1] != frameChecksum(buffer)) {
+      return false;
+    }  
+  }
   // TODO: check protected id.
   return true;
 }
 
 void setup()
 {
+  // If alt config pin is pulled low, using alternative config..
+  const boolean alt_config = alt_config_pin.isLow();
+  
   // We don't want interrupts from timer 2.
   avr_util::timer0_off();
 
@@ -132,13 +149,13 @@ void setup()
   SerialPrinter.setup();
 
   // Uses Timer2 with interrupts, and a few i/o pins. See code for details.
-  lin_decoder::setup();
+  lin_decoder::setup(alt_config);
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
   // the lin decoder to reduce ISR jitter.
   sei(); 
 
-  SerialPrinter.println(F("Started."));
+  SerialPrinter.println(alt_config ? F("Started (alt config).") : F("Started (std config)."));
 }
 
 // This is a quick loop that does not use delay() or other busy loops or blocking calls.

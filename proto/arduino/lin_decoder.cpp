@@ -20,19 +20,49 @@
 // ----- Baud rate related parameters. ---
 
 // The nominal baud rate. Tested with 9600, 10000, 19200, 20000.
-#define BAUD 9600
 
 // The pre scaler of timer 2 for generating serial bit ticks.
 #define PRE_SCALER 8
 
-// Timer 2 counts for a single serial data tick. Should be <= 256.
-#define COUNTS_PER_BIT ((16000000 / PRE_SCALER) / BAUD)
+// Wait at most 4 bits from the end of the stop bit of previous byte
+// to the start bit of next byte.
+#define MAX_SPACE_BITS 4
 
 // ----- Debugging outputs
 
 namespace lin_decoder {
-  // 9600 baud -> 26, 20000 baud -> 12. Not bothering with rounding.
-  static const uint8 kClockTicksPerBit = (hardware_clock::kTicksPerMilli * 1000) / BAUD;
+
+  struct Config {
+    boolean alt_config;
+    uint16 baud;
+    uint8 counts_per_bit;
+    uint8 counts_per_half_bit;
+    uint8 clock_ticks_per_bit;
+    uint8 clock_ticks_per_until_start_bit;
+  };
+
+  // Main configuration.
+  const Config kConfig = {
+    false, 
+    19200, 
+    ((16000000 / PRE_SCALER) / 19200), 
+    ((16000000 / PRE_SCALER) / 19200) / 2 + 2, 
+    (hardware_clock::kTicksPerMilli * 1000) / 19200, 
+    ((hardware_clock::kTicksPerMilli * 1000) / 19200) * MAX_SPACE_BITS   
+  };
+
+  // Alternative configuration. For debugging.
+  const Config kAltConfig = {
+    true, 
+    9600, 
+    ((16000000 / PRE_SCALER) / 9600), 
+    ((16000000 / PRE_SCALER) / 9600) / 2 + 2, 
+    (hardware_clock::kTicksPerMilli * 1000) / 9600, 
+    ((hardware_clock::kTicksPerMilli * 1000) / 9600) * MAX_SPACE_BITS    
+  };
+
+  // The actual configurtion. Sets during setup to either kConfig or kAltConfig;  
+  Config config;
 
   // ----- Digital I/O pins
   //
@@ -110,6 +140,34 @@ namespace lin_decoder {
       PORTC &= ~kPinMask;
     }
   }
+  
+  namespace debug1_pin {
+    static const uint8 kPinMask  = H(PIND4);
+    static inline void setup() {
+      DDRD |= kPinMask;    // output
+      PORTD &= ~kPinMask;  // low
+    }
+    static inline void setHigh() {
+      PORTD |= kPinMask;
+    }
+    static inline void setLow() {
+      PORTD &= ~kPinMask;
+    }
+  } 
+  
+   namespace debug2_pin {
+    static const uint8 kPinMask  = H(PIND5);
+    static inline void setup() {
+      DDRD |= kPinMask;    // output
+      PORTD &= ~kPinMask;  // low
+    }
+    static inline void setHigh() {
+      PORTD |= kPinMask;
+    }
+    static inline void setLow() {
+      PORTD &= ~kPinMask;
+    }
+  }
 
   // Called one during initialization.
   static inline void setupPins() {
@@ -118,6 +176,8 @@ namespace lin_decoder {
     sample_pin::setup();
     error_pin::setup();
     isr_pin::setup();
+    debug1_pin::setup();
+    debug2_pin::setup();
   }
 
   // ----- ISR To Main Data Transfer -----
@@ -255,10 +315,10 @@ private:
 #if (COUNTS_PER_BIT > 256) 
 #error "Baud too low, counts does not fit in a byte, needs a larger prescaler."
 #endif
-    OCR2A = COUNTS_PER_BIT - 1;
+    OCR2A = config.counts_per_bit - 1;
     // A short 8 clocks pulse on OC2B at the end of each cycle,
     // just before triggering the ISR.
-    OCR2B = COUNTS_PER_BIT - 2; 
+    OCR2B = config.counts_per_bit - 2; 
     // Interrupt on A match.
     TIMSK2 = L(OCIE2B) | H(OCIE2A) | L(TOIE2);
     // Clear pending Compare A interrupts.
@@ -266,7 +326,12 @@ private:
   }
 
   // Call once from main at the begining of the program.
-  void setup() {
+  // If alt_config is true, use the alternative config rather than
+  // the normal one. Useful for debugging.
+  void setup(boolean alt_config) {
+    // Should be done first since some of the steps below depends on it.
+    config = alt_config ? kAltConfig : kConfig;
+
     setupPins();
     setupBuffers();
     StateDetectBreak::enter();
@@ -289,7 +354,7 @@ private:
     // Adding 2 to compensate for pre calling delay. The goal is
     // to have the next ISR data sampling at the middle of the start
     // bit.
-    TCNT2 = (COUNTS_PER_BIT / 2) + 2;
+    TCNT2 = config.counts_per_half_bit;
   }
 
   // Perform a tight busy loop until RX is low or the given number
@@ -455,7 +520,7 @@ private:
     bits_read_in_byte_ = 0;
 
     // Wait for the high to low transition of start bit of next byte.
-    const boolean has_more_bytes =  waitForRxLow(kClockTicksPerBit * 4);
+    const boolean has_more_bytes =  waitForRxLow(config.clock_ticks_per_until_start_bit);
 
     // Handle the case of no transition. We just read the last byte in this frame.
     if (!has_more_bytes) {
@@ -523,5 +588,4 @@ private:
     isr_pin::setLow();
   }
 }  // namespace lin_decoder
-
 

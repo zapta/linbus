@@ -40,7 +40,7 @@ namespace lin_decoder {
   } RxFrameBuffer;
   
   // Call once in program setup. 
-  extern void setup();
+  extern void setup(boolean alt_config);
   
   // Try to read next available rx frame. If available, return true and set
   // given buffer. Otherwise, return false and leave *buffer unmodified. 

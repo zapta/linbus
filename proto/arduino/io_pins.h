@@ -69,10 +69,7 @@ private:
   // digital pin. Also optimized for quick access.
   class InputPin {
 public:
-    // port is either PORTB, PORTC, or PORTD.
-    // bit index is one of [7, 6, 5, 4, 3, 2, 1, 0] (lsb).
-    // NOTE: ddr port is is always one address below portx.
-    // NOTE: pin port is is always two addresses below portx.
+    // See OutputPin() for description of the args.
     InputPin(volatile uint8& port, uint8 bitIndex) 
 : 
       pin_(*((&port)-2)),
@@ -89,6 +86,39 @@ public:
 private:
     volatile uint8& pin_;
     const uint8 bit_mask_;
+  };
+  
+   // A class to abstract an input pin that is not read once 
+   // upon initializaiton.
+  class ConfigInputPin {
+public:
+    // See OutputPin() for description of the args.
+    ConfigInputPin(volatile uint8& port, uint8 bitIndex) { 
+        const uint8 bit_mask = (1 << bitIndex);
+        volatile uint8& pin = *((&port)-2);
+        volatile uint8& ddr = *((&port)-1);
+        ddr &= ~bit_mask;  // input
+        port |= bit_mask;  // pullup
+        // Make a short delay to make sure the value has enough time to stabalizes
+        // after we set the pin to an input with pullup. Reading a volatile 
+        // variable in a loop so the compiler will not optimize it out.
+        for (uint8 i = 0; i < 20; i++) {
+          is_high_ = pin & bit_mask;   
+        }
+      } 
+
+    // Always returns the same value, even if the config pin changed
+    // after after the constructor sampled it.
+    inline boolean isHigh() {
+      return is_high_;
+    }
+    
+    inline boolean isLow() {
+      return !is_high_;
+    }
+
+private:
+    boolean is_high_;
   };
 
 }  // namespace io_pins
