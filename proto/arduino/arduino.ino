@@ -138,7 +138,7 @@ void setup()
   // the lin decoder to reduce ISR jitter.
   sei(); 
 
-  SerialPrinter.println(F("\nSetup completed"));
+  SerialPrinter.println(F("Started."));
 }
 
 // This is a quick loop that does not use delay() or other busy loops or blocking calls.
@@ -155,7 +155,7 @@ void loop()
     frame_led.loop();
     error_led.loop();
 
-    // Heart beat led.
+    // Heartbeat LED blink.
     {
       static PassiveTimer heart_beat_timer;
       if (heart_beat_timer.timeMillis() >= 3000) {
@@ -164,17 +164,11 @@ void loop()
       }
     }
 
-    // Generate periodic messages.
+    // Generate periodic messages if no activiy.
     static PassiveTimer periodic_watchdog;
-    static byte pending_chars = 0;
-    if (periodic_watchdog.timeMillis() >= 1000) {
-      if (pending_chars >= 10) {
-        SerialPrinter.println();
-        pending_chars = 0;
-      }
+    if (periodic_watchdog.timeMillis() >= 5000) {
+      SerialPrinter.println(F("waiting..."));
       periodic_watchdog.restart();
-      SerialPrinter.print(F("."));
-      pending_chars++;
     }
 
     // Handle LIN errors.
@@ -185,10 +179,6 @@ void loop()
     // Handle recieved LIN frames.
     lin_decoder::RxFrameBuffer buffer;
     if (readNextFrame(&buffer)) {
-      if (pending_chars) {
-        SerialPrinter.println();
-        pending_chars = 0;
-      }
       const boolean frameOk = isFrameValid(buffer);
       if (frameOk) {
         frame_led.action();
