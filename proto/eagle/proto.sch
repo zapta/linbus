@@ -12476,7 +12476,7 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="MISO" x="-20.32" y="-10.16" length="middle" direction="in"/>
 <pin name="DEBUG1" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
 <pin name="DEBUG2" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="CONFIG" x="-20.32" y="10.16" length="middle" direction="in"/>
+<pin name="ALT_CONFIG" x="-20.32" y="10.16" length="middle" direction="in" function="dot"/>
 <pin name="LIN_ISR" x="20.32" y="-2.54" length="middle" direction="out" rot="R180"/>
 </symbol>
 </symbols>
@@ -12560,7 +12560,7 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <device name="DIP24-6" package="ARDUINO-PRO-MINI">
 <connects>
 <connect gate="G$1" pin="+5V" pad="9"/>
-<connect gate="G$1" pin="CONFIG" pad="1"/>
+<connect gate="G$1" pin="ALT_CONFIG" pad="1"/>
 <connect gate="G$1" pin="DEBUG1" pad="19"/>
 <connect gate="G$1" pin="DEBUG2" pad="20"/>
 <connect gate="G$1" pin="ERROR_LED" pad="24"/>
@@ -14702,7 +14702,7 @@ Mors</description>
 <net name="N$27" class="0">
 <segment>
 <pinref part="S1" gate="1" pin="2"/>
-<pinref part="U1" gate="G$1" pin="CONFIG"/>
+<pinref part="U1" gate="G$1" pin="ALT_CONFIG"/>
 <wire x1="177.8" y1="137.16" x2="180.34" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 </net>
