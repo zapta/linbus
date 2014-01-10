@@ -30,12 +30,13 @@ static ActionLed error_led(PORTB, 1);
 // Arduino standard LED.
 static io_pins::OutputPin led(PORTB, 5);
 
-// Compute frame checksum. 
+// Compute frame checksum. Assuming buffer is not empty.
 static uint8 frameChecksum(const lin_decoder::RxFrameBuffer& buffer) {
   // LIN V1 and V2 have slightly different checksum formulas.
   static const boolean kV2Checksum = false;
 
   // LIN V2 includes ID byte in checksum, V1 does not.
+  // Per the assumption above, we have at least one byte.
   const uint8 startByte = kV2Checksum ? 0 : 1;
   const uint8* p = &buffer.bytes[startByte];
   // Exclude also the checksum at the end.
@@ -60,12 +61,58 @@ static uint8 frameChecksum(const lin_decoder::RxFrameBuffer& buffer) {
   return (uint8)(~sum);
 }
 
+// Replace the 2 msb bits with checksum of the node ID in the 6 lsb bits per the
+// LINBUS spec.
+static uint8 setIdChecksumBits(uint8 id) {
+  // Algorithm is optimized for CPU time (avoiding individual shifts per id bit).
+  // Using registers for the two checksum bits. P1 is computed in bit 7 of p1_at_b7 
+  // and p0 is comptuted in bit 6 of p0_at_b6.
+  uint8 p1_at_b7 = 0;
+  uint8 p0_at_b6 = 0;
+  
+  // P1: id5, P0: id4
+  uint8 shifter = id << 12;
+  p1_at_b7 ^= shifter;
+  p0_at_b6 ^= shifter;
+
+  // P1: id4, P0: id3
+  shifter += shifter;
+  p1_at_b7 ^= shifter;
+  
+  // P1: id3, P0: id2
+  shifter += shifter;
+  p1_at_b7 ^= shifter;
+  p0_at_b6 ^= shifter;
+
+  // P1: id2, P0: id1
+  shifter += shifter;
+  p0_at_b6 ^= shifter;
+
+  // P1: id1, P0: id0
+  shifter += shifter;
+  p1_at_b7 ^= shifter;
+  p0_at_b6 ^= shifter;
+  
+  return (p1_at_b7 & 0b10000000) | (p0_at_b6 & 0b01000000) | (id & 0b00111111);
+}
+
 static boolean isFrameValid(const lin_decoder::RxFrameBuffer& buffer) {
   const uint8 n = buffer.num_bytes;
   
-  // NOTE: min and max frame sizes are already validated by the lin decoder ISR.
+  // Check frame size.
+  // One ID byte, 1-8 data bytes, 1 checksum byte.
+  if (n < 3 || n > 10) {
+    // TODO: should we enforce data size to be in {1, 2, 4, 8}?
+    return false;
+  }
   
-  // Check frame checksum byte.
+  // Check ID byte checksum bits.
+  const uint8 id_byte = buffer.bytes[0];
+  if (id_byte != setIdChecksumBits(id_byte)) {
+    return false;
+  }
+   
+  // Check overall frame checksum byte.
   if (buffer.bytes[n - 1] != frameChecksum(buffer)) {
     return false;
   }  
@@ -101,8 +148,6 @@ void loop()
   // Having our own loop shaves about 4 usec per iteration. It also eliminate
   // any underlying functionality that we may not want.
   for(;;) {
-    led.high();
-
     // Periodic updates.
     system_clock::loop();
     SerialPrinter.loop();
@@ -158,10 +203,12 @@ void loop()
         }
         SerialPrinter.printHexByte(buffer.bytes[i]);  
       }
-      SerialPrinter.println(frameOk ? F(" OK") : F(" ER"));  
+      if (!frameOk) {
+        SerialPrinter.print(F(" ERR"));
+      }
+      SerialPrinter.println();  
       periodic_watchdog.restart(); 
     }
-    led.low();
   }
 }
 
