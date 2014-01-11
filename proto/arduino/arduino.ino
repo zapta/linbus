@@ -149,7 +149,7 @@ void setup()
   SerialPrinter.setup();
 
   // Uses Timer2 with interrupts, and a few i/o pins. See code for details.
-  lin_decoder::setup(alt_config);
+  lin_decoder::setup(alt_config ? 9600 : 19200);
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
   // the lin decoder to reduce ISR jitter.

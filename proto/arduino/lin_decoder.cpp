@@ -19,49 +19,59 @@
 
 // ----- Baud rate related parameters. ---
 
-// The nominal baud rate. Tested with 9600, 10000, 19200, 20000.
-
 // The pre scaler of timer 2 for generating serial bit ticks.
-#define PRE_SCALER 8
+// Should match the prescaler bits in the timer setting.
+//
+// TODO: compute this dynamically to avoid overflow of Config.counts_per_bit_ when
+// the baud is below 4800.
+static const uint8 kPreScaler = 8;
 
 // Wait at most 4 bits from the end of the stop bit of previous byte
 // to the start bit of next byte.
-#define MAX_SPACE_BITS 4
+static const uint8 kMaxSpaceBits = 4;
 
 // ----- Debugging outputs
 
 namespace lin_decoder {
 
-  struct Config {
-    boolean alt_config;
-    uint16 baud;
-    uint8 counts_per_bit;
-    uint8 counts_per_half_bit;
-    uint8 clock_ticks_per_bit;
-    uint8 clock_ticks_per_until_start_bit;
+  class Config {
+public:
+    // Initialized to given baud rate. Tested with 9600, 10000, 19200, 20000.
+    void set(uint16 baud) {
+      baud_ = baud;
+      // TODO: if baud is too low this will overflow. If require baud below 9600, 
+      // compute the scaler dynamically from baud.  
+      counts_per_bit_ = (((16000000L / kPreScaler) / baud));
+      // Adding two counts to compensate for software delay.
+      counts_per_half_bit_ = (counts_per_bit_ / 2) + 2;
+      clock_ticks_per_bit_ = (hardware_clock::kTicksPerMilli * 1000) / baud;
+      clock_ticks_per_until_start_bit_ = clock_ticks_per_bit_ * kMaxSpaceBits;
+    }
+
+    inline uint16 baud() const { 
+      return baud_; 
+    }
+    inline uint8 counts_per_bit() const { 
+      return counts_per_bit_; 
+    }
+    inline uint8 counts_per_half_bit() const { 
+      return counts_per_half_bit_; 
+    }
+    inline uint8 clock_ticks_per_bit() const { 
+      return clock_ticks_per_bit_; 
+    }
+    inline uint8 clock_ticks_per_until_start_bit() const { 
+      return clock_ticks_per_until_start_bit_; 
+    }
+private:
+    uint16 baud_;
+    uint8 counts_per_bit_;
+    uint8 counts_per_half_bit_;
+    uint8 clock_ticks_per_bit_;
+    uint8 clock_ticks_per_until_start_bit_;
   };
 
-  // Main configuration.
-  const Config kConfig = {
-    false, 
-    19200, 
-    ((16000000 / PRE_SCALER) / 19200), 
-    ((16000000 / PRE_SCALER) / 19200) / 2 + 2, 
-    (hardware_clock::kTicksPerMilli * 1000) / 19200, 
-    ((hardware_clock::kTicksPerMilli * 1000) / 19200) * MAX_SPACE_BITS   
-  };
-
-  // Alternative configuration. For debugging.
-  const Config kAltConfig = {
-    true, 
-    9600, 
-    ((16000000 / PRE_SCALER) / 9600), 
-    ((16000000 / PRE_SCALER) / 9600) / 2 + 2, 
-    (hardware_clock::kTicksPerMilli * 1000) / 9600, 
-    ((hardware_clock::kTicksPerMilli * 1000) / 9600) * MAX_SPACE_BITS    
-  };
-
-  // The actual configurtion. Sets during setup to either kConfig or kAltConfig;  
+  // The actual configurtion. Initialized in setup() based on baud rate.  
   Config config;
 
   // ----- Digital I/O pins
@@ -140,7 +150,7 @@ namespace lin_decoder {
       PORTC &= ~kPinMask;
     }
   }
-  
+
   namespace debug1_pin {
     static const uint8 kPinMask  = H(PIND4);
     static inline void setup() {
@@ -154,8 +164,8 @@ namespace lin_decoder {
       PORTD &= ~kPinMask;
     }
   } 
-  
-   namespace debug2_pin {
+
+  namespace debug2_pin {
     static const uint8 kPinMask  = H(PIND5);
     static inline void setup() {
       DDRD |= kPinMask;    // output
@@ -304,10 +314,7 @@ private:
     DDRD |= H(DDD3);
     // Fast PWM mode, OC2B output active high.
     TCCR2A = L(COM2A1) | L(COM2A0) | H(COM2B1) | H(COM2B0) | H(WGM21) | H(WGM20);
-    // Prescaler: X8.
-#if (PRE_SCALER != 8)
-#error "Prescaler mismatch"
-#endif
+    // Prescaler: X8. Should match the definition of kPreScaler;
     TCCR2B = L(FOC2A) | L(FOC2B) | H(WGM22) | L(CS22) | H(CS21) | L(CS20);
     // Clear counter.
     TCNT2 = 0;
@@ -315,10 +322,10 @@ private:
 #if (COUNTS_PER_BIT > 256) 
 #error "Baud too low, counts does not fit in a byte, needs a larger prescaler."
 #endif
-    OCR2A = config.counts_per_bit - 1;
+    OCR2A = config.counts_per_bit() - 1;
     // A short 8 clocks pulse on OC2B at the end of each cycle,
     // just before triggering the ISR.
-    OCR2B = config.counts_per_bit - 2; 
+    OCR2B = config.counts_per_bit() - 2; 
     // Interrupt on A match.
     TIMSK2 = L(OCIE2B) | H(OCIE2A) | L(TOIE2);
     // Clear pending Compare A interrupts.
@@ -328,9 +335,9 @@ private:
   // Call once from main at the begining of the program.
   // If alt_config is true, use the alternative config rather than
   // the normal one. Useful for debugging.
-  void setup(boolean alt_config) {
+  void setup(uint16 baud) {
     // Should be done first since some of the steps below depends on it.
-    config = alt_config ? kAltConfig : kConfig;
+    config.set(baud);
 
     setupPins();
     setupBuffers();
@@ -354,7 +361,7 @@ private:
     // Adding 2 to compensate for pre calling delay. The goal is
     // to have the next ISR data sampling at the middle of the start
     // bit.
-    TCNT2 = config.counts_per_half_bit;
+    TCNT2 = config.counts_per_half_bit();
   }
 
   // Perform a tight busy loop until RX is low or the given number
@@ -520,7 +527,7 @@ private:
     bits_read_in_byte_ = 0;
 
     // Wait for the high to low transition of start bit of next byte.
-    const boolean has_more_bytes =  waitForRxLow(config.clock_ticks_per_until_start_bit);
+    const boolean has_more_bytes =  waitForRxLow(config.clock_ticks_per_until_start_bit());
 
     // Handle the case of no transition. We just read the last byte in this frame.
     if (!has_more_bytes) {
@@ -588,4 +595,5 @@ private:
     isr_pin::setLow();
   }
 }  // namespace lin_decoder
+
 
