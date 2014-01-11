@@ -79,10 +79,6 @@ def read_line(fd):
   line = [] 
   while True:
     char = read_char(fd)
-    # Ignore CR. The Arduino Print class seems to append
-    # them to '\n'.
-    if (char == "\r"):
-      continue
     if (char == "\n"):
       return "".join(line)
     line.append(char)

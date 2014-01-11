@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "serial_printer.h"
+#include "sio.h"
 #include "avr_util.h"
 #include "hardware_clock.h"
 #include "system_clock.h"
@@ -109,7 +109,6 @@ static boolean isFrameValid(const lin_decoder::RxFrameBuffer& buffer) {
   // TODO: should we enforce only 1, 2, 4, or 8 data bytes?  (total size 
   // 1, 3, 4, 6, or 10)
   if (n != 1 && (n < 3 || n > 10)) {
-    SerialPrinter.println("x1");
     return false;
   }
   
@@ -146,7 +145,7 @@ void setup()
   hardware_clock::setup();
 
   // Hard coded to 115.2k baud. Uses URART0, no interrupts.
-  SerialPrinter.setup();
+  sio::setup();
 
   // Uses Timer2 with interrupts, and a few i/o pins. See code for details.
   lin_decoder::setup(alt_config ? 9600 : 19200);
@@ -155,7 +154,7 @@ void setup()
   // the lin decoder to reduce ISR jitter.
   sei(); 
 
-  SerialPrinter.println(alt_config ? F("Started (alt config).") : F("Started (std config)."));
+  sio::println(alt_config ? F("Started (alt config).") : F("Started (std config)."));
 }
 
 // This is a quick loop that does not use delay() or other busy loops or blocking calls.
@@ -167,7 +166,7 @@ void loop()
   for(;;) {
     // Periodic updates.
     system_clock::loop();
-    SerialPrinter.loop();
+    sio::loop();
     status1_led.loop();
     frame_led.loop();
     error_led.loop();
@@ -184,7 +183,7 @@ void loop()
     // Generate periodic messages if no activiy.
     static PassiveTimer periodic_watchdog;
     if (periodic_watchdog.timeMillis() >= 5000) {
-      SerialPrinter.println(F("waiting..."));
+      sio::println(F("waiting..."));
       periodic_watchdog.restart();
     }
 
@@ -206,14 +205,14 @@ void loop()
       // Dump frame.
       for (int i = 0; i < buffer.num_bytes; i++) {
         if (i > 0) {
-          SerialPrinter.print(' ');  
+          sio::printchar(' ');  
         }
-        SerialPrinter.printHexByte(buffer.bytes[i]);  
+        sio::printhex2(buffer.bytes[i]);  
       }
       if (!frameOk) {
-        SerialPrinter.print(F(" ERR"));
+        sio::print(F(" ERR"));
       }
-      SerialPrinter.println();  
+      sio::println();  
       periodic_watchdog.restart(); 
     }
   }

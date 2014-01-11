@@ -17,6 +17,9 @@
 #include "avr_util.h"
 #include "hardware_clock.h"
 
+// TODO: for debugging. Remove.
+#include "sio.h"
+
 // ----- Baud rate related parameters. ---
 
 // The pre scaler of timer 2 for generating serial bit ticks.
@@ -344,6 +347,14 @@ private:
     StateDetectBreak::enter();
     setupTimer();
     error_flag = false;
+
+    // TODO: for debugging. Remove.
+    sio::printf(F("%u, %u, %u, %u, %u\n"), 
+    config.baud(), 
+    config.counts_per_bit(), 
+    config.counts_per_half_bit(), 
+    config.clock_ticks_per_bit(),  
+    config.clock_ticks_per_until_start_bit());
   }
 
   // ----- ISR Utility Functions -----
@@ -595,5 +606,7 @@ private:
     isr_pin::setLow();
   }
 }  // namespace lin_decoder
+
+
 
 
