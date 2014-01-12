@@ -22,12 +22,8 @@
 
 // ----- Baud rate related parameters. ---
 
-// The pre scaler of timer 2 for generating serial bit ticks.
-// Should match the prescaler bits in the timer setting.
-//
-// TODO: compute this dynamically to avoid overflow of Config.counts_per_bit_ when
-// the baud is below 4800.
-static const uint8 kPreScaler = 8;
+// If an out of range speed is specified, using this one.
+static const uint16 kDefaultBaud = 9600;
 
 // Wait at most 4 bits from the end of the stop bit of previous byte
 // to the start bit of next byte.
@@ -39,12 +35,17 @@ namespace lin_decoder {
 
   class Config {
 public:
-    // Initialized to given baud rate. Tested with 9600, 10000, 19200, 20000.
+    // Initialized to given baud rate. 
     void set(uint16 baud) {
-      baud_ = baud;
-      // TODO: if baud is too low this will overflow. If require baud below 9600, 
-      // compute the scaler dynamically from baud.  
-      counts_per_bit_ = (((16000000L / kPreScaler) / baud));
+      // If out of range use default speed.
+      if (baud < 1000 || baud > 20000) {
+        sio::println(F("ERROR: requested out of range baud"));
+        baud = kDefaultBaud;
+      }
+      baud_ = baud; 
+      prescaler_x64_ = baud < 8000;
+      const uint8 prescaling = prescaler_x64_ ? 64 : 8;  
+      counts_per_bit_ = (((16000000L / prescaling) / baud));
       // Adding two counts to compensate for software delay.
       counts_per_half_bit_ = (counts_per_bit_ / 2) + 2;
       clock_ticks_per_bit_ = (hardware_clock::kTicksPerMilli * 1000) / baud;
@@ -54,6 +55,11 @@ public:
     inline uint16 baud() const { 
       return baud_; 
     }
+
+    inline boolean prescaler_x64() {
+      return prescaler_x64_;
+    }
+
     inline uint8 counts_per_bit() const { 
       return counts_per_bit_; 
     }
@@ -68,6 +74,10 @@ public:
     }
 private:
     uint16 baud_;
+    // False -> x8, true -> x64.
+    // TODO: timer2 also have x32 scalingl Could use it for better 
+    // accuracy in the mid baude range.
+    boolean prescaler_x64_;
     uint8 counts_per_bit_;
     uint8 counts_per_half_bit_;
     uint8 clock_ticks_per_bit_;
@@ -295,10 +305,11 @@ private:
   // TODO: make this a bit or of multiple error types.
   static volatile boolean error_flag;
 
-  // Private. Called from ISR.
-  static inline void setErrorFlag() {
+  // Private. Called from ISR and from setup (beofe starting the ISR).
+  static inline void setErrorFlag(uint8 flags) {
     error_pin::setHigh();
-    error_flag = true;
+    // Non atomic when called from setup() but should be fine since ISR is not running yet.
+    error_flag |= flags;
     error_pin::setLow();
   }
 
@@ -306,7 +317,7 @@ private:
   boolean getAndClearErrorFlag() {
     // TODO: make this atomic, without increasing ISR jitter.
     const boolean result = error_flag;
-    error_flag = false;
+    error_flag = 0;
     return result;
   }
 
@@ -317,14 +328,14 @@ private:
     DDRD |= H(DDD3);
     // Fast PWM mode, OC2B output active high.
     TCCR2A = L(COM2A1) | L(COM2A0) | H(COM2B1) | H(COM2B0) | H(WGM21) | H(WGM20);
+    const uint8 prescaler = config.prescaler_x64()
+      ? (H(CS22) | L(CS21) | L(CS20))   // x64
+        : (L(CS22) | H(CS21) | L(CS20));  // x8
     // Prescaler: X8. Should match the definition of kPreScaler;
-    TCCR2B = L(FOC2A) | L(FOC2B) | H(WGM22) | L(CS22) | H(CS21) | L(CS20);
+    TCCR2B = L(FOC2A) | L(FOC2B) | H(WGM22) | prescaler;
     // Clear counter.
     TCNT2 = 0;
     // Determines baud rate.
-#if (COUNTS_PER_BIT > 256) 
-#error "Baud too low, counts does not fit in a byte, needs a larger prescaler."
-#endif
     OCR2A = config.counts_per_bit() - 1;
     // A short 8 clocks pulse on OC2B at the end of each cycle,
     // just before triggering the ISR.
@@ -336,8 +347,7 @@ private:
   }
 
   // Call once from main at the begining of the program.
-  // If alt_config is true, use the alternative config rather than
-  // the normal one. Useful for debugging.
+  // If baud is out of range, using default speed..
   void setup(uint16 baud) {
     // Should be done first since some of the steps below depends on it.
     config.set(baud);
@@ -348,13 +358,15 @@ private:
     setupTimer();
     error_flag = false;
 
-    // TODO: for debugging. Remove.
-    sio::printf(F("%u, %u, %u, %u, %u\n"), 
-    config.baud(), 
-    config.counts_per_bit(), 
-    config.counts_per_half_bit(), 
-    config.clock_ticks_per_bit(),  
-    config.clock_ticks_per_until_start_bit());
+    sio::waitUntilFlushed();
+    // TODO: move this to config class.
+    sio::printf(F("LIN: %u, %u, %u, %u, %u, %u\n"), 
+      config.baud(), 
+      config.prescaler_x64(),
+      config.counts_per_bit(), 
+      config.counts_per_half_bit(), 
+      config.clock_ticks_per_bit(),  
+      config.clock_ticks_per_until_start_bit());
   }
 
   // ----- ISR Utility Functions -----
@@ -486,7 +498,8 @@ private:
     if (bits_read_in_byte_ == 0) {
       // Start bit error.
       if (is_rx_high) {
-        setErrorFlag();
+        // If in sync byte, report as a sync error.
+        setErrorFlag(bytes_read_ == 0 ? ERROR_SYNC_BYTE : ERROR_START_BIT);
         StateDetectBreak::enter();
         return;
       }  
@@ -510,7 +523,8 @@ private:
 
     // Here when stop bit. Error if not high.
     if (!is_rx_high) {
-      setErrorFlag();
+      // If in sync byte, report as sync error.
+      setErrorFlag(bytes_read_ == 0 ? ERROR_SYNC_BYTE : ERROR_STOP_BIT);
       StateDetectBreak::enter();
       return;
     }  
@@ -519,7 +533,7 @@ private:
     if (bytes_read_ == 0) {
       // Should be exactly 0x55. We don't append this byte to the buffer.
       if (byte_buffer_ != 0x55) {
-        setErrorFlag();
+        setErrorFlag(ERROR_SYNC_BYTE);
         StateDetectBreak::enter();
         return;
       }
@@ -544,7 +558,7 @@ private:
     if (!has_more_bytes) {
       // Verify min byte count.
       if (bytes_read_ < RxFrameBuffer::kMinBytes) {
-        setErrorFlag();
+        setErrorFlag(ERROR_FRAME_TOO_SHORT);
         StateDetectBreak::enter();
         return;
       }
@@ -555,7 +569,7 @@ private:
       incrementHeadFrameBuffer();
       if (tail_frame_buffer == head_frame_buffer) {
         // Frame buffer overrun.        
-        setErrorFlag();
+        setErrorFlag(ERROR_BUFFER_OVERRUN);
         incrementTailFrameBuffer();
       }
 
@@ -566,7 +580,7 @@ private:
     // Here when there is at least one more byte in this frame. Error if we already had
     // the max number of bytes.
     if (rx_frame_buffers[head_frame_buffer].num_bytes >= RxFrameBuffer::kMaxBytes) {
-      setErrorFlag();
+      setErrorFlag(ERROR_FRAME_TOO_LONG);
       StateDetectBreak::enter();
       return;  
     }
@@ -595,7 +609,7 @@ private:
       StateReadData::handle_isr();
       break;
     default:
-      setErrorFlag();
+      setErrorFlag(ERROR_OTHER);
       StateDetectBreak::enter();
     }
 
@@ -606,6 +620,7 @@ private:
     isr_pin::setLow();
   }
 }  // namespace lin_decoder
+
 
 
 

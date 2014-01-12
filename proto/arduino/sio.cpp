@@ -77,6 +77,13 @@ namespace sio {
   uint8 capacity() {
     return kQueueSize - count;
   }
+  
+  void waitUntilFlushed() {
+    // Busy loop until all flushed to UART. 
+    while (count) {
+      loop();
+    }  
+  }
 
   // Assuming n is in [0, 15].
   static void printHexDigit(uint8 n) {
@@ -98,7 +105,7 @@ namespace sio {
  }
  
  void print(const __FlashStringHelper *str) {
-   const char PROGMEM *p = (const char PROGMEM *)str;
+  const char PROGMEM *p = (const char PROGMEM *)str;
   for(;;) {
     const unsigned char c = pgm_read_byte(p++);
     if (!c) {
@@ -113,6 +120,23 @@ namespace sio {
    println();
  }
  
+ 
+void print(const char* str) {
+  for(;;) {
+    const char c = *(str++);
+    if (!c) {
+      return;
+    }
+    printchar(c);
+  } 
+}
+
+void println(const char* str) {
+  print(str);
+  println();
+}
+  
+  
    void printf(const __FlashStringHelper *format, ...)
    {
    char buf[80];

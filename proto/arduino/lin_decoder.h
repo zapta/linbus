@@ -39,7 +39,8 @@ namespace lin_decoder {
     uint8 bytes[kMaxBytes];
   } RxFrameBuffer;
   
-  // Call once in program setup. 
+  // Call once in program setup. Supported baud range is 1000 to 20000. If
+  // out of range, using silently default baud of 9600.
   extern void setup(uint16 baud);
   
   // Try to read next available rx frame. If available, return true and set
@@ -48,8 +49,17 @@ namespace lin_decoder {
   // count are not verified. 
   extern boolean readNextFrame(RxFrameBuffer* buffer);
   
-  // Get current error flag and clear it.
-  extern boolean getAndClearErrorFlag();
+  // Errors byte masks for the individual error bits.
+  static const uint8 ERROR_FRAME_TOO_SHORT = (1 << 0);
+  static const uint8 ERROR_FRAME_TOO_LONG = (1 << 1);
+  static const uint8 ERROR_START_BIT = (1 << 2);
+  static const uint8 ERROR_STOP_BIT = (1 << 3);
+  static const uint8 ERROR_SYNC_BYTE = (1 << 4);
+  static const uint8 ERROR_BUFFER_OVERRUN = (1 << 5);
+  static const uint8 ERROR_OTHER = (1 << 6);
+  
+  // Get current error flag and clear it. 
+  extern uint8 getAndClearErrorFlag();
 }
 
 #endif  

@@ -31,10 +31,17 @@ namespace sio {
   
   extern void printchar(uint8 b);
   extern void print(const __FlashStringHelper *str);
-  extern void printf(const __FlashStringHelper *format, ...);
   extern void println(const __FlashStringHelper *str);
+  extern void print(const char* str);
+  extern void println(const char* str);
   extern void println();
-  extern void printhex2(uint8 b);  
+  extern void printf(const __FlashStringHelper *format, ...);
+  extern void printhex2(uint8 b); 
+ 
+  // Wait in a busy loop until all bytes were flushed to the UART. 
+  // Avoid using this when possible. Useful when needing to print
+  // during setup() more than the output buffer can contain.
+  void waitUntilFlushed(); 
 }  // namespace sio
 
 #endif  
