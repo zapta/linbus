@@ -280,8 +280,7 @@
 <pin name="LIN_ERROR" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
 <pin name="MOSI" x="-20.32" y="-15.24" length="middle" direction="in"/>
 <pin name="MISO" x="-20.32" y="-10.16" length="middle" direction="in"/>
-<pin name="DEBUG1" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
-<pin name="DEBUG2" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
+<pin name="BUZZER" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
 <pin name="ALT_CONFIG" x="-20.32" y="10.16" length="middle" direction="in" function="dot"/>
 <pin name="LIN_ISR" x="20.32" y="-2.54" length="middle" direction="out" rot="R180"/>
 </symbol>
@@ -362,8 +361,7 @@
 <connects>
 <connect gate="G$1" pin="+5V" pad="9"/>
 <connect gate="G$1" pin="ALT_CONFIG" pad="1"/>
-<connect gate="G$1" pin="DEBUG1" pad="19"/>
-<connect gate="G$1" pin="DEBUG2" pad="20"/>
+<connect gate="G$1" pin="BUZZER" pad="20"/>
 <connect gate="G$1" pin="ERROR_LED" pad="24"/>
 <connect gate="G$1" pin="FRAME_LED" pad="23"/>
 <connect gate="G$1" pin="GND1" pad="11"/>
