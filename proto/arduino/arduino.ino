@@ -154,7 +154,7 @@ static const  BitName kErrorBitNames[] PROGMEM = {
 // of set errors.
 // TODO: move to lin_decoder.
 static void printLinErrors(uint8 lin_errors) {
-  const uint8 n = sizeof(kErrorBitNames) / sizeof(kErrorBitNames[0]);
+  const uint8 n = ARRAY_SIZE(kErrorBitNames); 
   boolean any_printed = false;
   for (uint8 i = 0; i < n; i++) {
     const uint8 mask = pgm_read_byte(&kErrorBitNames[i].mask);
@@ -174,7 +174,7 @@ void setup()
   // Hard coded to 115.2k baud. Uses URART0, no interrupts.
   // Initialize this first since some setup methods uses it.
   sio::setup();
-  
+
   // If alt config pin is pulled low, using alternative config..
   const boolean alt_config = alt_config_pin.isLow();
   sio::waitUntilFlushed();
@@ -184,11 +184,11 @@ void setup()
 
   // Init buzzer. Leaves in off state.
   action_buzzer::setup();
-  
+
   // Uses Timer1, no interrupts.
   hardware_clock::setup();
 
- // Uses Timer2 with interrupts, and a few i/o pins. See code for details.
+  // Uses Timer2 with interrupts, and a few i/o pins. See code for details.
   lin_decoder::setup(alt_config ? 9600 : 19200);
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
@@ -200,10 +200,10 @@ void setup()
 // The iterations are are at the or  sio::waitUntilFlushed();
 void loop()
 {
-   const boolean use_lin_v2_checksum = alt_config_pin.isHigh();
-   sio::print(F("Checksum: "));
-   sio::println(use_lin_v2_checksum ? F("V2") : F("V1"));
-  
+  const boolean use_lin_v2_checksum = alt_config_pin.isHigh();
+  sio::print(F("Checksum: "));
+  sio::println(use_lin_v2_checksum ? F("V2") : F("V1"));
+
   // Having our own loop shaves about 4 usec per iteration. It also eliminate
   // any underlying functionality that we may not want.
   for(;;) {
@@ -213,11 +213,8 @@ void loop()
     action_buzzer::loop();
     status1_led.loop();
     frame_led.loop();
-    error_led.loop();
-    
-    // Temp.
-    action_buzzer::action();
-    
+    error_led.loop();  
+
     // Generate periodic messages if no activiy.
     static PassiveTimer idle_timer;
     if (idle_timer.timeMillis() >= 3000) {
@@ -235,7 +232,7 @@ void loop()
         error_led.action();
         idle_timer.restart();
       }
-      
+
       pending_lin_errors |= new_lin_errors;
       if (pending_lin_errors && lin_errors_timeout.timeMillis() > 1000) {
         sio::print(F("LIN errors: "));
@@ -268,11 +265,21 @@ void loop()
       }
       sio::println();  
       idle_timer.restart(); 
+
+      // Sample frame action.    
+      // Handle reverse gear alarm. Tested with P981/CS when connecting to the
+      // linbus near the windshiled mirror (homelink unit).
+      // Test frame: 39 04 00 00 00.
+      if (frameOk) {
+        // Data bytes are between id and checksum bytes.
+        const uint8 data_size = buffer.num_bytes - 2;
+        const uint8 id = buffer.bytes[0];
+        if (data_size == 4 && id == 0x39 && (buffer.bytes[1] & H(2))) {
+          action_buzzer::action();  
+        }
+      }
     }
   }
 }
-
-
-
 
 

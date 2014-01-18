@@ -16,16 +16,24 @@
 #include "passive_timer.h"
 
 namespace action_buzzer {
-  // Modify for differnt buzzer patter and tone.
   static const uint16 kFrequency = 4000;
-  static const uint16 kOnTimeMillis = 100;
-  static const uint16 kOffTimeMillis = 500;
 
   // Divider for given frequency, assuming 16Mhz clock, X256 prescaler.
   static const uint8 kDivider = (16000000L / 256) / kFrequency;
 
   // Output is OC0B from timer 0 (same as PD5).
   static const uint8 kPinMask =  H(PIND5);
+
+  // Even index slots are ON, odd index slots are off. Values are
+  // slot time in millis
+  static const  uint16 kSlotTimesMillis[] PROGMEM = {
+    50, // on
+    200,
+    50, // on
+    3000,  
+  };
+
+  static const uint8 kNumSlots = ARRAY_SIZE(kSlotTimesMillis);
 
   // Action buzzer variables.
   static PassiveTimer timer;
@@ -36,11 +44,14 @@ namespace action_buzzer {
     // No pending actions. LED can be turned on as soon as a new action arrives.
     static const uint8 IDLE = 1;
     // Buzzer cycle is in the active portion.
-    static const uint8 ACTIVE_ON = 2;
-    // Buzzer cycle is in the inactive portion.
-    static const uint8 ACTIVE_OFF = 3;
+    static const uint8 ACTIVE = 2;
   }
+
+  // 0 Menas idle. Value > 0 indicates the steps of a buzzer cycle.
   static uint8 state;
+
+  // When state is active, indicates the index of the current slot
+  static uint8 active_slot_index;
 
   // Turn on.
   void on() {
@@ -66,17 +77,12 @@ namespace action_buzzer {
     off();
   }
 
-  inline void enterActiveOnState() {
-    state = states::ACTIVE_ON;
+  inline void enterActiveState() {
+    state = states::ACTIVE;
+    active_slot_index = 0;
+    timer.restart();
     on();
-    timer.restart();
-  }
-
-  inline void enterActiveOffState() {
-    state = states::ACTIVE_OFF;
-    off();
-    timer.restart();
-  }  
+  } 
 
   void setup() {
     // Fast PWM mode, OC2B output active high.
@@ -101,20 +107,31 @@ namespace action_buzzer {
     switch (state) {
       case states::IDLE:
       if (pending_actions) {
-        enterActiveOnState();
+        enterActiveState();
         pending_actions = false;
       }
       break;
 
-      case states::ACTIVE_ON:
-      if (timer.timeMillis() > kOnTimeMillis) {
-        enterActiveOffState();
-      }
-      break;
-
-      case states::ACTIVE_OFF:
-      if (timer.timeMillis() > kOffTimeMillis) {
-        enterIdleState();
+      case states::ACTIVE:
+      // Test if we are done with this slot's time.
+      const uint16 slot_time_millis = pgm_read_word(&kSlotTimesMillis[active_slot_index]);
+      if (timer.timeMillis() > slot_time_millis) {
+        timer.restart();
+        active_slot_index++;
+        // If done with last slot, enter idle state.
+        if (active_slot_index >= kNumSlots) {
+          enterIdleState();
+        }
+        // Move to next slot.
+        else {
+          // Odd slots are off, even are on.
+          if (active_slot_index & 0x1) {
+            off();    
+          } 
+          else {
+            on();
+          }
+        }
       }
       break;  
     }
@@ -125,8 +142,5 @@ namespace action_buzzer {
   }
 
 }  // namespace hardware_clock
-
-
-
 
 

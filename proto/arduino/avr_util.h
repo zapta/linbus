@@ -29,9 +29,7 @@ typedef int32_t int32;
 #define H(x) (1 << (x))
 #define L(x) (0 << (x))
 
-namespace avr_util {
-  // Nothing to have here for now. 
-}  // namespace avr_util
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 #endif
 
