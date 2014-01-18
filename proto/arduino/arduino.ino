@@ -10,13 +10,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "sio.h"
-#include "avr_util.h"
-#include "hardware_clock.h"
-#include "system_clock.h"
-#include "lin_decoder.h"
-#include "io_pins.h"
 #include "action_led.h"
+#include "avr_util.h"
+#include "action_buzzer.h"
+#include "hardware_clock.h"
+#include "io_pins.h"
+#include "lin_decoder.h"
+#include "sio.h"
+#include "system_clock.h"
+
+
 
 // Config pin. Sampled once during initialization does not change value
 // after that. Using alternative configuration when pin is low.
@@ -179,9 +182,9 @@ void setup()
   sio::print(alt_config ? F("ALT") : F("STD"));
   sio::println();
 
-  // We don't want interrupts from timer 2.
-  avr_util::timer0_off();
-
+  // Init buzzer. Leaves in off state.
+  action_buzzer::setup();
+  
   // Uses Timer1, no interrupts.
   hardware_clock::setup();
 
@@ -207,10 +210,14 @@ void loop()
     // Periodic updates.
     system_clock::loop();
     sio::loop();
+    action_buzzer::loop();
     status1_led.loop();
     frame_led.loop();
     error_led.loop();
-
+    
+    // Temp.
+    action_buzzer::action();
+    
     // Generate periodic messages if no activiy.
     static PassiveTimer idle_timer;
     if (idle_timer.timeMillis() >= 3000) {

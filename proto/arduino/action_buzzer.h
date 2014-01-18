@@ -10,30 +10,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef HARDWARE_CLOCK_H
-#define HARDWARE_CLOCK_H
+#ifndef BUZZER_H
+#define BUZZER_H
 
 #include <arduino.h>
 #include "avr_util.h"
 
-// Provides a free running 16 bit counter with 250 ticks per millisecond and 
-// about 280 millis cycle time. Assuming 16Mhz clock.
-//
-// USES: timer 1, no interrupts.
-namespace hardware_clock {
-  // Call once from main setup(). Tick count starts at 0.
+// Controlled the buzzer signal on OC0B/PD5 pin. Uses timer 0.
+namespace action_buzzer {
+  // Call once from main setup(). Buzzer starts in off state.
   extern void setup();
 
-  // Free running 16 bit counter. Starts counting from zero and wraps around
-  // every ~280ms. Ok to read from an ISR.
-  inline uint16 ticks() {
-    return TCNT1;
-  }
+  // Call from each main loop().
+  extern void loop();
 
-  // @ 16Mhz / x64 prescaler. Number of ticks per a millisecond.
-  const uint32 kTicksPerMilli = 250;
+  // Buzzer wil keep beeping as long as this is called.
+  extern void action();
 }  // namespace hardware_clock
 
 #endif  
+
 
 

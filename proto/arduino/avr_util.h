@@ -30,19 +30,7 @@ typedef int32_t int32;
 #define L(x) (0 << (x))
 
 namespace avr_util {
-
-  // Initialize timer0 to do nothing and be invisible,
-  // no interrupts, etc.
-  inline void timer0_off() {
-    TCCR0A = 0;
-    TCCR0B = 0;
-    TCNT0 = 0;
-    OCR0A = 0;
-    OCR0B = 0;
-    TIMSK0 = 0;
-    TIFR0 = 0;
-  } 
-
+  // Nothing to have here for now. 
 }  // namespace avr_util
 
 #endif

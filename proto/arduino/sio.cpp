@@ -77,7 +77,7 @@ namespace sio {
   uint8 capacity() {
     return kQueueSize - count;
   }
-  
+
   void waitUntilFlushed() {
     // Busy loop until all flushed to UART. 
     while (count) {
@@ -100,58 +100,57 @@ namespace sio {
     printHexDigit(b & 0xf);
   }
 
- void println() {
-   printchar('\n');
- }
- 
- void print(const __FlashStringHelper *str) {
-  const char PROGMEM *p = (const char PROGMEM *)str;
-  for(;;) {
-    const unsigned char c = pgm_read_byte(p++);
-    if (!c) {
-      return;
-    }
-    printchar(c);
+  void println() {
+    printchar('\n');
   }
- }
- 
- void println(const __FlashStringHelper *str) {
-   print(str);
-   println();
- }
- 
- 
-void print(const char* str) {
-  for(;;) {
-    const char c = *(str++);
-    if (!c) {
-      return;
-    }
-    printchar(c);
-  } 
-}
 
-void println(const char* str) {
-  print(str);
-  println();
-}
-  
-  
-   void printf(const __FlashStringHelper *format, ...)
-   {
-   char buf[80];
-   va_list ap;
-        va_start(ap, format);
-        vsnprintf_P(buf, sizeof(buf), (const char *)format, ap); // progmem for AVR
-        for(char *p = &buf[0]; *p; p++) // emulate cooked mode for newlines
-        {
-                //if(*p == '\n')
-                //        write('\r');
-                printchar(*p);
-        }
-        va_end(ap);
-   }
+  void print(const __FlashStringHelper *str) {
+    const char PROGMEM *p = (const char PROGMEM *)str;
+    for(;;) {
+      const unsigned char c = pgm_read_byte(p++);
+      if (!c) {
+        return;
+      }
+      printchar(c);
+    }
+  }
+
+  void println(const __FlashStringHelper *str) {
+    print(str);
+    println();
+  }
+
+
+  void print(const char* str) {
+    for(;;) {
+      const char c = *(str++);
+      if (!c) {
+        return;
+      }
+      printchar(c);
+    } 
+  }
+
+  void println(const char* str) {
+    print(str);
+    println();
+  }
+
+
+  void printf(const __FlashStringHelper *format, ...)
+  {
+    char buf[80];
+    va_list ap;
+    va_start(ap, format);
+    vsnprintf_P(buf, sizeof(buf), (const char *)format, ap); // progmem for AVR
+    for(char *p = &buf[0]; *p; p++) // emulate cooked mode for newlines
+    {
+      printchar(*p);
+    }
+    va_end(ap);
+  }
 }  // namespace sio
+
 
 
 

@@ -13,7 +13,7 @@
 #ifndef IO_PINS_H
 #define IO_PINS_H
 
-#include <arduino.h>
+#include "avr_util.h"
 
 namespace io_pins {
   // A class to abstract an output pin that is not necesarily an arduino 

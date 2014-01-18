@@ -165,30 +165,30 @@ private:
   }
 
   namespace debug1_pin {
-    static const uint8 kPinMask  = H(PIND4);
+    static const uint8 kPinMask  = H(PINB4);
     static inline void setup() {
-      DDRD |= kPinMask;    // output
-      PORTD &= ~kPinMask;  // low
+      DDRB |= kPinMask;    // output
+      PORTB &= ~kPinMask;  // low
     }
     static inline void setHigh() {
-      PORTD |= kPinMask;
+      PORTB |= kPinMask;
     }
     static inline void setLow() {
-      PORTD &= ~kPinMask;
+      PORTB &= ~kPinMask;
     }
   } 
 
   namespace debug2_pin {
-    static const uint8 kPinMask  = H(PIND5);
+    static const uint8 kPinMask  = H(PINB3);
     static inline void setup() {
-      DDRD |= kPinMask;    // output
-      PORTD &= ~kPinMask;  // low
+      DDRB |= kPinMask;    // output
+      PORTB &= ~kPinMask;  // low
     }
     static inline void setHigh() {
-      PORTD |= kPinMask;
+      PORTB |= kPinMask;
     }
     static inline void setLow() {
-      PORTD &= ~kPinMask;
+      PORTB &= ~kPinMask;
     }
   }
 
@@ -265,11 +265,12 @@ private:
 
   // ----- State Machine Declaration -----
 
-  static enum {
-    DETECT_BREAK,
-    READ_DATA    
-  } 
-  state;
+  // Like enum by 8 bits only.
+  namespace states {
+    static const uint8 DETECT_BREAK = 1;
+    static const uint8 READ_DATA = 2;
+  }
+  static uint8 state;
 
   class StateDetectBreak {
 public:
@@ -444,7 +445,7 @@ private:
   uint8 StateDetectBreak::low_bits_counter_;
 
   inline void StateDetectBreak::enter() {
-    state = DETECT_BREAK;
+    state = states::DETECT_BREAK;
     low_bits_counter_ = 0;
   }
 
@@ -477,7 +478,7 @@ private:
 
   // Called after a long break changed to high.
   inline void StateReadData::enter() {
-    state = READ_DATA;
+    state = states::READ_DATA;
     bytes_read_ = 0;
     bits_read_in_byte_ = 0;
     rx_frame_buffers[head_frame_buffer].num_bytes = 0;
@@ -602,10 +603,10 @@ private:
 
     // TODO: make this state a boolean instead of enum? (efficency).
     switch (state) {
-    case DETECT_BREAK:
+    case states::DETECT_BREAK:
       StateDetectBreak::handle_isr();
       break;
-    case READ_DATA:
+    case states::READ_DATA:
       StateReadData::handle_isr();
       break;
     default:

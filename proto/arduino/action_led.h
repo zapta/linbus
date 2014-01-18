@@ -31,19 +31,19 @@ public:
   // Called periodically from main loop() to do the state transitions. 
   void loop() {
     switch (state_) {
-      case IDLE:
+      case kState_IDLE:
       if (pending_actions_) {
         enterActiveOnState();
         pending_actions_ = false;
       }
       break;
 
-      case ACTIVE_ON:
+      case kState_ACTIVE_ON:
         if (timer_.timeMillis() > 20) {
           enterActiveOffState();
         }
       break;
-      case ACTIVE_OFF:
+      case kState_ACTIVE_OFF:
       if (timer_.timeMillis() > 30) {
           // NOTE: if pending_actions_ then will enter ACTIVE_ON on next iteration.
           enterIdleState();
@@ -57,15 +57,14 @@ public:
   }
   
 private:
-  enum {
     // No pending actions. LED can be turned on as soon as a new action arrives.
-    IDLE,
+    static const uint8 kState_IDLE = 1;
     // LED is pulsed on.
-    ACTIVE_ON,
+    static const uint8 kState_ACTIVE_ON = 2;
     // LED was pulsed on and is now in a blackup period until it can be turned
     // on again.
-    ACTIVE_OFF,   
-  } state_;
+   static const uint8 kState_ACTIVE_OFF = 3; 
+   uint8 state_; 
   
   // The underlying pin of the led. Active high.
   io_pins::OutputPin led_;
@@ -77,19 +76,19 @@ private:
   boolean pending_actions_;
   
   inline void enterIdleState() {
-    state_ = IDLE;
+    state_ = kState_IDLE;
     led_.low();
   }
   
   inline void enterActiveOnState() {
-    state_ = ACTIVE_ON;
+    state_ = kState_ACTIVE_ON;
     led_.high();
     timer_.restart();
     
   }
   
   inline void enterActiveOffState() {
-    state_ = ACTIVE_OFF;
+    state_ = kState_ACTIVE_OFF;
     led_.low();
     timer_.restart();
   }
