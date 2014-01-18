@@ -24,7 +24,7 @@ namespace system_clock {
   static uint32 time_millis = 0;
 
   void loop() {
-    const uint16 current_ticks = hardware_clock::ticks();
+    const uint16 current_ticks = hardware_clock::ticksForNonIsr();
 
     // This 16 bit unsigned arithmetic works well also in case of a timer overflow.
     // Assuming at least two loops per timer cycle.

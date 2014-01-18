@@ -24,8 +24,9 @@ namespace action_buzzer {
   // Call from each main loop().
   extern void loop();
 
-  // Buzzer wil keep beeping as long as this is called.
-  extern void action();
+  // Buzzer wil keep beeping as long as this is called with true.
+  // Calling with false  cancels pending actions.
+  extern void action(boolean flag);  
 }  // namespace hardware_clock
 
 #endif  

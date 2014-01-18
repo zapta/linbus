@@ -30,7 +30,7 @@ namespace action_buzzer {
     50, // on
     200,
     50, // on
-    3000,  
+    1500,  
   };
 
   static const uint8 kNumSlots = ARRAY_SIZE(kSlotTimesMillis);
@@ -137,8 +137,8 @@ namespace action_buzzer {
     }
   }
 
-  void action() {
-    pending_actions = true;  
+  void action(boolean flag) {
+    pending_actions = flag;  
   }
 
 }  // namespace hardware_clock

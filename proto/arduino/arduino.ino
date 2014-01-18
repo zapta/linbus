@@ -206,9 +206,9 @@ void loop()
 
   // Having our own loop shaves about 4 usec per iteration. It also eliminate
   // any underlying functionality that we may not want.
-  for(;;) {
+  for(;;) {    
     // Periodic updates.
-    system_clock::loop();
+    system_clock::loop();    
     sio::loop();
     action_buzzer::loop();
     status1_led.loop();
@@ -269,17 +269,17 @@ void loop()
       // Sample frame action.    
       // Handle reverse gear alarm. Tested with P981/CS when connecting to the
       // linbus near the windshiled mirror (homelink unit).
-      // Test frame: 39 04 00 00 00.
+      // Test frame: 39 04 00 00 00 00 00.
       if (frameOk) {
         // Data bytes are between id and checksum bytes.
         const uint8 data_size = buffer.num_bytes - 2;
         const uint8 id = buffer.bytes[0];
-        if (data_size == 4 && id == 0x39 && (buffer.bytes[1] & H(2))) {
-          action_buzzer::action();  
+        if (data_size == 6 && id == 0x39) {
+          const boolean reverse_gear = buffer.bytes[1] & H(2);
+          action_buzzer::action(reverse_gear);  
         }
       }
     }
   }
 }
-
 

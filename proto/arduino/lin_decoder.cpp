@@ -392,7 +392,7 @@ private:
   // of clock ticks passed (timeout). Retuns true if ok,
   // false if timeout. Keeps timer reset during the wait.
   static inline boolean waitForRxLow(uint16 maxClockTicks) {
-    const uint16 base_clock = hardware_clock::ticks();
+    const uint16 base_clock = hardware_clock::ticksForIsr();
     for(;;) {
       // Keep the tick timer not ticking (no ISR).
       resetTickTimer();
@@ -404,7 +404,7 @@ private:
 
       // Test for timeout.
       // Should work also in case of 16 bit clock overflow.
-      const uint16 clock_diff = hardware_clock::ticks() - base_clock;
+      const uint16 clock_diff = hardware_clock::ticksForIsr() - base_clock;
       if (clock_diff >= maxClockTicks) {
         return false; 
       }
@@ -414,14 +414,14 @@ private:
   // Same as waitForRxLow but with reversed polarity.
   // We clone to code for time optimization.
   static inline boolean waitForRxHigh(uint16 maxClockTicks) {
-    const uint16 base_clock = hardware_clock::ticks();
+    const uint16 base_clock = hardware_clock::ticksForIsr();
     for(;;) {
       resetTickTimer();
       if (rx_pin::isHigh()) {
         return true;
       }
       // Should work also in case of an clock overflow.
-      const uint16 clock_diff = hardware_clock::ticks() - base_clock;
+      const uint16 clock_diff = hardware_clock::ticksForIsr() - base_clock;
       if (clock_diff >= maxClockTicks) {
         return false; 
       }
@@ -456,7 +456,8 @@ private:
       return;
     } 
 
-    // Here RX is low (active)    
+    // Here RX is low (active)  
+    // TODO: increase to 12? (does the standard say 13 min?).  
     if (++low_bits_counter_ < 10) {
       return;
     }

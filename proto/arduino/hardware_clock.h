@@ -25,15 +25,32 @@ namespace hardware_clock {
   extern void setup();
 
   // Free running 16 bit counter. Starts counting from zero and wraps around
-  // every ~280ms. Ok to read from an ISR.
-  inline uint16 ticks() {
-    return TCNT1;
+  // every ~280ms.
+  // Assumes interrupts are enabled upon entry.
+  // DO NOT CALL THIS FROM AN ISR.
+  inline uint16 ticksForNonIsr() {
+    // We disable interrupt to avoid corruption of the AVR temp byte buffer
+    // that is used to read 16 bit values.
+    // TODO: can we avoid disabling interrupts (motivation: improve LIN ISR jitter).
+    cli();
+    const uint16 result TCNT1;
+    sei();
+    return result;
   }
+
+  // Similar to ticksNonIsr but does not enable interrupts.
+  // CALL THIS FROM ISR ONLY.
+  inline uint16 ticksForIsr() {
+    return TCNT1; 
+  }
+
+
 
   // @ 16Mhz / x64 prescaler. Number of ticks per a millisecond.
   const uint32 kTicksPerMilli = 250;
 }  // namespace hardware_clock
 
 #endif  
+
 
 
