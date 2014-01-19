@@ -12256,7 +12256,7 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="my_lib">
+<library name="prototype">
 <packages>
 <package name="DUMMY-2">
 <pad name="P$1" x="-2.54" y="-1.27" drill="0.8" shape="square"/>
@@ -12464,7 +12464,7 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="STATUS2_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
 <pin name="FRAME_LED" x="20.32" y="-22.86" length="middle" direction="out" rot="R180"/>
 <pin name="ERROR_LED" x="20.32" y="-25.4" length="middle" direction="out" rot="R180"/>
-<pin name="RST" x="-20.32" y="-25.4" length="middle" direction="in" function="dot"/>
+<pin name="RESET" x="-20.32" y="-25.4" length="middle" direction="in" function="dot"/>
 <text x="12.7" y="-43.18" size="1.778" layer="96">&gt;VALUE</text>
 <text x="12.7" y="-40.64" size="1.778" layer="95">&gt;NAME</text>
 <pin name="LIN_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
@@ -12573,7 +12573,7 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <connect gate="G$1" pin="LIN_TICK" pad="18"/>
 <connect gate="G$1" pin="MISO" pad="3"/>
 <connect gate="G$1" pin="MOSI" pad="2"/>
-<connect gate="G$1" pin="RST" pad="10"/>
+<connect gate="G$1" pin="RESET" pad="10"/>
 <connect gate="G$1" pin="RXI" pad="14"/>
 <connect gate="G$1" pin="SCK/LED" pad="4"/>
 <connect gate="G$1" pin="STATUS1_LED" pad="21"/>
@@ -17714,30 +17714,30 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <part name="D3" library="display-hp" deviceset="HLMP6" device="" value="Green"/>
 <part name="D4" library="display-hp" deviceset="HLMP6" device="" value="Green"/>
 <part name="D5" library="display-hp" deviceset="HLMP6" device="" value="Green"/>
-<part name="S2" library="my_lib" deviceset="PUSH_BUTTON" device=""/>
-<part name="U2" library="my_lib" deviceset="ATA6663" device=""/>
+<part name="S2" library="prototype" deviceset="PUSH_BUTTON" device=""/>
+<part name="U2" library="prototype" deviceset="ATA6663" device=""/>
 <part name="C1" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="C2" library="rcl" deviceset="CPOL-US" device="SMCC" value="22uF"/>
 <part name="C3" library="rcl" deviceset="C-US" device="C0805" value="220pF"/>
 <part name="JP1" library="pinhead" deviceset="PINHD-1X3" device=""/>
-<part name="U4" library="my_lib" deviceset="FTDI-OBARD" device="" value="FTDI-BOARD"/>
+<part name="U4" library="prototype" deviceset="FTDI-OBARD" device="" value="FTDI-BOARD"/>
 <part name="U3" library="linear" deviceset="78*" device="T" technology="05"/>
 <part name="D8" library="diode" deviceset="MBRS3*0T3" device="" technology="2" value="1N5819"/>
 <part name="FRAME2" library="frames" deviceset="LETTER_L" device=""/>
 <part name="D6" library="diode" deviceset="MBRS3*0T3" device="" technology="2" value="1N5819"/>
-<part name="GND1" library="my_lib" deviceset="GND" device=""/>
-<part name="GND4" library="my_lib" deviceset="GND" device=""/>
-<part name="GND3" library="my_lib" deviceset="GND" device=""/>
-<part name="GND5" library="my_lib" deviceset="GND" device=""/>
-<part name="GND6" library="my_lib" deviceset="GND" device=""/>
-<part name="GND7" library="my_lib" deviceset="GND" device=""/>
-<part name="GND8" library="my_lib" deviceset="GND" device=""/>
-<part name="GND9" library="my_lib" deviceset="GND" device=""/>
-<part name="GND10" library="my_lib" deviceset="GND" device=""/>
-<part name="GND11" library="my_lib" deviceset="GND" device=""/>
+<part name="GND1" library="prototype" deviceset="GND" device=""/>
+<part name="GND4" library="prototype" deviceset="GND" device=""/>
+<part name="GND3" library="prototype" deviceset="GND" device=""/>
+<part name="GND5" library="prototype" deviceset="GND" device=""/>
+<part name="GND6" library="prototype" deviceset="GND" device=""/>
+<part name="GND7" library="prototype" deviceset="GND" device=""/>
+<part name="GND8" library="prototype" deviceset="GND" device=""/>
+<part name="GND9" library="prototype" deviceset="GND" device=""/>
+<part name="GND10" library="prototype" deviceset="GND" device=""/>
+<part name="GND11" library="prototype" deviceset="GND" device=""/>
 <part name="C4" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
-<part name="GND12" library="my_lib" deviceset="GND" device=""/>
-<part name="U1" library="my_lib" deviceset="ARDUINO_MINI_PRO" device="DIP24-6" value="ARDUINO_MINI_PRO"/>
+<part name="GND12" library="prototype" deviceset="GND" device=""/>
+<part name="U1" library="prototype" deviceset="ARDUINO_MINI_PRO" device="DIP24-6" value="ARDUINO_MINI_PRO"/>
 <part name="C6" library="rcl" deviceset="C-US" device="C0805" value="10nF"/>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
 <part name="R6" library="rcl" deviceset="R-US_" device="R0805" value="10k"/>
@@ -17749,27 +17749,27 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <part name="LIN" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="R9" library="rcl" deviceset="R-US_" device="R0805" value="5K"/>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
-<part name="GND2" library="my_lib" deviceset="GND" device=""/>
-<part name="GND13" library="my_lib" deviceset="GND" device=""/>
-<part name="GND15" library="my_lib" deviceset="GND" device=""/>
+<part name="GND2" library="prototype" deviceset="GND" device=""/>
+<part name="GND13" library="prototype" deviceset="GND" device=""/>
+<part name="GND15" library="prototype" deviceset="GND" device=""/>
 <part name="P+4" library="supply1" deviceset="+5V" device=""/>
 <part name="BREAK" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="SAMPLE" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="ERROR" library="testpad" deviceset="TP" device="PAD1-17"/>
-<part name="GND16" library="my_lib" deviceset="GND" device=""/>
+<part name="GND16" library="prototype" deviceset="GND" device=""/>
 <part name="F2" library="special" deviceset="FUSE" device="" value="200ma"/>
 <part name="JP2" library="pinhead" deviceset="PINHD-2X3" device="" value="ICSP"/>
-<part name="GND14" library="my_lib" deviceset="GND" device=""/>
+<part name="GND14" library="prototype" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
 <part name="DEBUG1" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="DEBUG2" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="S1" library="switch-dil" deviceset="DS01E" device=""/>
-<part name="GND17" library="my_lib" deviceset="GND" device=""/>
+<part name="GND17" library="prototype" deviceset="GND" device=""/>
 <part name="ISR" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="SG1" library="buzzer" deviceset="F/SMX" device="" value=""/>
 <part name="R1" library="rcl" deviceset="R-US_" device="R0805" value="5K"/>
 <part name="T1" library="transistor" deviceset="*-NPN-" device="SOT23-BEC" technology="MMBT3904LT1" value="3904"/>
-<part name="GND18" library="my_lib" deviceset="GND" device=""/>
+<part name="GND18" library="prototype" deviceset="GND" device=""/>
 <part name="D1" library="diode" deviceset="DIODE-" device="MINIMELF"/>
 <part name="P+3" library="supply1" deviceset="+5V" device=""/>
 <part name="R8" library="rcl" deviceset="R-US_" device="R0805" value="220"/>
@@ -18055,7 +18055,7 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <pinref part="S2" gate="G$1" pin="P$3"/>
 <wire x1="165.1" y1="96.52" x2="165.1" y2="101.6" width="0.1524" layer="91"/>
 <pinref part="C6" gate="G$1" pin="2"/>
-<pinref part="U1" gate="G$1" pin="RST"/>
+<pinref part="U1" gate="G$1" pin="RESET"/>
 <wire x1="180.34" y1="101.6" x2="175.26" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="101.6" x2="175.26" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="71.12" x2="193.04" y2="71.12" width="0.1524" layer="91"/>

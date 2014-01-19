@@ -270,7 +270,7 @@
 <pin name="STATUS2_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
 <pin name="FRAME_LED" x="20.32" y="-22.86" length="middle" direction="out" rot="R180"/>
 <pin name="ERROR_LED" x="20.32" y="-25.4" length="middle" direction="out" rot="R180"/>
-<pin name="RST" x="-20.32" y="-25.4" length="middle" direction="in" function="dot"/>
+<pin name="RESET" x="-20.32" y="-25.4" length="middle" direction="in" function="dot"/>
 <text x="12.7" y="-43.18" size="1.778" layer="96">&gt;VALUE</text>
 <text x="12.7" y="-40.64" size="1.778" layer="95">&gt;NAME</text>
 <pin name="LIN_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
@@ -374,7 +374,7 @@
 <connect gate="G$1" pin="LIN_TICK" pad="18"/>
 <connect gate="G$1" pin="MISO" pad="3"/>
 <connect gate="G$1" pin="MOSI" pad="2"/>
-<connect gate="G$1" pin="RST" pad="10"/>
+<connect gate="G$1" pin="RESET" pad="10"/>
 <connect gate="G$1" pin="RXI" pad="14"/>
 <connect gate="G$1" pin="SCK/LED" pad="4"/>
 <connect gate="G$1" pin="STATUS1_LED" pad="21"/>
