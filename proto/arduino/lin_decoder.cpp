@@ -164,34 +164,6 @@ private:
     }
   }
 
-  namespace debug1_pin {
-    static const uint8 kPinMask  = H(PINB4);
-    static inline void setup() {
-      DDRB |= kPinMask;    // output
-      PORTB &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTB |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTB &= ~kPinMask;
-    }
-  } 
-
-  namespace debug2_pin {
-    static const uint8 kPinMask  = H(PINB3);
-    static inline void setup() {
-      DDRB |= kPinMask;    // output
-      PORTB &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTB |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTB &= ~kPinMask;
-    }
-  }
-
   // Called one during initialization.
   static inline void setupPins() {
     rx_pin::setup();
@@ -199,8 +171,6 @@ private:
     sample_pin::setup();
     error_pin::setup();
     isr_pin::setup();
-    debug1_pin::setup();
-    debug2_pin::setup();
   }
 
   // ----- ISR To Main Data Transfer -----
@@ -211,12 +181,12 @@ private:
 
   // The ISR to main transfer buffer. 
   // TODO: why having volatile here breaks the compilation?
-  static RxFrameBuffer request_buffer;
+  static LinFrame request_frame_buffer;
 
   // Public. Called from main. See .h for description.
-  boolean readNextFrame(RxFrameBuffer* buffer) {
+  boolean readNextFrame(LinFrame* buffer) {
     if (request_buffer_has_data) {
-      *buffer = request_buffer;
+      *buffer = request_frame_buffer;
       request_buffer_has_data = false;
       return true;  
     }  
@@ -229,7 +199,7 @@ private:
   static const uint8 kMaxFrameBuffers = 8;
 
   // RX Frame buffers queue. Read/Writen by ISR only. 
-  static RxFrameBuffer rx_frame_buffers[kMaxFrameBuffers];
+  static LinFrame rx_frame_buffers[kMaxFrameBuffers];
 
   // Index [0, kMaxFrameBuffers) of the current frame buffer being
   // written (newest). Read/Written by ISR only.
@@ -245,7 +215,7 @@ private:
     head_frame_buffer = 0;
     tail_frame_buffer = 0;
     request_buffer_has_data = false;
-    request_buffer.num_bytes = 0;
+    request_frame_buffer.reset();
   }
 
   // Called from main after consuming a tail buffer.
@@ -303,23 +273,59 @@ private:
   // ----- Error Flag. -----
 
   // Written from ISR. Read/Write from main.
-  // TODO: make this a bit or of multiple error types.
-  static volatile boolean error_flag;
+  static volatile boolean error_flags;
 
   // Private. Called from ISR and from setup (beofe starting the ISR).
-  static inline void setErrorFlag(uint8 flags) {
+  static inline void setErrorFlags(uint8 flags) {
     error_pin::setHigh();
     // Non atomic when called from setup() but should be fine since ISR is not running yet.
-    error_flag |= flags;
+    error_flags |= flags;
     error_pin::setLow();
   }
 
-  // Called from main. Public.
-  boolean getAndClearErrorFlag() {
-    // TODO: make this atomic, without increasing ISR jitter.
-    const boolean result = error_flag;
-    error_flag = 0;
+  // Called from main. Public. Assumed interrupts are enabled. 
+  // Do not call from ISR.
+  boolean getAndClearErrorFlags() {
+    // Disabling interrupts for a brief for atomicity. Need to pay attention to
+    // ISR jitter due to disabled interrupts.
+    cli();
+    const boolean result = error_flags;
+    error_flags = 0;
+    sei();
     return result;
+  }
+  
+  struct BitName {
+    uint8 mask;
+    char *name;  
+  };
+
+  static const  BitName kErrorBitNames[] PROGMEM = {
+    { lin_decoder::errors::FRAME_TOO_SHORT, "SHRT" },
+    { lin_decoder::errors::FRAME_TOO_LONG, "LONG" },
+    { lin_decoder::errors::START_BIT, "STRT" },
+    { lin_decoder::errors::STOP_BIT, "STOP" },
+    { lin_decoder::errors::SYNC_BYTE, "SYNC" },
+    { lin_decoder::errors::BUFFER_OVERRUN, "OVRN" },
+    { lin_decoder::errors::OTHER, "OTHR" },
+  };
+
+  // Given a byte with lin decoder error bitset, print the list
+  // of set errors.
+  void printErrorFlags(uint8 lin_errors) {
+    const uint8 n = ARRAY_SIZE(kErrorBitNames); 
+    boolean any_printed = false;
+    for (uint8 i = 0; i < n; i++) {
+      const uint8 mask = pgm_read_byte(&kErrorBitNames[i].mask);
+      if (lin_errors & mask) {
+        if (any_printed) {
+          sio::printchar(' ');
+        }
+        const char* const name = (const char*)pgm_read_word(&kErrorBitNames[i].name);
+        sio::print(name);
+        any_printed = true;
+      }
+    }
   }
 
   // ----- Initialization -----
@@ -357,7 +363,7 @@ private:
     setupBuffers();
     StateDetectBreak::enter();
     setupTimer();
-    error_flag = false;
+    error_flags = 0;
 
     sio::waitUntilFlushed();
     // TODO: move this to config class.
@@ -434,7 +440,7 @@ private:
     // the request buffer. 
     if (!request_buffer_has_data && tail_frame_buffer != head_frame_buffer) {
       // This copies the request buffer struct.
-      request_buffer = rx_frame_buffers[tail_frame_buffer];
+      request_frame_buffer = rx_frame_buffers[tail_frame_buffer];
       incrementTailFrameBuffer();
       request_buffer_has_data = true;
     }
@@ -482,7 +488,7 @@ private:
     state = states::READ_DATA;
     bytes_read_ = 0;
     bits_read_in_byte_ = 0;
-    rx_frame_buffers[head_frame_buffer].num_bytes = 0;
+    rx_frame_buffers[head_frame_buffer].reset();
 
     // TODO: handle post break timeout errors.
     // TODO: set a reasonable time limit.
@@ -501,7 +507,7 @@ private:
       // Start bit error.
       if (is_rx_high) {
         // If in sync byte, report as a sync error.
-        setErrorFlag(bytes_read_ == 0 ? ERROR_SYNC_BYTE : ERROR_START_BIT);
+        setErrorFlags(bytes_read_ == 0 ? errors::SYNC_BYTE : errors::START_BIT);
         StateDetectBreak::enter();
         return;
       }  
@@ -526,7 +532,7 @@ private:
     // Here when stop bit. Error if not high.
     if (!is_rx_high) {
       // If in sync byte, report as sync error.
-      setErrorFlag(bytes_read_ == 0 ? ERROR_SYNC_BYTE : ERROR_STOP_BIT);
+      setErrorFlags(bytes_read_ == 0 ? errors::SYNC_BYTE : errors::STOP_BIT);
       StateDetectBreak::enter();
       return;
     }  
@@ -535,7 +541,7 @@ private:
     if (bytes_read_ == 0) {
       // Should be exactly 0x55. We don't append this byte to the buffer.
       if (byte_buffer_ != 0x55) {
-        setErrorFlag(ERROR_SYNC_BYTE);
+        setErrorFlags(errors::SYNC_BYTE);
         StateDetectBreak::enter();
         return;
       }
@@ -544,8 +550,9 @@ private:
     else {
       // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
       // will not cause a buffer overlow.
-      RxFrameBuffer* const frame_buffer = &rx_frame_buffers[head_frame_buffer];
-      frame_buffer->bytes[frame_buffer->num_bytes++] = byte_buffer_;
+      rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);
+      //LinFrame* const frame_buffer = &rx_frame_buffers[head_frame_buffer];
+      //frame_buffer->bytes_[frame_buffer->num_bytes_++] = byte_buffer_;
     }
 
     // Preper for next byte. We will reset the byte_buffer in the next start
@@ -559,8 +566,8 @@ private:
     // Handle the case of no transition. We just read the last byte in this frame.
     if (!has_more_bytes) {
       // Verify min byte count.
-      if (bytes_read_ < RxFrameBuffer::kMinBytes) {
-        setErrorFlag(ERROR_FRAME_TOO_SHORT);
+      if (bytes_read_ < LinFrame::kMinBytes) {
+        setErrorFlags(errors::FRAME_TOO_SHORT);
         StateDetectBreak::enter();
         return;
       }
@@ -571,7 +578,7 @@ private:
       incrementHeadFrameBuffer();
       if (tail_frame_buffer == head_frame_buffer) {
         // Frame buffer overrun.        
-        setErrorFlag(ERROR_BUFFER_OVERRUN);
+        setErrorFlags(errors::BUFFER_OVERRUN);
         incrementTailFrameBuffer();
       }
 
@@ -581,8 +588,8 @@ private:
 
     // Here when there is at least one more byte in this frame. Error if we already had
     // the max number of bytes.
-    if (rx_frame_buffers[head_frame_buffer].num_bytes >= RxFrameBuffer::kMaxBytes) {
-      setErrorFlag(ERROR_FRAME_TOO_LONG);
+    if (rx_frame_buffers[head_frame_buffer].num_bytes() >= LinFrame::kMaxBytes) {
+      setErrorFlags(errors::FRAME_TOO_LONG);
       StateDetectBreak::enter();
       return;  
     }
@@ -611,7 +618,7 @@ private:
       StateReadData::handle_isr();
       break;
     default:
-      setErrorFlag(ERROR_OTHER);
+      setErrorFlags(errors::OTHER);
       StateDetectBreak::enter();
     }
 

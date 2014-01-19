@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "hardware_clock.h"
+#include "action_buzzer.h"
 
 #include "avr_util.h"
 #include "passive_timer.h"
@@ -141,6 +141,6 @@ namespace action_buzzer {
     pending_actions = flag;  
   }
 
-}  // namespace hardware_clock
+}  // namespace action_buzzer
 
 
