@@ -273,7 +273,6 @@
 <pin name="MOSI" x="-20.32" y="-22.86" length="middle" direction="in"/>
 <pin name="MISO" x="-20.32" y="-20.32" length="middle" direction="in"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
-<pin name="ALT_CONFIG" x="-20.32" y="10.16" length="middle" direction="in" function="dot"/>
 <pin name="LIN_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
 <pin name="+5V@3" x="5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="+5V@1" x="-5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
@@ -343,7 +342,6 @@
 <connect gate="G$1" pin="+5V@1" pad="4"/>
 <connect gate="G$1" pin="+5V@2" pad="6"/>
 <connect gate="G$1" pin="+5V@3" pad="18"/>
-<connect gate="G$1" pin="ALT_CONFIG" pad="14"/>
 <connect gate="G$1" pin="BUZZER" pad="9"/>
 <connect gate="G$1" pin="ERROR_LED" pad="13"/>
 <connect gate="G$1" pin="FRAME_LED" pad="12"/>

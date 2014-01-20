@@ -12412,7 +12412,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="MOSI" x="-20.32" y="-22.86" length="middle" direction="in"/>
 <pin name="MISO" x="-20.32" y="-20.32" length="middle" direction="in"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
-<pin name="ALT_CONFIG" x="-20.32" y="10.16" length="middle" direction="in" function="dot"/>
 <pin name="LIN_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
 <pin name="+5V@3" x="5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="+5V@1" x="-5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
@@ -12497,7 +12496,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <connect gate="G$1" pin="+5V@1" pad="4"/>
 <connect gate="G$1" pin="+5V@2" pad="6"/>
 <connect gate="G$1" pin="+5V@3" pad="18"/>
-<connect gate="G$1" pin="ALT_CONFIG" pad="14"/>
 <connect gate="G$1" pin="BUZZER" pad="9"/>
 <connect gate="G$1" pin="ERROR_LED" pad="13"/>
 <connect gate="G$1" pin="FRAME_LED" pad="12"/>
@@ -12935,50 +12933,6 @@ Source: &lt;a href="http://www.onsemi.com/pub_link/Collateral/SMF5.0AT1-D.PDF"&g
 <rectangle x1="3.429" y1="-2.921" x2="4.191" y2="-1.905" layer="21"/>
 <rectangle x1="5.969" y1="-2.921" x2="6.731" y2="-1.905" layer="21"/>
 </package>
-<package name="1X02">
-<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
-<wire x1="-1.905" y1="1.27" x2="-0.635" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="-0.635" y1="1.27" x2="0" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="0" y1="0.635" x2="0" y2="-0.635" width="0.1524" layer="21"/>
-<wire x1="0" y1="-0.635" x2="-0.635" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="-2.54" y1="0.635" x2="-2.54" y2="-0.635" width="0.1524" layer="21"/>
-<wire x1="-1.905" y1="1.27" x2="-2.54" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="-2.54" y1="-0.635" x2="-1.905" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="-0.635" y1="-1.27" x2="-1.905" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="0" y1="0.635" x2="0.635" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="0.635" y1="1.27" x2="1.905" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="1.905" y1="1.27" x2="2.54" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="2.54" y1="0.635" x2="2.54" y2="-0.635" width="0.1524" layer="21"/>
-<wire x1="2.54" y1="-0.635" x2="1.905" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="1.905" y1="-1.27" x2="0.635" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="0.635" y1="-1.27" x2="0" y2="-0.635" width="0.1524" layer="21"/>
-<pad name="1" x="-1.27" y="0" drill="1.016" shape="long" rot="R90"/>
-<pad name="2" x="1.27" y="0" drill="1.016" shape="long" rot="R90"/>
-<text x="-2.6162" y="1.8288" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-2.54" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-1.524" y1="-0.254" x2="-1.016" y2="0.254" layer="51"/>
-<rectangle x1="1.016" y1="-0.254" x2="1.524" y2="0.254" layer="51"/>
-</package>
-<package name="1X02/90">
-<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
-<wire x1="-2.54" y1="-1.905" x2="0" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="0" y1="-1.905" x2="0" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="0" y1="0.635" x2="-2.54" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="-2.54" y1="0.635" x2="-2.54" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="-1.27" y1="6.985" x2="-1.27" y2="1.27" width="0.762" layer="21"/>
-<wire x1="0" y1="-1.905" x2="2.54" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="2.54" y1="-1.905" x2="2.54" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="2.54" y1="0.635" x2="0" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="1.27" y1="6.985" x2="1.27" y2="1.27" width="0.762" layer="21"/>
-<pad name="1" x="-1.27" y="-3.81" drill="1.016" shape="long" rot="R90"/>
-<pad name="2" x="1.27" y="-3.81" drill="1.016" shape="long" rot="R90"/>
-<text x="-3.175" y="-3.81" size="1.27" layer="25" ratio="10" rot="R90">&gt;NAME</text>
-<text x="4.445" y="-3.81" size="1.27" layer="27" rot="R90">&gt;VALUE</text>
-<rectangle x1="-1.651" y1="0.635" x2="-0.889" y2="1.143" layer="21"/>
-<rectangle x1="0.889" y1="0.635" x2="1.651" y2="1.143" layer="21"/>
-<rectangle x1="-1.651" y1="-2.921" x2="-0.889" y2="-1.905" layer="21"/>
-<rectangle x1="0.889" y1="-2.921" x2="1.651" y2="-1.905" layer="21"/>
-</package>
 </packages>
 <symbols>
 <symbol name="PINHD3">
@@ -13019,16 +12973,6 @@ Source: &lt;a href="http://www.onsemi.com/pub_link/Collateral/SMF5.0AT1-D.PDF"&g
 <pin name="4" x="-2.54" y="0" visible="pad" length="short" direction="pas" function="dot"/>
 <pin name="5" x="-2.54" y="-2.54" visible="pad" length="short" direction="pas" function="dot"/>
 <pin name="6" x="-2.54" y="-5.08" visible="pad" length="short" direction="pas" function="dot"/>
-</symbol>
-<symbol name="PINHD2">
-<wire x1="-6.35" y1="-2.54" x2="1.27" y2="-2.54" width="0.4064" layer="94"/>
-<wire x1="1.27" y1="-2.54" x2="1.27" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="1.27" y1="5.08" x2="-6.35" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="-6.35" y1="5.08" x2="-6.35" y2="-2.54" width="0.4064" layer="94"/>
-<text x="-6.35" y="5.715" size="1.778" layer="95">&gt;NAME</text>
-<text x="-6.35" y="-5.08" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="1" x="-2.54" y="2.54" visible="pad" length="short" direction="pas" function="dot"/>
-<pin name="2" x="-2.54" y="0" visible="pad" length="short" direction="pas" function="dot"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -13121,32 +13065,6 @@ Source: &lt;a href="http://www.onsemi.com/pub_link/Collateral/SMF5.0AT1-D.PDF"&g
 <connect gate="A" pin="4" pad="4"/>
 <connect gate="A" pin="5" pad="5"/>
 <connect gate="A" pin="6" pad="6"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="PINHD-1X2" prefix="JP" uservalue="yes">
-<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="PINHD2" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="1X02">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="/90" package="1X02/90">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -16307,10 +16225,10 @@ Source: www.kingbright.com</description>
 <part name="JP3" library="pinhead" deviceset="PINHD-1X6" device=""/>
 <part name="JP4" library="pinhead" deviceset="PINHD-1X3" device=""/>
 <part name="GND1" library="beeper" deviceset="GND" device=""/>
-<part name="D9" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0560"/>
+<part name="D9" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
 <part name="U1" library="beeper" deviceset="ATMEGA328P" device=""/>
-<part name="D5" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0560"/>
-<part name="D6" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0560"/>
+<part name="D5" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
+<part name="D6" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
 <part name="Q1" library="SparkFun" deviceset="RESONATOR" device="SMD" value="16MHz"/>
 <part name="GND8" library="beeper" deviceset="GND" device=""/>
 <part name="SP1" library="beeper" deviceset="AL60P" device="" value="WT-1205"/>
@@ -16326,8 +16244,6 @@ Source: www.kingbright.com</description>
 <part name="GND10" library="beeper" deviceset="GND" device=""/>
 <part name="GND15" library="beeper" deviceset="GND" device=""/>
 <part name="GND17" library="beeper" deviceset="GND" device=""/>
-<part name="JP5" library="pinhead" deviceset="PINHD-1X2" device=""/>
-<part name="GND4" library="beeper" deviceset="GND" device=""/>
 <part name="GND11" library="beeper" deviceset="GND" device=""/>
 <part name="F1" library="beeper" deviceset="FUSE" device="" value="250ma"/>
 </parts>
@@ -16420,8 +16336,6 @@ Source: www.kingbright.com</description>
 <instance part="GND10" gate="1" x="185.42" y="167.64"/>
 <instance part="GND15" gate="1" x="154.94" y="187.96"/>
 <instance part="GND17" gate="1" x="170.18" y="187.96"/>
-<instance part="JP5" gate="G$1" x="165.1" y="139.7" rot="MR90"/>
-<instance part="GND4" gate="1" x="165.1" y="129.54"/>
 <instance part="GND11" gate="1" x="129.54" y="134.62"/>
 <instance part="F1" gate="G$1" x="106.68" y="200.66"/>
 </instances>
@@ -16504,11 +16418,6 @@ Source: www.kingbright.com</description>
 <segment>
 <pinref part="C5" gate="G$1" pin="2"/>
 <pinref part="GND17" gate="1" pin="GND"/>
-</segment>
-<segment>
-<pinref part="JP5" gate="G$1" pin="2"/>
-<wire x1="165.1" y1="137.16" x2="165.1" y2="132.08" width="0.1524" layer="91"/>
-<pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="JP1" gate="A" pin="2"/>
@@ -16841,13 +16750,6 @@ Source: www.kingbright.com</description>
 <wire x1="175.26" y1="119.38" x2="180.34" y2="119.38" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$5" class="0">
-<segment>
-<pinref part="JP5" gate="G$1" pin="1"/>
-<pinref part="U1" gate="G$1" pin="ALT_CONFIG"/>
-<wire x1="167.64" y1="137.16" x2="180.34" y2="137.16" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$6" class="0">
 <segment>
 <pinref part="F1" gate="G$1" pin="2"/>
@@ -16864,7 +16766,6 @@ Source: www.kingbright.com</description>
 <approved hash="113,1,185.316,118.006,FRAME2,,,,,"/>
 <approved hash="113,1,284.717,144.911,JP3,,,,,"/>
 <approved hash="113,1,78.5029,171.581,JP4,,,,,"/>
-<approved hash="113,1,167.771,137.397,JP5,,,,,"/>
 </errors>
 </schematic>
 </drawing>
