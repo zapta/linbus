@@ -277,8 +277,8 @@
 <pin name="+5V@3" x="5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="+5V@1" x="-5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="GND@3" x="5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
-<pin name="XTAL1" x="-20.32" y="-2.54" length="middle" direction="pas"/>
-<pin name="XTAL2" x="-20.32" y="-7.62" length="middle" direction="pas"/>
+<pin name="XTAL1" x="-20.32" y="5.08" length="middle" direction="pas"/>
+<pin name="XTAL2" x="-20.32" y="0" length="middle" direction="pas"/>
 </symbol>
 <symbol name="GND">
 <wire x1="-1.905" y1="0" x2="1.905" y2="0" width="0.254" layer="94"/>

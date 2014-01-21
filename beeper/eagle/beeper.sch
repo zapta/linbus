@@ -12416,8 +12416,8 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="+5V@3" x="5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="+5V@1" x="-5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="GND@3" x="5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
-<pin name="XTAL1" x="-20.32" y="-2.54" length="middle" direction="pas"/>
-<pin name="XTAL2" x="-20.32" y="-7.62" length="middle" direction="pas"/>
+<pin name="XTAL1" x="-20.32" y="5.08" length="middle" direction="pas"/>
+<pin name="XTAL2" x="-20.32" y="0" length="middle" direction="pas"/>
 </symbol>
 <symbol name="SPEAKER">
 <wire x1="-1.905" y1="-0.635" x2="1.905" y2="-0.635" width="0.254" layer="94"/>
@@ -16315,11 +16315,11 @@ Source: www.kingbright.com</description>
 </instance>
 <instance part="D5" gate="G$1" x="231.14" y="200.66" rot="R180"/>
 <instance part="D6" gate="G$1" x="231.14" y="180.34" rot="R180"/>
-<instance part="Q1" gate="G$1" x="175.26" y="121.92" smashed="yes" rot="MR90">
-<attribute name="NAME" x="166.116" y="124.968" size="1.778" layer="95" rot="MR180"/>
-<attribute name="VALUE" x="170.688" y="116.84" size="1.778" layer="96" rot="MR180"/>
+<instance part="Q1" gate="G$1" x="177.8" y="129.54" smashed="yes" rot="MR90">
+<attribute name="NAME" x="168.656" y="132.588" size="1.778" layer="95" rot="MR180"/>
+<attribute name="VALUE" x="173.228" y="124.46" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="GND8" gate="1" x="165.1" y="116.84"/>
+<instance part="GND8" gate="1" x="167.64" y="124.46"/>
 <instance part="SP1" gate="G$1" x="289.56" y="96.52" smashed="yes" rot="R270">
 <attribute name="NAME" x="295.91" y="100.33" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="291.211" y="88.9" size="1.778" layer="96"/>
@@ -16387,9 +16387,9 @@ Source: www.kingbright.com</description>
 </segment>
 <segment>
 <pinref part="Q1" gate="G$1" pin="2"/>
-<wire x1="167.64" y1="121.92" x2="165.1" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="129.54" x2="167.64" y2="129.54" width="0.1524" layer="91"/>
 <pinref part="GND8" gate="1" pin="GND"/>
-<wire x1="165.1" y1="121.92" x2="165.1" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="129.54" x2="167.64" y2="127" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND3" gate="1" pin="GND"/>
@@ -16740,14 +16740,14 @@ Source: www.kingbright.com</description>
 <segment>
 <pinref part="U1" gate="G$1" pin="XTAL1"/>
 <pinref part="Q1" gate="G$1" pin="3"/>
-<wire x1="180.34" y1="124.46" x2="175.26" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="180.34" y1="132.08" x2="177.8" y2="132.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$11" class="0">
 <segment>
 <pinref part="Q1" gate="G$1" pin="1"/>
 <pinref part="U1" gate="G$1" pin="XTAL2"/>
-<wire x1="175.26" y1="119.38" x2="180.34" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="177.8" y1="127" x2="180.34" y2="127" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$6" class="0">
