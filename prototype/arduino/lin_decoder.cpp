@@ -35,6 +35,9 @@ namespace lin_decoder {
 
   class Config {
 public:
+#if F_CPU != 16000000
+#error "The existing code assumes 16Mhz CPU clk."
+#endif
     // Initialized to given baud rate. 
     void set(uint16 baud) {
       // If out of range use default speed.
@@ -294,7 +297,7 @@ private:
     sei();
     return result;
   }
-  
+
   struct BitName {
     uint8 mask;
     char *name;  
@@ -368,12 +371,12 @@ private:
     sio::waitUntilFlushed();
     // TODO: move this to config class.
     sio::printf(F("LIN: %u, %u, %u, %u, %u, %u\n"), 
-      config.baud(), 
-      config.prescaler_x64(),
-      config.counts_per_bit(), 
-      config.counts_per_half_bit(), 
-      config.clock_ticks_per_bit(),  
-      config.clock_ticks_per_until_start_bit());
+    config.baud(), 
+    config.prescaler_x64(),
+    config.counts_per_bit(), 
+    config.counts_per_half_bit(), 
+    config.clock_ticks_per_bit(),  
+    config.clock_ticks_per_until_start_bit());
   }
 
   // ----- ISR Utility Functions -----
@@ -629,6 +632,7 @@ private:
     isr_pin::setLow();
   }
 }  // namespace lin_decoder
+
 
 
 

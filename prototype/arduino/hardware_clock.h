@@ -44,7 +44,9 @@ namespace hardware_clock {
     return TCNT1; 
   }
 
-
+#if F_CPU != 16000000
+#error "The existing code assumes 16Mhz CPU clk."
+#endif
 
   // @ 16Mhz / x64 prescaler. Number of ticks per a millisecond.
   const uint32 kTicksPerMilli = 250;

@@ -47,7 +47,10 @@ namespace sio {
   void setup() {
     start = 0;
     count = 0;
-
+    
+#if F_CPU != 16000000
+#error "The existing code assumes 16Mhz CPU clk."
+#endif
     // For devisors see table 19-12 in the atmega328p datasheet.
     // U2X0, 16 -> 115.2k baud @ 16MHz. 
     // U2X0, 207 -> 9600 baud @ 16Mhz.

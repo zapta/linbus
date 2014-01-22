@@ -16,8 +16,12 @@
 #include "avr_util.h"
 
 namespace hardware_clock {
-  
- void setup() {
+
+#if F_CPU != 16000000
+#error "The existing code assumes 16Mhz CPU clk."
+#endif
+
+void setup() {
     // Normal mode (free running [0, ffff]).
     TCCR1A = L(COM1A1) | L(COM1A0) | L(COM1B1) | L(COM1B0) | L(WGM11) | L(WGM10);
     // Prescaler: X64 (250 clocks per ms @ 16MHz). 2^16 clock cycle every ~260ms.
