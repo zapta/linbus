@@ -19,10 +19,14 @@
 #include "sio.h"
 #include "system_clock.h"
 
+// Config for P981/Cayman.
+static const uint16 kLinSpeed = 19200;
+static const boolean kUseLinV2Checksum = true;
+
 // Config pin. Sampled once during initialization and does not change value
 // after that. Slects one of two configurations. Default configuration is when
 // high (pullup input left unconnected).
-static io_pins::ConfigInputPin alt_config_pin(PORTB, 2);
+//static io_pins::ConfigInputPin alt_config_pin(PORTB, 2);
 
 // Status LEDs.
 static io_pins::OutputPin status_led(PORTD, 6);
@@ -33,21 +37,11 @@ static ActionLed frames_activity_led(PORTB, 0);
 static ActionLed errors_activity_led(PORTB, 1);
 static ActionLed waiting_activity_led(PORTD, 7);
 
-// Arduino standard LED. For debugging.
-static io_pins::OutputPin led(PORTB, 5);
-
 void setup()
 {
   // Hard coded to 115.2k baud. Uses URART0, no interrupts.
   // Initialize this first since some setup methods uses it.
   sio::setup();
-
-  // If alt config pin is pulled low, using alternative config..
-  const boolean alt_config = alt_config_pin.isLow();
-  sio::waitUntilFlushed();
-  sio::print(F("Config: "));
-  sio::print(alt_config ? F("ALT") : F("STD"));
-  sio::println();
 
   // Init buzzer. Leaves in off state.
   action_buzzer::setup();
@@ -56,7 +50,7 @@ void setup()
   hardware_clock::setup();
 
   // Uses Timer2 with interrupts, and a few i/o pins. See code for details.
-  lin_decoder::setup(alt_config ? 9600 : 19200);
+  lin_decoder::setup(kLinSpeed);
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
   // the lin decoder to reduce ISR jitter.
@@ -67,10 +61,6 @@ void setup()
 // The iterations are are at the or  sio::waitUntilFlushed();
 void loop()
 {
-  const boolean use_lin_v2_checksum = alt_config_pin.isHigh();
-  sio::print(F("Checksum: "));
-  sio::println(use_lin_v2_checksum ? F("V2") : F("V1"));
-
   // Having our own loop shaves about 4 usec per iteration. It also eliminate
   // any underlying functionality that we may not want.
   for(;;) {    
@@ -113,7 +103,7 @@ void loop()
     // Handle recieved LIN frames.
     LinFrame frame;
     if (lin_decoder::readNextFrame(&frame)) {
-      const boolean frameOk = frame.isValid(use_lin_v2_checksum);
+      const boolean frameOk = frame.isValid(kUseLinV2Checksum);
       if (frameOk) {
         frames_activity_led.action();
       } 

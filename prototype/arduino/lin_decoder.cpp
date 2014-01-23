@@ -176,26 +176,6 @@ private:
     isr_pin::setup();
   }
 
-  // ----- ISR To Main Data Transfer -----
-
-  // When true, request_buffer has data that should be read by main. When false, ISR
-  // can fill buffer with data, if available.
-  static volatile boolean request_buffer_has_data;
-
-  // The ISR to main transfer buffer. 
-  // TODO: why having volatile here breaks the compilation?
-  static LinFrame request_frame_buffer;
-
-  // Public. Called from main. See .h for description.
-  boolean readNextFrame(LinFrame* buffer) {
-    if (request_buffer_has_data) {
-      *buffer = request_frame_buffer;
-      request_buffer_has_data = false;
-      return true;  
-    }  
-    return false; 
-  }
-
   // ----- ISR RX Ring Buffers -----
 
   // Frame buffer queue size.
@@ -217,11 +197,9 @@ private:
   static inline void setupBuffers() {
     head_frame_buffer = 0;
     tail_frame_buffer = 0;
-    request_buffer_has_data = false;
-    request_frame_buffer.reset();
   }
 
-  // Called from main after consuming a tail buffer.
+  // Called from ISR or from main with interrupts disabled.
   static inline void incrementTailFrameBuffer() {
     if (++tail_frame_buffer >= kMaxFrameBuffers) {
       tail_frame_buffer = 0;
@@ -234,6 +212,38 @@ private:
     if (++head_frame_buffer >= kMaxFrameBuffers) {
       head_frame_buffer = 0;
     }
+  }
+
+  // ----- ISR To Main Data Transfer -----
+
+  // Increment by the ISR to indicates to the main program when the ISR returned.
+  // This is used to defered disabling interrupts until the ISR completes to 
+  // reduce ISR jitter time.
+  static volatile uint8 isr_marker;
+  
+  // Should be called from main only. 
+  static inline void waitForIsrEnd() {
+    const uint8 value = isr_marker;
+    // Wait until the next ISR ends.
+    while (value == isr_marker) {
+    } 
+  }
+  
+  // Public. Called from main. See .h for description.
+  boolean readNextFrame(LinFrame* buffer) {
+    boolean result = false;
+    waitForIsrEnd();
+    cli();
+    if (tail_frame_buffer != head_frame_buffer) {
+      //led::setHigh();
+      // This copies the request buffer struct.
+      *buffer = rx_frame_buffers[tail_frame_buffer];
+      incrementTailFrameBuffer();
+      result = true;
+      //led::setLow();
+    }
+    sei();
+    return result; 
   }
 
   // ----- State Machine Declaration -----
@@ -437,18 +447,6 @@ private:
     } 
   }
 
-  // Called from ISR.
-  static inline void maybeServiceRxRequest() {
-    //  If request buffer is empty and queue has an RX frame then move it to
-    // the request buffer. 
-    if (!request_buffer_has_data && tail_frame_buffer != head_frame_buffer) {
-      // This copies the request buffer struct.
-      request_frame_buffer = rx_frame_buffers[tail_frame_buffer];
-      incrementTailFrameBuffer();
-      request_buffer_has_data = true;
-    }
-  }
-
   // ----- Detect-Break State Implementation -----
 
   uint8 StateDetectBreak::low_bits_counter_;
@@ -611,7 +609,6 @@ private:
   ISR(TIMER2_COMPA_vect)
   {
     isr_pin::setHigh();
-
     // TODO: make this state a boolean instead of enum? (efficency).
     switch (state) {
     case states::DETECT_BREAK:
@@ -625,10 +622,11 @@ private:
       StateDetectBreak::enter();
     }
 
-    // This should be fast enough even when setting in start bit half bit
-    // interupt period. Otherwise, we can avoid calling this in an ISR
-    // cycle that called setTimerToHalfTick(). 
-    maybeServiceRxRequest();
+    // Increment the isr flag to indicate to the main that the ISR just
+    // exited and interrupts can be temporarily disabled without causes ISR 
+    // jitter.
+    isr_marker++;
+    
     isr_pin::setLow();
   }
 }  // namespace lin_decoder

@@ -16,7 +16,8 @@
 #include "passive_timer.h"
 
 namespace action_buzzer {
-  static const uint16 kFrequency = 4000;
+  // 2400Hz is the resonance frequency of Soberton WT-1205.
+  static const uint16 kFrequency = 2400;
 
   // Divider for given frequency, assuming 16Mhz clock, X256 prescaler.
   static const uint8 kDivider = (16000000L / 256) / kFrequency;

@@ -12475,7 +12475,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="MOSI" x="-20.32" y="-15.24" length="middle" direction="in"/>
 <pin name="MISO" x="-20.32" y="-10.16" length="middle" direction="in"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
-<pin name="ALT_CONFIG" x="-20.32" y="10.16" length="middle" direction="in" function="dot"/>
 <pin name="LIN_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
 </symbol>
 </symbols>
@@ -12559,7 +12558,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <device name="DIP24-6" package="ARDUINO-PRO-MINI">
 <connects>
 <connect gate="G$1" pin="+5V" pad="9"/>
-<connect gate="G$1" pin="ALT_CONFIG" pad="1"/>
 <connect gate="G$1" pin="BUZZER" pad="20"/>
 <connect gate="G$1" pin="ERROR_LED" pad="24"/>
 <connect gate="G$1" pin="FRAME_LED" pad="23"/>
@@ -16040,71 +16038,6 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 </deviceset>
 </devicesets>
 </library>
-<library name="switch-dil">
-<description>&lt;b&gt;DIL Switches and Code Switches&lt;/b&gt;&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="DS-01">
-<description>&lt;b&gt;DIL/CODE SWITCH&lt;/b&gt;&lt;p&gt;
-Mors</description>
-<wire x1="-2.032" y1="-5.08" x2="2.032" y2="-5.08" width="0.1524" layer="21"/>
-<wire x1="2.032" y1="5.08" x2="-2.032" y2="5.08" width="0.1524" layer="21"/>
-<wire x1="-2.032" y1="5.08" x2="-2.032" y2="1.905" width="0.1524" layer="21"/>
-<wire x1="-2.032" y1="1.905" x2="-2.032" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="-2.032" y1="-1.905" x2="-2.032" y2="-5.08" width="0.1524" layer="21"/>
-<wire x1="2.032" y1="-5.08" x2="2.032" y2="5.08" width="0.1524" layer="21"/>
-<wire x1="-0.762" y1="1.905" x2="-0.762" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="-0.762" y1="1.905" x2="0.762" y2="1.905" width="0.1524" layer="21"/>
-<wire x1="0.762" y1="-1.905" x2="0.762" y2="1.905" width="0.1524" layer="21"/>
-<wire x1="0.762" y1="-1.905" x2="-0.762" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="-2.032" y1="1.905" x2="-1.397" y2="1.905" width="0.1524" layer="21"/>
-<wire x1="-1.397" y1="-1.905" x2="-1.397" y2="1.905" width="0.1524" layer="21"/>
-<wire x1="-2.032" y1="-1.905" x2="-1.397" y2="-1.905" width="0.1524" layer="21"/>
-<pad name="1" x="0" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="2" x="0" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<text x="-0.254" y="-3.429" size="0.9906" layer="51" ratio="14">1</text>
-<text x="-2.032" y="-6.731" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
-<text x="-2.032" y="5.461" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-0.762" y="2.413" size="0.9906" layer="51" ratio="14">ON</text>
-<rectangle x1="-0.762" y1="-1.905" x2="0.762" y2="0" layer="21"/>
-</package>
-</packages>
-<symbols>
-<symbol name="S+V">
-<wire x1="0" y1="-3.175" x2="0" y2="-1.905" width="0.254" layer="94"/>
-<wire x1="0" y1="-1.905" x2="-1.27" y2="1.905" width="0.254" layer="94"/>
-<wire x1="0" y1="1.905" x2="0" y2="3.175" width="0.254" layer="94"/>
-<text x="2.54" y="-3.81" size="1.778" layer="95" rot="R90">&gt;NAME</text>
-<text x="5.08" y="-3.81" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="1" x="0" y="-5.08" visible="pad" length="short" direction="pas" rot="R90"/>
-<pin name="2" x="0" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="DS01E" prefix="S" uservalue="yes">
-<description>&lt;b&gt;DIL/CODE SWITCH&lt;/b&gt;</description>
-<gates>
-<gate name="1" symbol="S+V" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="DS-01">
-<connects>
-<connect gate="1" pin="1" pad="1"/>
-<connect gate="1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="MF" value="" constant="no"/>
-<attribute name="MPN" value="" constant="no"/>
-<attribute name="OC_FARNELL" value="unknown" constant="no"/>
-<attribute name="OC_NEWARK" value="unknown" constant="no"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="buzzer">
 <description>&lt;b&gt;Speakers and Buzzers&lt;/b&gt;&lt;p&gt;
 &lt;ul&gt;Distributors:
@@ -17763,8 +17696,6 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
 <part name="DEBUG1" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="DEBUG2" library="testpad" deviceset="TP" device="PAD1-17"/>
-<part name="S1" library="switch-dil" deviceset="DS01E" device=""/>
-<part name="GND17" library="prototype" deviceset="GND" device=""/>
 <part name="ISR" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="SG1" library="buzzer" deviceset="F/SMX" device="" value=""/>
 <part name="R1" library="rcl" deviceset="R-US_" device="R0805" value="5K"/>
@@ -17899,8 +17830,6 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <attribute name="NAME" x="155.702" y="131.318" size="1.778" layer="95" rot="R90"/>
 <attribute name="TP_SIGNAL_NAME" x="156.21" y="128.27" size="1.778" layer="97"/>
 </instance>
-<instance part="S1" gate="1" x="172.72" y="137.16" rot="R270"/>
-<instance part="GND17" gate="1" x="165.1" y="132.08"/>
 <instance part="ISR" gate="G$1" x="226.06" y="134.62" smashed="yes" rot="R270">
 <attribute name="NAME" x="227.838" y="133.858" size="1.778" layer="95"/>
 <attribute name="TP_SIGNAL_NAME" x="224.79" y="133.35" size="1.778" layer="97" rot="R270"/>
@@ -18005,12 +17934,6 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <pinref part="GND14" gate="1" pin="GND"/>
 <wire x1="121.92" y1="83.82" x2="129.54" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="129.54" y1="83.82" x2="129.54" y2="78.74" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="S1" gate="1" pin="1"/>
-<pinref part="GND17" gate="1" pin="GND"/>
-<wire x1="167.64" y1="137.16" x2="165.1" y2="137.16" width="0.1524" layer="91"/>
-<wire x1="165.1" y1="137.16" x2="165.1" y2="134.62" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="T1" gate="G$1" pin="E"/>
@@ -18332,13 +18255,6 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <pinref part="R5" gate="G$1" pin="2"/>
 <wire x1="220.98" y1="109.22" x2="259.08" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="259.08" y1="109.22" x2="259.08" y2="101.6" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$27" class="0">
-<segment>
-<pinref part="S1" gate="1" pin="2"/>
-<pinref part="U1" gate="G$1" pin="ALT_CONFIG"/>
-<wire x1="177.8" y1="137.16" x2="180.34" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$29" class="0">
