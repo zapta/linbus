@@ -296,22 +296,6 @@
 <pin name="P$3" x="0" y="5.08" visible="off" length="short" direction="pas" rot="R270"/>
 <pin name="P$4" x="0" y="-5.08" visible="off" length="short" direction="pas" rot="R90"/>
 </symbol>
-<symbol name="ATA6663">
-<pin name="LIN" x="-12.7" y="-2.54" length="middle"/>
-<wire x1="-7.62" y1="15.24" x2="-7.62" y2="-17.78" width="0.254" layer="94"/>
-<wire x1="-7.62" y1="-17.78" x2="10.16" y2="-17.78" width="0.254" layer="94"/>
-<wire x1="10.16" y1="-17.78" x2="10.16" y2="15.24" width="0.254" layer="94"/>
-<wire x1="-7.62" y1="15.24" x2="10.16" y2="15.24" width="0.254" layer="94"/>
-<pin name="VSS" x="5.08" y="17.78" length="short" direction="pwr" rot="R270"/>
-<pin name="GND" x="0" y="-20.32" length="short" direction="pwr" rot="R90"/>
-<pin name="RXO" x="15.24" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="TXI" x="15.24" y="0" length="middle" direction="in" rot="R180"/>
-<pin name="ENI" x="15.24" y="-5.08" length="middle" direction="in" rot="R180"/>
-<pin name="INH" x="15.24" y="-10.16" length="middle" direction="out" rot="R180"/>
-<pin name="WAKE" x="-2.54" y="17.78" length="short" rot="R270"/>
-<text x="7.62" y="-20.32" size="1.27" layer="95">&gt;NAME</text>
-<text x="7.62" y="-22.86" size="1.27" layer="96">&gt;VALUE</text>
-</symbol>
 <symbol name="PINHD6">
 <wire x1="-6.35" y1="-7.62" x2="1.27" y2="-7.62" width="0.4064" layer="94"/>
 <wire x1="1.27" y1="-7.62" x2="1.27" y2="10.16" width="0.4064" layer="94"/>
@@ -348,6 +332,22 @@
 <symbol name="GND">
 <wire x1="-1.905" y1="0" x2="1.905" y2="0" width="0.254" layer="94"/>
 <pin name="GND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
+</symbol>
+<symbol name="ATA6631">
+<pin name="LIN" x="-15.24" y="0" length="middle"/>
+<wire x1="-10.16" y1="17.78" x2="-10.16" y2="-25.4" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-25.4" x2="10.16" y2="-25.4" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-25.4" x2="10.16" y2="17.78" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="17.78" x2="10.16" y2="17.78" width="0.254" layer="94"/>
+<pin name="VS" x="0" y="20.32" length="short" direction="pwr" rot="R270"/>
+<pin name="GND" x="0" y="-27.94" length="short" direction="pwr" rot="R90"/>
+<pin name="RXO" x="15.24" y="-20.32" length="middle" direction="out" rot="R180"/>
+<pin name="TXI" x="15.24" y="-15.24" length="middle" direction="in" rot="R180"/>
+<pin name="ENI" x="15.24" y="2.54" length="middle" direction="in" rot="R180"/>
+<pin name="NRES" x="-15.24" y="-15.24" length="middle" direction="out" function="dot"/>
+<text x="7.62" y="-27.94" size="1.778" layer="95">&gt;NAME</text>
+<text x="7.62" y="-30.48" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="+5V" x="15.24" y="12.7" length="middle" direction="sup" rot="R180"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -394,28 +394,6 @@
 <connects>
 <connect gate="G$1" pin="P$3" pad="P$1"/>
 <connect gate="G$1" pin="P$4" pad="P$2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="ATA6663">
-<gates>
-<gate name="G$1" symbol="ATA6663" x="-2.54" y="0"/>
-</gates>
-<devices>
-<device name="" package="SO-08">
-<connects>
-<connect gate="G$1" pin="ENI" pad="2"/>
-<connect gate="G$1" pin="GND" pad="5"/>
-<connect gate="G$1" pin="INH" pad="8"/>
-<connect gate="G$1" pin="LIN" pad="6"/>
-<connect gate="G$1" pin="RXO" pad="1"/>
-<connect gate="G$1" pin="TXI" pad="4"/>
-<connect gate="G$1" pin="VSS" pad="7"/>
-<connect gate="G$1" pin="WAKE" pad="3"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -471,6 +449,28 @@
 </gates>
 <devices>
 <device name="">
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="ATA6631">
+<gates>
+<gate name="G$1" symbol="ATA6631" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SO-08">
+<connects>
+<connect gate="G$1" pin="+5V" pad="8"/>
+<connect gate="G$1" pin="ENI" pad="2"/>
+<connect gate="G$1" pin="GND" pad="3"/>
+<connect gate="G$1" pin="LIN" pad="4"/>
+<connect gate="G$1" pin="NRES" pad="7"/>
+<connect gate="G$1" pin="RXO" pad="5"/>
+<connect gate="G$1" pin="TXI" pad="6"/>
+<connect gate="G$1" pin="VS" pad="1"/>
+</connects>
 <technologies>
 <technology name=""/>
 </technologies>
