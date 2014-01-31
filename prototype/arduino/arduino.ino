@@ -29,13 +29,13 @@ static const boolean kUseLinV2Checksum = true;
 //static io_pins::ConfigInputPin alt_config_pin(PORTB, 2);
 
 // Status LEDs.
-static io_pins::OutputPin status_led(PORTD, 6);
+//static io_pins::OutputPin status_led(PORTD, 6);
 
 // Action LEDs. Indicates activity by blinking. Require periodic calls to
 // update().
-static ActionLed frames_activity_led(PORTB, 0);
 static ActionLed errors_activity_led(PORTB, 1);
-static ActionLed waiting_activity_led(PORTD, 7);
+static ActionLed frames_activity_led(PORTB, 0);
+static ActionLed status_activity_led(PORTD, 7);
 
 void setup()
 {
@@ -68,14 +68,14 @@ void loop()
     system_clock::loop();    
     sio::loop();
     action_buzzer::loop();
-    waiting_activity_led.loop();
+    status_activity_led.loop();
     frames_activity_led.loop();
     errors_activity_led.loop();  
 
     // Generate periodic messages if no activiy.
     static PassiveTimer idle_timer;
     if (idle_timer.timeMillis() >= 3000) {
-      waiting_activity_led.action(); 
+      status_activity_led.action(); 
       sio::println(F("waiting..."));
       idle_timer.restart();
     }
@@ -133,7 +133,6 @@ void loop()
         const uint8 id = frame.get_byte(0);
         if (data_size == 6 && id == 0x39) {
           const boolean reverse_gear = frame.get_byte(1) & H(2);
-          status_led.set(reverse_gear);
           action_buzzer::action(reverse_gear);  
         }
       }
