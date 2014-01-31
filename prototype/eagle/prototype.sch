@@ -12408,22 +12408,19 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="GND2" x="5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
 <pin name="RXI" x="20.32" y="17.78" length="middle" direction="out" rot="R180"/>
 <pin name="TXO" x="20.32" y="20.32" length="middle" direction="in" rot="R180"/>
-<pin name="STATUS1_LED" x="20.32" y="-17.78" length="middle" direction="out" rot="R180"/>
-<pin name="STATUS2_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
+<pin name="STATUS_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
 <pin name="FRAME_LED" x="20.32" y="-22.86" length="middle" direction="out" rot="R180"/>
 <pin name="ERROR_LED" x="20.32" y="-25.4" length="middle" direction="out" rot="R180"/>
 <pin name="RESET" x="-20.32" y="-25.4" length="middle" direction="in" function="dot"/>
 <text x="12.7" y="-43.18" size="1.778" layer="96">&gt;VALUE</text>
 <text x="12.7" y="-40.64" size="1.778" layer="95">&gt;NAME</text>
-<pin name="LIN_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
+<pin name="DBG_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
 <pin name="SCK/LED" x="-20.32" y="-5.08" length="middle" direction="out"/>
-<pin name="LIN_BREAK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_SAMPLE" x="20.32" y="2.54" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_ERROR" x="20.32" y="0" length="middle" direction="out" rot="R180"/>
+<pin name="DBG_BREAK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
 <pin name="MOSI" x="-20.32" y="-15.24" length="middle" direction="in"/>
 <pin name="MISO" x="-20.32" y="-10.16" length="middle" direction="in"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
+<pin name="DBG_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -12485,23 +12482,20 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <connects>
 <connect gate="G$1" pin="+5V" pad="9"/>
 <connect gate="G$1" pin="BUZZER" pad="20"/>
+<connect gate="G$1" pin="DBG_BREAK" pad="5"/>
+<connect gate="G$1" pin="DBG_ISR" pad="8"/>
+<connect gate="G$1" pin="DBG_TICK" pad="18"/>
 <connect gate="G$1" pin="ERROR_LED" pad="24"/>
 <connect gate="G$1" pin="FRAME_LED" pad="23"/>
 <connect gate="G$1" pin="GND1" pad="11"/>
 <connect gate="G$1" pin="GND2" pad="16"/>
-<connect gate="G$1" pin="LIN_BREAK" pad="5"/>
-<connect gate="G$1" pin="LIN_ERROR" pad="7"/>
-<connect gate="G$1" pin="LIN_ISR" pad="8"/>
 <connect gate="G$1" pin="LIN_RXI" pad="17"/>
-<connect gate="G$1" pin="LIN_SAMPLE" pad="6"/>
-<connect gate="G$1" pin="LIN_TICK" pad="18"/>
 <connect gate="G$1" pin="MISO" pad="3"/>
 <connect gate="G$1" pin="MOSI" pad="2"/>
 <connect gate="G$1" pin="RESET" pad="10"/>
 <connect gate="G$1" pin="RXI" pad="14"/>
 <connect gate="G$1" pin="SCK/LED" pad="4"/>
-<connect gate="G$1" pin="STATUS1_LED" pad="21"/>
-<connect gate="G$1" pin="STATUS2_LED" pad="22"/>
+<connect gate="G$1" pin="STATUS_LED" pad="22"/>
 <connect gate="G$1" pin="TXO" pad="13"/>
 </connects>
 <technologies>
@@ -17402,11 +17396,9 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <part name="R2" library="rcl" deviceset="R-US_" device="R0805" value="3.3K"/>
 <part name="R3" library="rcl" deviceset="R-US_" device="R0805" value="470"/>
 <part name="R4" library="rcl" deviceset="R-US_" device="R0805" value="470"/>
-<part name="R5" library="rcl" deviceset="R-US_" device="R0805" value="470"/>
 <part name="D2" library="display-hp" deviceset="HLMP6" device="" value="Red"/>
 <part name="D3" library="display-hp" deviceset="HLMP6" device="" value="Green"/>
 <part name="D4" library="display-hp" deviceset="HLMP6" device="" value="Green"/>
-<part name="D5" library="display-hp" deviceset="HLMP6" device="" value="Green"/>
 <part name="S2" library="prototype" deviceset="PUSH_BUTTON" device=""/>
 <part name="C1" library="rcl" deviceset="C-US" device="C0805" value="0.1uF 40V"/>
 <part name="C2" library="rcl" deviceset="CPOL-US" device="SMCC" value="22uF 40V"/>
@@ -17437,17 +17429,14 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <part name="LIN" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="GND2" library="prototype" deviceset="GND" device=""/>
 <part name="GND13" library="prototype" deviceset="GND" device=""/>
-<part name="GND15" library="prototype" deviceset="GND" device=""/>
 <part name="BREAK" library="testpad" deviceset="TP" device="PAD1-17"/>
-<part name="SAMPLE" library="testpad" deviceset="TP" device="PAD1-17"/>
-<part name="ERROR" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="GND16" library="prototype" deviceset="GND" device=""/>
 <part name="F2" library="special" deviceset="FUSE" device="" value="250ma Slow"/>
 <part name="JP2" library="pinhead" deviceset="PINHD-2X3" device="" value="ICSP"/>
 <part name="GND14" library="prototype" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
-<part name="DEBUG1" library="testpad" deviceset="TP" device="PAD1-17"/>
-<part name="DEBUG2" library="testpad" deviceset="TP" device="PAD1-17"/>
+<part name="LIN_SAMPLE" library="testpad" deviceset="TP" device="PAD1-17"/>
+<part name="LIN_ERROR" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="ISR" library="testpad" deviceset="TP" device="PAD1-17"/>
 <part name="SG1" library="buzzer" deviceset="F/SMX" device="" value=""/>
 <part name="R1" library="rcl" deviceset="R-US_" device="R0805" value="5K"/>
@@ -17470,7 +17459,6 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <instance part="R2" gate="G$1" x="228.6" y="96.52" rot="R90"/>
 <instance part="R3" gate="G$1" x="238.76" y="96.52" rot="R90"/>
 <instance part="R4" gate="G$1" x="248.92" y="96.52" rot="R90"/>
-<instance part="R5" gate="G$1" x="259.08" y="96.52" rot="R90"/>
 <instance part="D2" gate="A" x="228.6" y="83.82" smashed="yes">
 <attribute name="NAME" x="231.902" y="79.756" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="232.029" y="83.82" size="1.778" layer="96" rot="R90"/>
@@ -17482,10 +17470,6 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <instance part="D4" gate="A" x="248.92" y="83.82" smashed="yes">
 <attribute name="NAME" x="252.222" y="79.756" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="252.095" y="83.82" size="1.778" layer="96" rot="R90"/>
-</instance>
-<instance part="D5" gate="A" x="259.08" y="83.82" smashed="yes">
-<attribute name="NAME" x="262.382" y="79.756" size="1.778" layer="95" rot="R90"/>
-<attribute name="VALUE" x="262.255" y="84.074" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="S2" gate="G$1" x="165.1" y="91.44"/>
 <instance part="C1" gate="G$1" x="172.72" y="195.58"/>
@@ -17551,18 +17535,9 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 </instance>
 <instance part="GND2" gate="1" x="238.76" y="78.74"/>
 <instance part="GND13" gate="1" x="248.92" y="78.74"/>
-<instance part="GND15" gate="1" x="259.08" y="78.74"/>
 <instance part="BREAK" gate="G$1" x="226.06" y="132.08" smashed="yes" rot="R270">
 <attribute name="NAME" x="227.838" y="131.318" size="1.778" layer="95"/>
 <attribute name="TP_SIGNAL_NAME" x="224.79" y="130.81" size="1.778" layer="97" rot="R270"/>
-</instance>
-<instance part="SAMPLE" gate="G$1" x="226.06" y="129.54" smashed="yes" rot="R270">
-<attribute name="NAME" x="227.838" y="128.778" size="1.778" layer="95"/>
-<attribute name="TP_SIGNAL_NAME" x="224.79" y="128.27" size="1.778" layer="97" rot="R270"/>
-</instance>
-<instance part="ERROR" gate="G$1" x="226.06" y="127" smashed="yes" rot="R270">
-<attribute name="NAME" x="227.838" y="126.238" size="1.778" layer="95"/>
-<attribute name="TP_SIGNAL_NAME" x="224.79" y="125.73" size="1.778" layer="97" rot="R270"/>
 </instance>
 <instance part="GND16" gate="1" x="205.74" y="78.74"/>
 <instance part="F2" gate="G$1" x="274.32" y="165.1" rot="R90"/>
@@ -17571,11 +17546,11 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <instance part="P+5" gate="1" x="132.08" y="104.14" smashed="yes">
 <attribute name="VALUE" x="129.54" y="100.838" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="DEBUG1" gate="G$1" x="149.86" y="127" smashed="yes">
+<instance part="LIN_SAMPLE" gate="G$1" x="149.86" y="127" smashed="yes">
 <attribute name="NAME" x="150.622" y="128.778" size="1.778" layer="95" rot="R90"/>
 <attribute name="TP_SIGNAL_NAME" x="151.13" y="125.73" size="1.778" layer="97"/>
 </instance>
-<instance part="DEBUG2" gate="G$1" x="154.94" y="127" smashed="yes">
+<instance part="LIN_ERROR" gate="G$1" x="154.94" y="127" smashed="yes">
 <attribute name="NAME" x="155.702" y="128.778" size="1.778" layer="95" rot="R90"/>
 <attribute name="TP_SIGNAL_NAME" x="156.21" y="125.73" size="1.778" layer="97"/>
 </instance>
@@ -17656,10 +17631,6 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <pinref part="GND13" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="D5" gate="A" pin="K"/>
-<pinref part="GND15" gate="1" pin="GND"/>
-</segment>
-<segment>
 <pinref part="D3" gate="A" pin="K"/>
 <pinref part="GND2" gate="1" pin="GND"/>
 </segment>
@@ -17692,13 +17663,6 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <segment>
 <pinref part="C5" gate="G$1" pin="-"/>
 <pinref part="GND11" gate="1" pin="GND"/>
-</segment>
-</net>
-<net name="N$1" class="0">
-<segment>
-<pinref part="R5" gate="G$1" pin="1"/>
-<pinref part="D5" gate="A" pin="A"/>
-<wire x1="259.08" y1="91.44" x2="259.08" y2="88.9" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -17875,30 +17839,16 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 </net>
 <net name="N$26" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="LIN_TICK"/>
+<pinref part="U1" gate="G$1" pin="DBG_TICK"/>
 <pinref part="TICK" gate="G$1" pin="TP"/>
 <wire x1="223.52" y1="137.16" x2="220.98" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$5" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="LIN_BREAK"/>
+<pinref part="U1" gate="G$1" pin="DBG_BREAK"/>
 <pinref part="BREAK" gate="G$1" pin="TP"/>
 <wire x1="220.98" y1="132.08" x2="223.52" y2="132.08" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$6" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="LIN_SAMPLE"/>
-<pinref part="SAMPLE" gate="G$1" pin="TP"/>
-<wire x1="220.98" y1="129.54" x2="223.52" y2="129.54" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$11" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="LIN_ERROR"/>
-<pinref part="ERROR" gate="G$1" pin="TP"/>
-<wire x1="220.98" y1="127" x2="223.52" y2="127" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$12" class="0">
@@ -17928,7 +17878,7 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <wire x1="154.94" y1="93.98" x2="154.94" y2="111.76" width="0.1524" layer="91"/>
 <wire x1="154.94" y1="111.76" x2="180.34" y2="111.76" width="0.1524" layer="91"/>
 <pinref part="U1" gate="G$1" pin="MOSI"/>
-<pinref part="DEBUG2" gate="G$1" pin="TP"/>
+<pinref part="LIN_ERROR" gate="G$1" pin="TP"/>
 <wire x1="154.94" y1="124.46" x2="154.94" y2="111.76" width="0.1524" layer="91"/>
 <junction x="154.94" y="111.76"/>
 </segment>
@@ -17941,7 +17891,7 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <wire x1="106.68" y1="116.84" x2="149.86" y2="116.84" width="0.1524" layer="91"/>
 <pinref part="U1" gate="G$1" pin="MISO"/>
 <wire x1="149.86" y1="116.84" x2="180.34" y2="116.84" width="0.1524" layer="91"/>
-<pinref part="DEBUG1" gate="G$1" pin="TP"/>
+<pinref part="LIN_SAMPLE" gate="G$1" pin="TP"/>
 <wire x1="149.86" y1="124.46" x2="149.86" y2="116.84" width="0.1524" layer="91"/>
 <junction x="149.86" y="116.84"/>
 </segment>
@@ -17976,23 +17926,15 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 </net>
 <net name="N$9" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="STATUS2_LED"/>
+<pinref part="U1" gate="G$1" pin="STATUS_LED"/>
 <pinref part="R4" gate="G$1" pin="2"/>
 <wire x1="220.98" y1="106.68" x2="248.92" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="106.68" x2="248.92" y2="101.6" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$10" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="STATUS1_LED"/>
-<pinref part="R5" gate="G$1" pin="2"/>
-<wire x1="220.98" y1="109.22" x2="259.08" y2="109.22" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="109.22" x2="259.08" y2="101.6" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$29" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="LIN_ISR"/>
+<pinref part="U1" gate="G$1" pin="DBG_ISR"/>
 <pinref part="ISR" gate="G$1" pin="TP"/>
 <wire x1="220.98" y1="134.62" x2="223.52" y2="134.62" width="0.1524" layer="91"/>
 </segment>

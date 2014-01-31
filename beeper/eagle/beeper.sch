@@ -12429,8 +12429,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="LIN_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
 <pin name="SCK" x="-20.32" y="-17.78" length="middle" direction="out"/>
 <pin name="LIN_BREAK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_SAMPLE" x="20.32" y="2.54" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_ERROR" x="20.32" y="0" length="middle" direction="out" rot="R180"/>
 <pin name="MOSI" x="-20.32" y="-22.86" length="middle" direction="in"/>
 <pin name="MISO" x="-20.32" y="-20.32" length="middle" direction="in"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
@@ -12557,10 +12555,8 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <connect gate="G$1" pin="GND@2" pad="21"/>
 <connect gate="G$1" pin="GND@3" pad="5"/>
 <connect gate="G$1" pin="LIN_BREAK" pad="23"/>
-<connect gate="G$1" pin="LIN_ERROR" pad="25"/>
 <connect gate="G$1" pin="LIN_ISR" pad="26"/>
 <connect gate="G$1" pin="LIN_RXI" pad="32"/>
-<connect gate="G$1" pin="LIN_SAMPLE" pad="24"/>
 <connect gate="G$1" pin="LIN_TICK" pad="1"/>
 <connect gate="G$1" pin="MISO" pad="16"/>
 <connect gate="G$1" pin="MOSI" pad="15"/>
@@ -16245,6 +16241,9 @@ Source: www.kingbright.com</description>
 <text x="76.2" y="190.5" size="1.778" layer="91">LIN1</text>
 <text x="76.2" y="162.56" size="1.778" layer="91">LIN2</text>
 <text x="275.59" y="131.064" size="1.778" layer="91">FTDI 5V SERIAL</text>
+<text x="137.922" y="101.6" size="1.778" layer="91">LIN_ERROR</text>
+<text x="112.268" y="103.886" size="1.778" layer="91">LIN_SAMPLE</text>
+<text x="116.332" y="109.982" size="1.778" layer="91">(LED)</text>
 </plain>
 <instances>
 <instance part="R5" gate="G$1" x="228.6" y="96.52" rot="R90"/>

@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -336,8 +336,6 @@
 <pin name="LIN_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
 <pin name="SCK" x="-20.32" y="-17.78" length="middle" direction="out"/>
 <pin name="LIN_BREAK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_SAMPLE" x="20.32" y="2.54" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_ERROR" x="20.32" y="0" length="middle" direction="out" rot="R180"/>
 <pin name="MOSI" x="-20.32" y="-22.86" length="middle" direction="in"/>
 <pin name="MISO" x="-20.32" y="-20.32" length="middle" direction="in"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
@@ -449,10 +447,8 @@
 <connect gate="G$1" pin="GND@2" pad="21"/>
 <connect gate="G$1" pin="GND@3" pad="5"/>
 <connect gate="G$1" pin="LIN_BREAK" pad="23"/>
-<connect gate="G$1" pin="LIN_ERROR" pad="25"/>
 <connect gate="G$1" pin="LIN_ISR" pad="26"/>
 <connect gate="G$1" pin="LIN_RXI" pad="32"/>
-<connect gate="G$1" pin="LIN_SAMPLE" pad="24"/>
 <connect gate="G$1" pin="LIN_TICK" pad="1"/>
 <connect gate="G$1" pin="MISO" pad="16"/>
 <connect gate="G$1" pin="MOSI" pad="15"/>

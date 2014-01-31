@@ -266,22 +266,19 @@
 <pin name="GND2" x="5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
 <pin name="RXI" x="20.32" y="17.78" length="middle" direction="out" rot="R180"/>
 <pin name="TXO" x="20.32" y="20.32" length="middle" direction="in" rot="R180"/>
-<pin name="STATUS1_LED" x="20.32" y="-17.78" length="middle" direction="out" rot="R180"/>
-<pin name="STATUS2_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
+<pin name="STATUS_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
 <pin name="FRAME_LED" x="20.32" y="-22.86" length="middle" direction="out" rot="R180"/>
 <pin name="ERROR_LED" x="20.32" y="-25.4" length="middle" direction="out" rot="R180"/>
 <pin name="RESET" x="-20.32" y="-25.4" length="middle" direction="in" function="dot"/>
 <text x="12.7" y="-43.18" size="1.778" layer="96">&gt;VALUE</text>
 <text x="12.7" y="-40.64" size="1.778" layer="95">&gt;NAME</text>
-<pin name="LIN_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
+<pin name="DBG_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
 <pin name="SCK/LED" x="-20.32" y="-5.08" length="middle" direction="out"/>
-<pin name="LIN_BREAK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_SAMPLE" x="20.32" y="2.54" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_ERROR" x="20.32" y="0" length="middle" direction="out" rot="R180"/>
+<pin name="DBG_BREAK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
 <pin name="MOSI" x="-20.32" y="-15.24" length="middle" direction="in"/>
 <pin name="MISO" x="-20.32" y="-10.16" length="middle" direction="in"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
+<pin name="DBG_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
 </symbol>
 <symbol name="PUSH_BUTTON">
 <circle x="0" y="-1.524" radius="0.915809375" width="0.254" layer="94"/>
@@ -360,23 +357,20 @@
 <connects>
 <connect gate="G$1" pin="+5V" pad="9"/>
 <connect gate="G$1" pin="BUZZER" pad="20"/>
+<connect gate="G$1" pin="DBG_BREAK" pad="5"/>
+<connect gate="G$1" pin="DBG_ISR" pad="8"/>
+<connect gate="G$1" pin="DBG_TICK" pad="18"/>
 <connect gate="G$1" pin="ERROR_LED" pad="24"/>
 <connect gate="G$1" pin="FRAME_LED" pad="23"/>
 <connect gate="G$1" pin="GND1" pad="11"/>
 <connect gate="G$1" pin="GND2" pad="16"/>
-<connect gate="G$1" pin="LIN_BREAK" pad="5"/>
-<connect gate="G$1" pin="LIN_ERROR" pad="7"/>
-<connect gate="G$1" pin="LIN_ISR" pad="8"/>
 <connect gate="G$1" pin="LIN_RXI" pad="17"/>
-<connect gate="G$1" pin="LIN_SAMPLE" pad="6"/>
-<connect gate="G$1" pin="LIN_TICK" pad="18"/>
 <connect gate="G$1" pin="MISO" pad="3"/>
 <connect gate="G$1" pin="MOSI" pad="2"/>
 <connect gate="G$1" pin="RESET" pad="10"/>
 <connect gate="G$1" pin="RXI" pad="14"/>
 <connect gate="G$1" pin="SCK/LED" pad="4"/>
-<connect gate="G$1" pin="STATUS1_LED" pad="21"/>
-<connect gate="G$1" pin="STATUS2_LED" pad="22"/>
+<connect gate="G$1" pin="STATUS_LED" pad="22"/>
 <connect gate="G$1" pin="TXO" pad="13"/>
 </connects>
 <technologies>

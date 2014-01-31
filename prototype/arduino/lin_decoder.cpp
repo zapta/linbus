@@ -122,33 +122,33 @@ private:
     }
   } 
 
-  // SAMPLE - output, PC1. Indicates input bit sampling. For debugging.
+  // SAMPLE - output, PB4 (MISO). Indicates input bit sampling. For debugging.
   namespace sample_pin {
-    static const uint8 kPinMask  = H(PINC1);
+    static const uint8 kPinMask  = H(PINB4);
     static inline void setup() {
-      DDRC |= kPinMask;    // output
-      PORTC &= ~kPinMask;  // low
+      DDRB |= kPinMask;    // output
+      PORTB &= ~kPinMask;  // low
     }
     static inline void setHigh() {
-      PORTC |= kPinMask;
+      PORTB |= kPinMask;
     }
     static inline void setLow() {
-      PORTC &= ~kPinMask;
+      PORTB &= ~kPinMask;
     }
   } 
 
-  // ERROR - output, PC2. Indicates errors detection. For debugging.
+  // ERROR - output, PB3 (MOSI). Indicates errors detection. For debugging.
   namespace error_pin {
-    static const uint8 kPinMask  = H(PINC2);
+    static const uint8 kPinMask  = H(PINB3);
     static inline void setup() {
-      DDRC |= kPinMask;    // output
-      PORTC &= ~kPinMask;  // low
+      DDRB |= kPinMask;    // output
+      PORTB &= ~kPinMask;  // low
     }
     static inline void setHigh() {
-      PORTC |= kPinMask;
+      PORTB |= kPinMask;
     }
     static inline void setLow() {
-      PORTC &= ~kPinMask;
+      PORTB &= ~kPinMask;
     }
   }
 
