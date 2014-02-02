@@ -9,6 +9,7 @@
 # some Arduinos cause a CPU reset.
 
 import getopt
+import optparse
 import os
 import re
 import select
@@ -16,27 +17,10 @@ import sys
 import termios
 import time
 
-# TODO: make these flags
-kPrintRawLines = False
-kPrintFrameDiffs = True
+# Set later when parsing args.
+FLAGS = None
 
-# TODO: make these command line args.
-FLAG_speed = 115200
-FLAG_port = "/dev/cu.usbserial-A600dOYP"
-
-# For getopt parsing.
-kFlagNames = [
-  "speed=",
-  "port="
-]
-
-kUsage = [
-  "serial_read.py [option ...]",
-  "Options:",
-  "--port=<port>",
-  "--speed=<speed>"
-]
-
+# Pattern to parse a frame line.
 # NOTE: excluding frames with ERR suffix.
 kFrameRegex = re.compile('^([0-9a-f]{2})((?: [0-9a-f]{2})+) ([0-9a-f]{2})$')
 
@@ -70,24 +54,31 @@ def parseLine(line):
     return None
   return LinFrame(m.group(1), m.group(2).split(), m.group(3))
 
-# Parse args and set flags.
+# Parse args and set FLAGS.
 def parseArgs(argv):
-  global FLAG_speed
-  global FLAG_port
-  try:
-    opts, args = getopt.getopt(argv, "", kFlagNames)
-  except getopt.GetoptError:
-    print "\n".join(kUsage)
-    sys.exit(2)
-  for opt, arg in opts:
-    if opt == "--port":
-      FLAG_port = arg
-    elif opt == "--speed":
-      FLAG_speed = int(arg)
-  print "---"
-  print "Port:  ", FLAG_port
-  print "Speed: ", FLAG_speed
-  print "---"
+  global FLAGS
+  parser = optparse.OptionParser()
+  parser.add_option(
+      "-p", "--port", dest="port",
+      default="/dev/cu.usbserial-A600dOYP",
+      help="serial port to read", metavar="PORT")
+  parser.add_option(
+      "-d", "--diff", dest="diff",
+      default=False,
+      help="show only data changes")
+  parser.add_option(
+      "-s", "--speed", dest="speed",
+      default=115200,
+      help="set baud rate, 0 for default")
+  (FLAGS, args) = parser.parse_args()
+  if args:
+    print "Uexpected arguments:", args
+    print "Aborting"
+    sys.exit(1)
+  print "Flags:"
+  print "  --port:  ", FLAGS.port
+  print "  --diff:  ", FLAGS.diff
+  print "  --speed: ", FLAGS.speed
 
 # Return time now in millis. We use it to comptute relative time.
 def timeMillis():
@@ -102,7 +93,7 @@ def formatRelativeTimeMillis(millis):
 # Clear pending chars until no more.
 def clearPendingChars(fd):
   while (True):
-    ready,_,_ = select.select([fd],[],[], 1)
+    ready,_,_ = select.select([fd],[],[], 1e-10)
     if not ready:
       return;
     os.read(fd, 1)
@@ -127,15 +118,30 @@ def readLine(fd):
 # Open the serial port for reading at the specified speed.
 # Returns the port's fd.
 def openPort():
-  # Open port in read only mode. Call is blocking.
-  fd = os.open(FLAG_port, os.O_RDONLY | os.O_NOCTTY )
+  while True:
+    try:
+      # Open port in read only mode. Call is blocking.
+      print "Opening port"
+      fd = os.open(FLAGS.port, os.O_RDONLY | os.O_NOCTTY )
+      print "Done"
+      break
+    except Exception:
+      print "Exception, will retry"
+      time.sleep(1)
 
-  # Setup the port.
-  iflag, oflag, cflag, lflag, ispeed, ospeed, cc = termios.tcgetattr(fd) 
-  ispeed = FLAG_speed
-  ospeed = FLAG_speed
-  termios.tcsetattr(fd, termios.TCSANOW, [iflag, oflag, cflag, lflag, ispeed, ospeed, cc])
+  # If speed requested, setup the port.
+  if FLAGS.speed != 0:
+    print "Setting port speed to", FLAGS.speed
+    iflag, oflag, cflag, lflag, ispeed, ospeed, cc = termios.tcgetattr(fd) 
+    ispeed = FLAGS.speed
+    ospeed = FLAGS.speed
+    termios.tcsetattr(fd, termios.TCSANOW, [iflag, oflag, cflag, lflag, ispeed, ospeed, cc])
+    print "Done"
+  else:
+    print "Using default speed"
+  print "Clearing pending chars"
   clearPendingChars(fd)
+  print "Done"
   return fd
 
 # For now, assuming both are of same size.
@@ -162,10 +168,13 @@ def main(argv):
     line = readLine(fd);
     rel_time_millis = timeMillis() - start_time_millis
     timestamp = formatRelativeTimeMillis(rel_time_millis);
-    if kPrintRawLines:
+    # Dump raw lines
+    if not FLAGS.diff:
       out_line = "%s  %s\n" % (timestamp, line)
       sys.stdout.write(out_line)
       sys.stdout.flush()
+      continue
+    # Parse and dump diffs only
     frame = parseLine(line)
     if not frame:
       continue
@@ -178,13 +187,12 @@ def main(argv):
     last_bit_lists[id] = new_bit_list
     if new_bit_list == old_bit_list:
       continue
-    if kPrintFrameDiffs:
-      diff_bit_list = diffBitLists(old_bit_list, new_bit_list)
-      diff_str = insertSeperators("".join(diff_bit_list), 4, " ")
-      diff_str = insertSeperators(diff_str, 10, "| ")
-      out_line = "%s  %s: | %s |\n" % (timestamp, id, diff_str)
-      sys.stdout.write(out_line)
-      sys.stdout.flush()
+    diff_bit_list = diffBitLists(old_bit_list, new_bit_list)
+    diff_str = insertSeperators("".join(diff_bit_list), 4, " ")
+    diff_str = insertSeperators(diff_str, 10, "| ")
+    out_line = "%s  %s: | %s |\n" % (timestamp, id, diff_str)
+    sys.stdout.write(out_line)
+    sys.stdout.flush()
 
 if __name__ == "__main__":
   main(sys.argv[1:])
