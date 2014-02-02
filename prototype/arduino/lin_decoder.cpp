@@ -1,4 +1,4 @@
-// Licensed under the Apache License, Version 2.0 (the "License");
+5// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
@@ -111,6 +111,21 @@ private:
       return  PIND & kPinMask;
     }
   }  // namespace rx1_pin
+  
+ // LIN MASTER TX - output, PC2. TX output to master.
+  namespace tx1_pin {
+    static const uint8 kPinMask  = H(PINC2);
+    static inline void setup() {
+      DDRC |= kPinMask;   // output
+      PORTC |= kPinMask;  // high
+    }
+    static inline void setHigh() {
+      PORTC |= kPinMask;
+    }
+    static inline void setLow() {
+      PORTC &= ~kPinMask;
+    }
+  }  // namespace tx1_pin
 
   // LIN SLAVE TX - output, PD4. TX output to slave.
   namespace tx2_pin {
@@ -190,6 +205,7 @@ private:
   // Called one during initialization.
   static inline void setupPins() {
     rx1_pin::setup();
+    tx1_pin::setup();
     tx2_pin::setup();
     break_pin::setup();
     sample_pin::setup();

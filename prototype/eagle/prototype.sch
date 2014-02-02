@@ -12402,7 +12402,7 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <wire x1="15.24" y1="30.48" x2="15.24" y2="-38.1" width="0.254" layer="94"/>
 <wire x1="15.24" y1="-38.1" x2="-15.24" y2="-38.1" width="0.254" layer="94"/>
 <wire x1="-15.24" y1="-38.1" x2="-15.24" y2="30.48" width="0.254" layer="94"/>
-<pin name="LIN_RXI" x="-20.32" y="20.32" length="middle" direction="in"/>
+<pin name="LIN_RXI1" x="-20.32" y="20.32" length="middle" direction="in"/>
 <pin name="+5V" x="0" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="GND1" x="-5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
 <pin name="GND2" x="5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
@@ -12421,6 +12421,7 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="MISO" x="-20.32" y="-10.16" length="middle" direction="in"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
 <pin name="DBG_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
+<pin name="LIN_TXO1" x="-20.32" y="25.4" length="middle" direction="out"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -12489,7 +12490,8 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <connect gate="G$1" pin="FRAME_LED" pad="23"/>
 <connect gate="G$1" pin="GND1" pad="11"/>
 <connect gate="G$1" pin="GND2" pad="16"/>
-<connect gate="G$1" pin="LIN_RXI" pad="17"/>
+<connect gate="G$1" pin="LIN_RXI1" pad="17"/>
+<connect gate="G$1" pin="LIN_TXO1" pad="7"/>
 <connect gate="G$1" pin="MISO" pad="3"/>
 <connect gate="G$1" pin="MOSI" pad="2"/>
 <connect gate="G$1" pin="RESET" pad="10"/>
@@ -17529,9 +17531,9 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <attribute name="NAME" x="145.288" y="128.524" size="1.778" layer="95" rot="R90"/>
 <attribute name="TP_SIGNAL_NAME" x="146.05" y="125.73" size="1.778" layer="97"/>
 </instance>
-<instance part="LIN" gate="G$1" x="154.94" y="152.4" smashed="yes">
-<attribute name="NAME" x="156.972" y="154.94" size="1.778" layer="95" rot="R180"/>
-<attribute name="TP_SIGNAL_NAME" x="156.21" y="151.13" size="1.778" layer="97"/>
+<instance part="LIN" gate="G$1" x="167.64" y="157.48" smashed="yes">
+<attribute name="NAME" x="169.672" y="160.02" size="1.778" layer="95" rot="R180"/>
+<attribute name="TP_SIGNAL_NAME" x="168.91" y="156.21" size="1.778" layer="97"/>
 </instance>
 <instance part="GND2" gate="1" x="238.76" y="78.74"/>
 <instance part="GND13" gate="1" x="248.92" y="78.74"/>
@@ -17706,12 +17708,12 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 </net>
 <net name="N$18" class="0">
 <segment>
-<wire x1="180.34" y1="147.32" x2="154.94" y2="147.32" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="LIN_RXI"/>
+<wire x1="180.34" y1="147.32" x2="167.64" y2="147.32" width="0.1524" layer="91"/>
+<pinref part="U1" gate="G$1" pin="LIN_RXI1"/>
 <pinref part="LIN" gate="G$1" pin="TP"/>
-<wire x1="137.16" y1="147.32" x2="154.94" y2="147.32" width="0.1524" layer="91"/>
-<wire x1="154.94" y1="149.86" x2="154.94" y2="147.32" width="0.1524" layer="91"/>
-<junction x="154.94" y="147.32"/>
+<wire x1="137.16" y1="147.32" x2="167.64" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="154.94" x2="167.64" y2="147.32" width="0.1524" layer="91"/>
+<junction x="167.64" y="147.32"/>
 <pinref part="U2" gate="G$1" pin="RXO"/>
 </segment>
 </net>
@@ -17786,11 +17788,8 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <junction x="200.66" y="180.34"/>
 <junction x="152.4" y="180.34"/>
 <junction x="172.72" y="180.34"/>
-<pinref part="U2" gate="G$1" pin="TXI"/>
-<wire x1="137.16" y1="152.4" x2="137.16" y2="170.18" width="0.1524" layer="91"/>
 <pinref part="U2" gate="G$1" pin="ENI"/>
 <wire x1="137.16" y1="170.18" x2="137.16" y2="180.34" width="0.1524" layer="91"/>
-<junction x="137.16" y="170.18"/>
 <junction x="137.16" y="180.34"/>
 </segment>
 </net>
@@ -17979,6 +17978,13 @@ BF959 corrected 2008.03.06&lt;br&gt;</description>
 <pinref part="R8" gate="G$1" pin="1"/>
 <wire x1="289.56" y1="106.68" x2="289.56" y2="104.14" width="0.1524" layer="91"/>
 <junction x="289.56" y="104.14"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="U2" gate="G$1" pin="TXI"/>
+<pinref part="U1" gate="G$1" pin="LIN_TXO1"/>
+<wire x1="137.16" y1="152.4" x2="180.34" y2="152.4" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
