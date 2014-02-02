@@ -52,6 +52,7 @@ public:
       // Adding two counts to compensate for software delay.
       counts_per_half_bit_ = (counts_per_bit_ / 2) + 2;
       clock_ticks_per_bit_ = (hardware_clock::kTicksPerMilli * 1000) / baud;
+      clock_ticks_per_half_bit_ = clock_ticks_per_bit_ / 2;
       clock_ticks_per_until_start_bit_ = clock_ticks_per_bit_ * kMaxSpaceBits;
     }
 
@@ -72,6 +73,9 @@ public:
     inline uint8 clock_ticks_per_bit() const { 
       return clock_ticks_per_bit_; 
     }
+    inline uint8 clock_ticks_per_half_bit() const { 
+      return clock_ticks_per_half_bit_; 
+    }
     inline uint8 clock_ticks_per_until_start_bit() const { 
       return clock_ticks_per_until_start_bit_; 
     }
@@ -84,6 +88,7 @@ private:
     uint8 counts_per_bit_;
     uint8 counts_per_half_bit_;
     uint8 clock_ticks_per_bit_;
+    uint8 clock_ticks_per_half_bit_;
     uint8 clock_ticks_per_until_start_bit_;
   };
 
@@ -95,8 +100,8 @@ private:
   // NOTE: we use direct register access instead the abstractions in io_pins.h. 
   // This way we shave a few cycles from the ISR.
 
-  // RX - input, PD2. Lin bus input.
-  namespace rx_pin {
+  // Master LIN RX - input, PD2. Lin bus input.
+  namespace rx1_pin {
     static const uint8 kPinMask  = H(PIND2);
     static inline void setup() {
       DDRD &= ~kPinMask;  // input
@@ -105,8 +110,23 @@ private:
     static inline uint8 isHigh() {
       return  PIND & kPinMask;
     }
-  }  // namespace rx_pin
+  }  // namespace rx1_pin
 
+  // LIN SLAVE TX - output, PD4. TX output to slave.
+  namespace tx2_pin {
+    static const uint8 kPinMask  = H(PIND4);
+    static inline void setup() {
+      DDRD |= kPinMask;    // output
+      PORTD |= kPinMask;  // high
+    }
+    static inline void setHigh() {
+      PORTD |= kPinMask;
+    }
+    static inline void setLow() {
+      PORTD &= ~kPinMask;
+    }
+  }  // namespace tx2_pin
+  
   // BREAK - output, PC0. Indicates detection of a break. For debugging.
   namespace break_pin {
     static const uint8 kPinMask  = H(PINC0);
@@ -120,7 +140,7 @@ private:
     static inline void setLow() {
       PORTC &= ~kPinMask;
     }
-  } 
+  }  // namespace break_pin
 
   // SAMPLE - output, PB4 (MISO). Indicates input bit sampling. For debugging.
   namespace sample_pin {
@@ -135,7 +155,7 @@ private:
     static inline void setLow() {
       PORTB &= ~kPinMask;
     }
-  } 
+  }  // namespace sample_pin
 
   // ERROR - output, PB3 (MOSI). Indicates errors detection. For debugging.
   namespace error_pin {
@@ -150,7 +170,7 @@ private:
     static inline void setLow() {
       PORTB &= ~kPinMask;
     }
-  }
+  }  // namespace error_pin
 
   // ISR - output, PC3. Indicate ISR execution period. For debugging.
   namespace isr_pin {
@@ -165,11 +185,12 @@ private:
     static inline void setLow() {
       PORTC &= ~kPinMask;
     }
-  }
+  }  // namespace isr_pin
 
   // Called one during initialization.
   static inline void setupPins() {
-    rx_pin::setup();
+    rx1_pin::setup();
+    tx2_pin::setup();
     break_pin::setup();
     sample_pin::setup();
     error_pin::setup();
@@ -406,25 +427,44 @@ private:
     // bit.
     TCNT2 = config.counts_per_half_bit();
   }
+  
+  
+  // Perform a tight busy loop for a given number of clock ticks.
+  // Keeps the lin tick timer reset.
+  // Called from ISR only.
+  static inline void wait(uint16 clock_ticks) {
+    const uint16 base_clock = hardware_clock::ticksForIsr();
+    for(;;) {
+      // Keep the tick timer not ticking (no ISR).
+      resetTickTimer();
+
+      // Should work also in case of 16 bit clock overflow.
+      const uint16 clock_diff = hardware_clock::ticksForIsr() - base_clock;
+      if (clock_diff >= clock_ticks) {
+        return; 
+      }
+    } 
+  }
 
   // Perform a tight busy loop until RX is low or the given number
   // of clock ticks passed (timeout). Retuns true if ok,
   // false if timeout. Keeps timer reset during the wait.
-  static inline boolean waitForRxLow(uint16 maxClockTicks) {
+  // Called from ISR only.
+  static inline boolean waitForRxLow(uint16 max_clock_ticks) {
     const uint16 base_clock = hardware_clock::ticksForIsr();
     for(;;) {
       // Keep the tick timer not ticking (no ISR).
       resetTickTimer();
 
       // If rx is low we are done.
-      if (!rx_pin::isHigh()) {
+      if (!rx1_pin::isHigh()) {
         return true;
       }
 
       // Test for timeout.
       // Should work also in case of 16 bit clock overflow.
       const uint16 clock_diff = hardware_clock::ticksForIsr() - base_clock;
-      if (clock_diff >= maxClockTicks) {
+      if (clock_diff >= max_clock_ticks) {
         return false; 
       }
     } 
@@ -432,16 +472,17 @@ private:
 
   // Same as waitForRxLow but with reversed polarity.
   // We clone to code for time optimization.
-  static inline boolean waitForRxHigh(uint16 maxClockTicks) {
+  // Called from ISR only.
+  static inline boolean waitForRxHigh(uint16 max_clock_ticks) {
     const uint16 base_clock = hardware_clock::ticksForIsr();
     for(;;) {
       resetTickTimer();
-      if (rx_pin::isHigh()) {
+      if (rx1_pin::isHigh()) {
         return true;
       }
       // Should work also in case of an clock overflow.
       const uint16 clock_diff = hardware_clock::ticksForIsr() - base_clock;
-      if (clock_diff >= maxClockTicks) {
+      if (clock_diff >= max_clock_ticks) {
         return false; 
       }
     } 
@@ -454,26 +495,40 @@ private:
   inline void StateDetectBreak::enter() {
     state = states::DETECT_BREAK;
     low_bits_counter_ = 0;
+    // Make slave TX output passive.
+    tx2_pin::setHigh();
   }
 
   // Return true if enough time to service rx request.
   inline void StateDetectBreak::handle_isr() {
-    if (rx_pin::isHigh()) {
+    if (rx1_pin::isHigh()) {
+      tx2_pin::setHigh();
       low_bits_counter_ = 0;
       return;
     } 
 
     // Here RX is low (active)  
-    // TODO: increase to 12? (does the standard say 13 min?).  
+    // TODO: since the slave is delayed by 1 bit, will be nice to delay also
+    // the begining of the break.
+    tx2_pin::setLow();
+
     if (++low_bits_counter_ < 10) {
       return;
     }
 
     // Detected a break. Wait for rx high and enter data reading.
     break_pin::setHigh();
+
     // TODO: set actual max count
     waitForRxHigh(255);
     break_pin::setLow();
+
+    // Wait for half a bit before we propogate the end of the break
+    // to the slave. The slave is delayed by half a bit.
+    wait(config.clock_ticks_per_half_bit());
+    tx2_pin::setHigh();
+   
+    // Go process the data
     StateReadData::enter();
   }
 
@@ -484,7 +539,7 @@ private:
   uint8 StateReadData::byte_buffer_;
   uint8 StateReadData::byte_buffer_bit_mask_;
 
-  // Called after a long break changed to high.
+  // Called after half a bit after the low to high transition at the end of the break.
   inline void StateReadData::enter() {
     state = states::READ_DATA;
     bytes_read_ = 0;
@@ -500,9 +555,17 @@ private:
   inline void StateReadData::handle_isr() {
     // Sample data bit ASAP to avoid jitter.
     sample_pin::setHigh();
-    const uint8 is_rx_high = rx_pin::isHigh();
+    const uint8 is_rx_high = rx1_pin::isHigh();
     sample_pin::setLow();
 
+    // Propogate the bit to the slave. Since we are sampling the master
+    // at the middle of its bits, this is delayed by half a bit.
+    if (is_rx_high) {
+      tx2_pin::setHigh();
+    } else {
+      tx2_pin::setLow();
+    }
+    
     // Handle start bit.
     if (bits_read_in_byte_ == 0) {
       // Start bit error.
