@@ -29,9 +29,11 @@ namespace action_buzzer {
   // slot time in millis
   static const  uint16 kSlotTimesMillis[] PROGMEM = {
     50, // on
-    200,
+    150,
     50, // on
-    1500,  
+    150,
+    50, // on
+    3000,  
   };
 
   static const uint8 kNumSlots = ARRAY_SIZE(kSlotTimesMillis);
