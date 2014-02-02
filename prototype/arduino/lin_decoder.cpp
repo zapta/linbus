@@ -401,12 +401,13 @@ private:
 
     sio::waitUntilFlushed();
     // TODO: move this to config class.
-    sio::printf(F("LIN: %u, %u, %u, %u, %u, %u\n"), 
+    sio::printf(F("LIN: %u, %u, %u, %u, %u, %u, %u\n"), 
     config.baud(), 
     config.prescaler_x64(),
     config.counts_per_bit(), 
     config.counts_per_half_bit(), 
     config.clock_ticks_per_bit(),  
+    config.clock_ticks_per_half_bit(),  
     config.clock_ticks_per_until_start_bit());
   }
 
