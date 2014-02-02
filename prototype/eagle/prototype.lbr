@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -260,26 +260,25 @@
 <wire x1="15.24" y1="30.48" x2="15.24" y2="-38.1" width="0.254" layer="94"/>
 <wire x1="15.24" y1="-38.1" x2="-15.24" y2="-38.1" width="0.254" layer="94"/>
 <wire x1="-15.24" y1="-38.1" x2="-15.24" y2="30.48" width="0.254" layer="94"/>
-<pin name="LIN_RXI1" x="-20.32" y="20.32" length="middle" direction="in"/>
+<pin name="LIN_RXI1" x="-20.32" y="12.7" length="middle" direction="in"/>
 <pin name="+5V" x="0" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="GND1" x="-5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
 <pin name="GND2" x="5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
-<pin name="RXI" x="20.32" y="17.78" length="middle" direction="out" rot="R180"/>
-<pin name="TXO" x="20.32" y="20.32" length="middle" direction="in" rot="R180"/>
+<pin name="RXI" x="20.32" y="20.32" length="middle" direction="out" rot="R180"/>
+<pin name="TXO" x="20.32" y="22.86" length="middle" direction="in" rot="R180"/>
 <pin name="STATUS_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
 <pin name="FRAME_LED" x="20.32" y="-22.86" length="middle" direction="out" rot="R180"/>
 <pin name="ERROR_LED" x="20.32" y="-25.4" length="middle" direction="out" rot="R180"/>
 <pin name="RESET" x="-20.32" y="-25.4" length="middle" direction="in" function="dot"/>
 <text x="12.7" y="-43.18" size="1.778" layer="96">&gt;VALUE</text>
 <text x="12.7" y="-40.64" size="1.778" layer="95">&gt;NAME</text>
-<pin name="DBG_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
-<pin name="SCK/LED" x="-20.32" y="-5.08" length="middle" direction="out"/>
-<pin name="DBG_BREAK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="MOSI" x="-20.32" y="-15.24" length="middle" direction="in"/>
-<pin name="MISO" x="-20.32" y="-10.16" length="middle" direction="in"/>
-<pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
-<pin name="DBG_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_TXO1" x="-20.32" y="25.4" length="middle" direction="out"/>
+<pin name="SCK/LED" x="20.32" y="-2.54" length="middle" direction="out" rot="R180"/>
+<pin name="MOSI" x="20.32" y="7.62" length="middle" direction="in" rot="R180"/>
+<pin name="MISO" x="20.32" y="2.54" length="middle" direction="in" rot="R180"/>
+<pin name="BUZZER" x="20.32" y="-15.24" length="middle" direction="out" rot="R180"/>
+<pin name="LIN_TXO1" x="-20.32" y="17.78" length="middle" direction="out"/>
+<pin name="LIN2_RX" x="-20.32" y="-12.7" length="middle" direction="in"/>
+<pin name="LIN2_TX" x="-20.32" y="-7.62" length="middle" direction="out"/>
 </symbol>
 <symbol name="PUSH_BUTTON">
 <circle x="0" y="-1.524" radius="0.915809375" width="0.254" layer="94"/>
@@ -332,19 +331,19 @@
 <pin name="GND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
 </symbol>
 <symbol name="ATA6631">
-<pin name="LIN" x="-15.24" y="0" length="middle"/>
-<wire x1="-10.16" y1="17.78" x2="-10.16" y2="-25.4" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="-25.4" x2="10.16" y2="-25.4" width="0.254" layer="94"/>
-<wire x1="10.16" y1="-25.4" x2="10.16" y2="17.78" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="17.78" x2="10.16" y2="17.78" width="0.254" layer="94"/>
-<pin name="VS" x="0" y="20.32" length="short" direction="pwr" rot="R270"/>
-<pin name="GND" x="0" y="-27.94" length="short" direction="pwr" rot="R90"/>
-<pin name="RXO" x="15.24" y="-20.32" length="middle" direction="out" rot="R180"/>
-<pin name="TXI" x="15.24" y="-15.24" length="middle" direction="in" rot="R180"/>
-<pin name="ENI" x="15.24" y="2.54" length="middle" direction="in" rot="R180"/>
-<pin name="NRES" x="-15.24" y="-15.24" length="middle" direction="out" function="dot"/>
-<text x="7.62" y="-27.94" size="1.778" layer="95">&gt;NAME</text>
-<text x="7.62" y="-30.48" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="LIN" x="-10.16" y="2.54" length="middle"/>
+<wire x1="-5.08" y1="17.78" x2="-5.08" y2="-12.7" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="-12.7" x2="10.16" y2="-12.7" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-12.7" x2="10.16" y2="17.78" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="17.78" x2="10.16" y2="17.78" width="0.254" layer="94"/>
+<pin name="VS" x="2.54" y="20.32" length="short" direction="pwr" rot="R270"/>
+<pin name="GND" x="2.54" y="-15.24" length="short" direction="pwr" rot="R90"/>
+<pin name="RXO" x="15.24" y="-5.08" length="middle" direction="out" rot="R180"/>
+<pin name="TXI" x="15.24" y="0" length="middle" direction="in" rot="R180"/>
+<pin name="ENI" x="15.24" y="7.62" length="middle" direction="in" rot="R180"/>
+<pin name="NRES" x="-10.16" y="-5.08" length="middle" direction="out" function="dot"/>
+<text x="7.62" y="-15.24" size="1.778" layer="95">&gt;NAME</text>
+<text x="7.62" y="-17.78" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="+5V" x="15.24" y="12.7" length="middle" direction="sup" rot="R180"/>
 </symbol>
 </symbols>
@@ -358,13 +357,12 @@
 <connects>
 <connect gate="G$1" pin="+5V" pad="9"/>
 <connect gate="G$1" pin="BUZZER" pad="20"/>
-<connect gate="G$1" pin="DBG_BREAK" pad="5"/>
-<connect gate="G$1" pin="DBG_ISR" pad="8"/>
-<connect gate="G$1" pin="DBG_TICK" pad="18"/>
 <connect gate="G$1" pin="ERROR_LED" pad="24"/>
 <connect gate="G$1" pin="FRAME_LED" pad="23"/>
 <connect gate="G$1" pin="GND1" pad="11"/>
 <connect gate="G$1" pin="GND2" pad="16"/>
+<connect gate="G$1" pin="LIN2_RX" pad="6"/>
+<connect gate="G$1" pin="LIN2_TX" pad="19"/>
 <connect gate="G$1" pin="LIN_RXI1" pad="17"/>
 <connect gate="G$1" pin="LIN_TXO1" pad="7"/>
 <connect gate="G$1" pin="MISO" pad="3"/>
