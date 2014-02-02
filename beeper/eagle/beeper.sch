@@ -16203,7 +16203,7 @@ Source: www.kingbright.com</description>
 <part name="GND14" library="beeper" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
 <part name="R3" library="rcl" deviceset="R-US_" device="R0805" value="5K"/>
-<part name="T1" library="transistor" deviceset="*-NPN-" device="SOT23-BEC" technology="MMBT3904LT1" value="3904"/>
+<part name="T1" library="transistor" deviceset="*-NPN-" device="SOT23-BEC" technology="MMBT3904LT1" value="MMBT3904"/>
 <part name="GND18" library="beeper" deviceset="GND" device=""/>
 <part name="P+3" library="supply1" deviceset="+5V" device=""/>
 <part name="R4" library="rcl" deviceset="R-US_" device="R0805" value="220"/>
@@ -16233,7 +16233,7 @@ Source: www.kingbright.com</description>
 <part name="GND15" library="beeper" deviceset="GND" device=""/>
 <part name="GND17" library="beeper" deviceset="GND" device=""/>
 <part name="GND11" library="beeper" deviceset="GND" device=""/>
-<part name="F1" library="beeper" deviceset="FUSE" device="" value="250ma"/>
+<part name="F1" library="beeper" deviceset="FUSE" device="" value="250ma Slow"/>
 </parts>
 <sheets>
 <sheet>
@@ -16243,7 +16243,13 @@ Source: www.kingbright.com</description>
 <text x="275.59" y="131.064" size="1.778" layer="91">FTDI 5V SERIAL</text>
 <text x="137.922" y="101.6" size="1.778" layer="91">LIN_ERROR</text>
 <text x="112.268" y="103.886" size="1.778" layer="91">LIN_SAMPLE</text>
-<text x="116.332" y="109.982" size="1.778" layer="91">(LED)</text>
+<text x="110.744" y="72.136" size="1.778" layer="91">RESET</text>
+<text x="275.082" y="157.48" size="1.778" layer="91">115,200 baud</text>
+<text x="71.882" y="157.48" size="1.778" layer="91">19,200 baud</text>
+<text x="290.83" y="85.09" size="1.778" layer="91">2.4KHz</text>
+<text x="287.782" y="99.06" size="1.778" layer="91">+</text>
+<text x="224.536" y="133.858" size="1.778" layer="91">DEBUG SIGNALS</text>
+<text x="71.882" y="154.94" size="1.778" layer="91">LIN checksum V2</text>
 </plain>
 <instances>
 <instance part="R5" gate="G$1" x="228.6" y="96.52" rot="R90"/>
@@ -16301,8 +16307,8 @@ Source: www.kingbright.com</description>
 <instance part="GND1" gate="1" x="88.9" y="162.56"/>
 <instance part="D1" gate="G$1" x="119.38" y="200.66"/>
 <instance part="U2" gate="G$1" x="200.66" y="127" smashed="yes">
-<attribute name="VALUE" x="177.8" y="83.82" size="1.778" layer="96"/>
-<attribute name="NAME" x="177.8" y="86.36" size="1.778" layer="95"/>
+<attribute name="VALUE" x="213.36" y="162.56" size="1.778" layer="96"/>
+<attribute name="NAME" x="213.36" y="160.02" size="1.778" layer="95"/>
 </instance>
 <instance part="D2" gate="G$1" x="231.14" y="200.66" rot="R180"/>
 <instance part="D3" gate="G$1" x="231.14" y="180.34" rot="R180"/>
@@ -16312,7 +16318,7 @@ Source: www.kingbright.com</description>
 </instance>
 <instance part="GND8" gate="1" x="167.64" y="124.46"/>
 <instance part="SP1" gate="G$1" x="289.56" y="96.52" smashed="yes" rot="R270">
-<attribute name="NAME" x="295.91" y="100.33" size="1.778" layer="95" rot="R270"/>
+<attribute name="NAME" x="296.418" y="92.202" size="1.778" layer="95"/>
 <attribute name="VALUE" x="291.211" y="88.9" size="1.778" layer="96"/>
 </instance>
 <instance part="D4" gate="G$1" x="279.4" y="96.52" rot="MR90"/>
@@ -16328,7 +16334,10 @@ Source: www.kingbright.com</description>
 <instance part="GND15" gate="1" x="154.94" y="187.96"/>
 <instance part="GND17" gate="1" x="170.18" y="187.96"/>
 <instance part="GND11" gate="1" x="129.54" y="134.62"/>
-<instance part="F1" gate="G$1" x="106.68" y="200.66"/>
+<instance part="F1" gate="G$1" x="106.68" y="200.66" smashed="yes">
+<attribute name="NAME" x="101.6" y="203.2" size="1.778" layer="95"/>
+<attribute name="VALUE" x="99.06" y="196.85" size="1.778" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
