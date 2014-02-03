@@ -29,7 +29,38 @@ static const uint16 kDefaultBaud = 9600;
 // to the start bit of next byte.
 static const uint8 kMaxSpaceBits = 4;
 
-// ----- Debugging outputs
+// Define an input pin with fast access. Using the macro does
+// not increase the pin access time compared to direct bit manipulation.
+// Pin is setup with active pullup.
+#define DEFINE_INPUT_PIN(name, port_letter, bit_index) \
+  namespace name { \
+    static const uint8 kPinMask  = H(bit_index); \
+    static inline void setup() { \
+      DDR ## port_letter &= ~kPinMask;  \
+      PORT ## port_letter |= kPinMask;  \
+    } \
+    static inline uint8 isHigh() { \
+      return  PIN##port_letter & kPinMask; \
+    } \
+  } 
+ 
+// Define an output pin with fast access. Using the macro does
+// not increase the pin access time compared to direct bit manipulation.
+#define DEFINE_OUTPUT_PIN(name, port_letter, bit_index) \
+  namespace name { \
+    static const uint8 kPinMask  = H(bit_index); \
+    static inline void setup() { \
+      DDR ## port_letter |= kPinMask;  \
+      PORT ## port_letter |= kPinMask; \
+    } \
+    static inline void setHigh() { \
+      PORT ## port_letter |= kPinMask; \
+    } \
+    static inline void setLow() { \
+      PORT ## port_letter &= ~kPinMask; \
+    } \
+  }  
+  
 
 namespace lin_decoder {
 
@@ -99,120 +130,20 @@ private:
   //
   // NOTE: we use direct register access instead the abstractions in io_pins.h. 
   // This way we shave a few cycles from the ISR.
-
-  // Master LIN RX - input, PD2. Lin bus input.
-  namespace rx1_pin {
-    static const uint8 kPinMask  = H(PIND2);
-    static inline void setup() {
-      DDRD &= ~kPinMask;  // input
-      PORTD |= kPinMask;  // pullup
-    }
-    static inline uint8 isHigh() {
-      return  PIND & kPinMask;
-    }
-  }  // namespace rx1_pin
+    
+  // Master LIN interface.
+  DEFINE_INPUT_PIN(rx1_pin, D, 2);
+  DEFINE_OUTPUT_PIN(tx1_pin, C, 2);
   
- // LIN MASTER TX - output, PC2. TX output to master.
-  namespace tx1_pin {
-    static const uint8 kPinMask  = H(PINC2);
-    static inline void setup() {
-      DDRC |= kPinMask;   // output
-      PORTC |= kPinMask;  // high
-    }
-    static inline void setHigh() {
-      PORTC |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTC &= ~kPinMask;
-    }
-  }  // namespace tx1_pin
-
-  // Slave LIN RX - input, PcC1 Lin bus input.
-  namespace rx2_pin {
-    static const uint8 kPinMask  = H(PINC1);
-    static inline void setup() {
-      DDRC &= ~kPinMask;  // input
-      PORTC |= kPinMask;  // pullup
-    }
-    static inline uint8 isHigh() {
-      return  PINC & kPinMask;
-    }
-  }  // namespace rx2_pin
+  // Slae LIN interface.  
+  DEFINE_INPUT_PIN(rx2_pin, C, 1);
+  DEFINE_OUTPUT_PIN(tx2_pin, D, 4);
   
-  // LIN SLAVE TX - output, PD4. TX output to slave.
-  namespace tx2_pin {
-    static const uint8 kPinMask  = H(PIND4);
-    static inline void setup() {
-      DDRD |= kPinMask;    // output
-      PORTD |= kPinMask;  // high
-    }
-    static inline void setHigh() {
-      PORTD |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTD &= ~kPinMask;
-    }
-  }  // namespace tx2_pin
-  
-  // BREAK - output, PC0. Indicates detection of a break. For debugging.
-  namespace break_pin {
-    static const uint8 kPinMask  = H(PINC0);
-    static inline void setup() {
-      DDRC |= kPinMask;    // output
-      PORTC &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTC |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTC &= ~kPinMask;
-    }
-  }  // namespace break_pin
-
-  // SAMPLE - output, PB4 (MISO). Indicates input bit sampling. For debugging.
-  namespace sample_pin {
-    static const uint8 kPinMask  = H(PINB4);
-    static inline void setup() {
-      DDRB |= kPinMask;    // output
-      PORTB &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTB |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTB &= ~kPinMask;
-    }
-  }  // namespace sample_pin
-
-  // ERROR - output, PB3 (MOSI). Indicates errors detection. For debugging.
-  namespace error_pin {
-    static const uint8 kPinMask  = H(PINB3);
-    static inline void setup() {
-      DDRB |= kPinMask;    // output
-      PORTB &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTB |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTB &= ~kPinMask;
-    }
-  }  // namespace error_pin
-
-  // ISR - output, PC3. Indicate ISR execution period. For debugging.
-  namespace isr_pin {
-    static const uint8 kPinMask  = H(PINC3);
-    static inline void setup() {
-      DDRC |= kPinMask;    // output
-      PORTC &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTC |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTC &= ~kPinMask;
-    }
-  }  // namespace isr_pin
+  // Debugging signals.
+  DEFINE_OUTPUT_PIN(break_pin, C, 0);
+  DEFINE_OUTPUT_PIN(sample_pin, B, 4);
+  DEFINE_OUTPUT_PIN(error_pin, B, 3);
+  DEFINE_OUTPUT_PIN(isr_pin, C, 3);
 
   // Called one during initialization.
   static inline void setupPins() {
