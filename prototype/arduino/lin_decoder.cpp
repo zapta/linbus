@@ -1,4 +1,4 @@
-5// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
@@ -127,6 +127,18 @@ private:
     }
   }  // namespace tx1_pin
 
+  // Slave LIN RX - input, PcC1 Lin bus input.
+  namespace rx2_pin {
+    static const uint8 kPinMask  = H(PINC1);
+    static inline void setup() {
+      DDRC &= ~kPinMask;  // input
+      PORTC |= kPinMask;  // pullup
+    }
+    static inline uint8 isHigh() {
+      return  PINC & kPinMask;
+    }
+  }  // namespace rx2_pin
+  
   // LIN SLAVE TX - output, PD4. TX output to slave.
   namespace tx2_pin {
     static const uint8 kPinMask  = H(PIND4);
@@ -206,6 +218,7 @@ private:
   static inline void setupPins() {
     rx1_pin::setup();
     tx1_pin::setup();
+    rx2_pin::setup();
     tx2_pin::setup();
     break_pin::setup();
     sample_pin::setup();
@@ -309,6 +322,10 @@ private:
     // Number of complete bytes read so far. Includes all bytes, even
     // sync, id and checksum.
     static uint8 bytes_read_;
+    // Indicates the direction of passing the bytes. True -> master to slave,
+    // False -> slave to master. Meaningfull only when bytes_read_ >= 2 (
+    // past the sync and id bytes).
+    static boolean master_to_slave_;
     // Number of bits read so far in the current byte. Includes start bit, 
     // 8 data bits and one stop bits.
     static uint8 bits_read_in_byte_;
@@ -553,6 +570,7 @@ private:
 
   uint8 StateReadData::bytes_read_;
   uint8 StateReadData::bits_read_in_byte_;
+  boolean StateReadData::master_to_slave_;
   uint8 StateReadData::byte_buffer_;
   uint8 StateReadData::byte_buffer_bit_mask_;
 
@@ -562,6 +580,10 @@ private:
     bytes_read_ = 0;
     bits_read_in_byte_ = 0;
     rx_frame_buffers[head_frame_buffer].reset();
+    
+    // This is ignored until we read the sync and id bytes
+    // but setting it here anyway for determinism.
+    master_to_slave_ = false;
 
     // TODO: handle post break timeout errors.
     // TODO: set a reasonable time limit.
