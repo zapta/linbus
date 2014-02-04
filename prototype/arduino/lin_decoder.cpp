@@ -25,9 +25,13 @@
 // If an out of range speed is specified, using this one.
 static const uint16 kDefaultBaud = 9600;
 
-// Wait at most 4 bits from the end of the stop bit of previous byte
+// Wait at most N bits from the end of the stop bit of previous byte
 // to the start bit of next byte.
-static const uint8 kMaxSpaceBits = 4;
+//
+// TODO: seperate values for pre response space (longer, e.g. 8) and pre
+// regular byte space (shorter, e.g. 4).
+//
+static const uint8 kMaxSpaceBits = 6;
 
 // Define an input pin with fast access. Using the macro does
 // not increase the pin access time compared to direct bit manipulation.
@@ -144,6 +148,7 @@ private:
   DEFINE_OUTPUT_PIN(sample_pin, B, 4);
   DEFINE_OUTPUT_PIN(error_pin, B, 3);
   DEFINE_OUTPUT_PIN(isr_pin, C, 3);
+  DEFINE_OUTPUT_PIN(gp_pin, D, 6);
 
   // Called one during initialization.
   static inline void setupPins() {
@@ -155,6 +160,7 @@ private:
     sample_pin::setup();
     error_pin::setup();
     isr_pin::setup();
+    gp_pin::setup();
   }
 
   // ----- ISR RX Ring Buffers -----
@@ -250,13 +256,11 @@ public:
     static inline void enter();
     static inline void handle_isr();
 private:
+    // Indicates if we read bytes from master (true) or slave (false).
+    static boolean rx_from_lin1_;
     // Number of complete bytes read so far. Includes all bytes, even
     // sync, id and checksum.
     static uint8 bytes_read_;
-    // Indicates the direction of passing the bytes. True -> master to slave,
-    // False -> slave to master. Meaningfull only when bytes_read_ >= 2 (
-    // past the sync and id bytes).
-    static boolean master_to_slave_;
     // Number of bits read so far in the current byte. Includes start bit, 
     // 8 data bits and one stop bits.
     static uint8 bits_read_in_byte_;
@@ -410,19 +414,23 @@ private:
       }
     } 
   }
+  
+  static inline boolean isRxHigh(boolean use_rx1) {
+    return use_rx1 ? rx1_pin::isHigh() : rx2_pin::isHigh(); 
+  } 
 
   // Perform a tight busy loop until RX is low or the given number
   // of clock ticks passed (timeout). Retuns true if ok,
   // false if timeout. Keeps timer reset during the wait.
   // Called from ISR only.
-  static inline boolean waitForRxLow(uint16 max_clock_ticks) {
+  static inline boolean waitForRxLow(uint16 max_clock_ticks, boolean use_rx1) {
     const uint16 base_clock = hardware_clock::ticksForIsr();
     for(;;) {
       // Keep the tick timer not ticking (no ISR).
       resetTickTimer();
 
-      // If rx is low we are done.
-      if (!rx1_pin::isHigh()) {
+      // If selected rx is low we are done.
+      if (!isRxHigh(use_rx1)) {
         return true;
       }
 
@@ -438,11 +446,11 @@ private:
   // Same as waitForRxLow but with reversed polarity.
   // We clone to code for time optimization.
   // Called from ISR only.
-  static inline boolean waitForRxHigh(uint16 max_clock_ticks) {
+  static inline boolean waitForRxHigh(uint16 max_clock_ticks, boolean use_rx1) {
     const uint16 base_clock = hardware_clock::ticksForIsr();
     for(;;) {
       resetTickTimer();
-      if (rx1_pin::isHigh()) {
+      if (isRxHigh(use_rx1)) {
         return true;
       }
       // Should work also in case of an clock overflow.
@@ -453,6 +461,43 @@ private:
     } 
   }
 
+
+  // Wait for a high to low transition in any of the two channels or timeout
+  // if max clock ticks elapsed. Return 0 if timeout, 1 if rx1 or 2 if rx2.
+  // Keeps the tick timer reset to avoid interrupts.
+  // Called from an ISR.
+  static inline byte waitForResponseStartBit(uint16 max_clock_ticks) {
+    const uint16 base_clock = hardware_clock::ticksForIsr();
+    boolean state1 = rx1_pin::isHigh();
+    boolean state2 = rx2_pin::isHigh();
+    for(;;) {
+      resetTickTimer();  
+      // High to low transition on channel 2?     
+      {
+        const boolean new_state1 = rx1_pin::isHigh();
+        if (state1 && !new_state1) {
+          return 1;
+        }
+        state1 = new_state1;
+      }
+      // High to low transition on channel 2?    
+      {
+        const boolean new_state2 = rx2_pin::isHigh();
+        if (state2 && !new_state2) {
+          return 2;
+        }
+        state2 = new_state2;
+      }
+      
+      // Check for timeout.
+      // NOTE: substraction should work also in case of an clock overflow.
+      const uint16 clock_diff = hardware_clock::ticksForIsr() - base_clock;
+      if (clock_diff >= max_clock_ticks) {
+        return 0; 
+      }
+    } 
+  }
+  
   // ----- Detect-Break State Implementation -----
 
   uint8 StateDetectBreak::low_bits_counter_;
@@ -485,7 +530,7 @@ private:
     break_pin::setHigh();
 
     // TODO: set actual max count
-    waitForRxHigh(255);
+    waitForRxHigh(255, true);
     break_pin::setLow();
 
     // Wait for half a bit before we propogate the end of the break
@@ -501,7 +546,7 @@ private:
 
   uint8 StateReadData::bytes_read_;
   uint8 StateReadData::bits_read_in_byte_;
-  boolean StateReadData::master_to_slave_;
+  boolean StateReadData::rx_from_lin1_;
   uint8 StateReadData::byte_buffer_;
   uint8 StateReadData::byte_buffer_bit_mask_;
 
@@ -512,31 +557,41 @@ private:
     bits_read_in_byte_ = 0;
     rx_frame_buffers[head_frame_buffer].reset();
     
-    // This is ignored until we read the sync and id bytes
-    // but setting it here anyway for determinism.
-    master_to_slave_ = false;
+    // True: reading from rx1. False: reading from rx2.
+    rx_from_lin1_ = true;
 
     // TODO: handle post break timeout errors.
     // TODO: set a reasonable time limit.
-    waitForRxLow(255);
+    waitForRxLow(255, true);
     setTimerToHalfTick();   
   }
 
   inline void StateReadData::handle_isr() {
-    // Sample data bit ASAP to avoid jitter.
+    // Sample data bit ASAP to avoid jitter and porpogate to the other
+    // channel. Since we sample at the middle of the bit, the output
+    // channel is delayed by 1/2 bit.
+    //
+    // TODO: refactor to a seperate method.
+    boolean is_rx_high;
     sample_pin::setHigh();
-    const uint8 is_rx_high = rx1_pin::isHigh();
-    sample_pin::setLow();
-
-    // Propogate the bit to the slave. Since we are sampling the master
-    // at the middle of its bits, this is delayed by half a bit.
-    if (is_rx_high) {
-      tx2_pin::setHigh();
+    if (rx_from_lin1_) {
+      is_rx_high = rx1_pin::isHigh();
+      if (is_rx_high) {
+        tx2_pin::setHigh();
+      } else {
+        tx2_pin::setLow();
+      }
     } else {
-      tx2_pin::setLow();
+      is_rx_high = rx2_pin::isHigh();
+      if (is_rx_high) {
+        tx1_pin::setHigh();
+      } else {
+        tx1_pin::setLow();
+      }
     }
+    sample_pin::setLow();
     
-    // Handle start bit.
+    // Handle byte's start bit.
     if (bits_read_in_byte_ == 0) {
       // Start bit error.
       if (is_rx_high) {
@@ -553,7 +608,8 @@ private:
       return;
     }
 
-    // Handle next, out of 8, data bits. Collect the current bit into byte_buffer_, lsb first.
+    // Handle next data bit, 1 out of total of 8. 
+    // Collect the current bit into byte_buffer_, lsb first.
     if (bits_read_in_byte_ <= 8) {
       if (is_rx_high) {
         byte_buffer_ |= byte_buffer_bit_mask_;
@@ -562,42 +618,56 @@ private:
       bits_read_in_byte_++;
       return;
     }
+    
+    // Here when in a stop bit. 
+    bytes_read_++;
+    bits_read_in_byte_ = 0;
 
-    // Here when stop bit. Error if not high.
+    // Error if stop bit is not high.
     if (!is_rx_high) {
       // If in sync byte, report as sync error.
       setErrorFlags(bytes_read_ == 0 ? errors::SYNC_BYTE : errors::STOP_BIT);
       StateDetectBreak::enter();
       return;
     }  
-
-    // Handle sync byte.
-    if (bytes_read_ == 0) {
+    
+    // If this is a stop bit of a sync byte, verify that it has
+    // the expected value.
+    if (bytes_read_ == 1) {
       // Should be exactly 0x55. We don't append this byte to the buffer.
       if (byte_buffer_ != 0x55) {
         setErrorFlags(errors::SYNC_BYTE);
         StateDetectBreak::enter();
         return;
       }
-    } 
-    // Handle non sync byte. We append it to the buffer.
-    else {
+    }  else {   
+     // Handle non sync byte. We append it to the buffer.
       // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
       // will not cause a buffer overlow.
       rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);
-      //LinFrame* const frame_buffer = &rx_frame_buffers[head_frame_buffer];
-      //frame_buffer->bytes_[frame_buffer->num_bytes_++] = byte_buffer_;
+      
+      // TODO: @@@ temp for debugging. Remove. Trigger for a specific ID.
+      // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      if (bytes_read_ == 2 && byte_buffer_ == 0x8e) {
+        gp_pin::setHigh();
+        gp_pin::setLow();  
+      }
+    }
+    
+    boolean has_more_bytes = false;
+    if (bytes_read_ == 2) {
+      // Master sent sync and ID bytes and now we need to wait for the response. It can 
+      // come from the master (1) or the slave (2), or 0 for timeout.
+      // TODO: user longer timeout than for normal bytes.
+      const byte lin_channel_ = waitForResponseStartBit(config.clock_ticks_per_until_start_bit());
+      has_more_bytes = lin_channel_;
+      rx_from_lin1_ = (lin_channel_ != 2);
+    } else {
+      // Wait for the high to low transition of start bit of next byte. Using existing channel.
+      has_more_bytes =  waitForRxLow(config.clock_ticks_per_until_start_bit(), rx_from_lin1_);
     }
 
-    // Preper for next byte. We will reset the byte_buffer in the next start
-    // bit, not here.
-    bytes_read_++;
-    bits_read_in_byte_ = 0;
-
-    // Wait for the high to low transition of start bit of next byte.
-    const boolean has_more_bytes =  waitForRxLow(config.clock_ticks_per_until_start_bit());
-
-    // Handle the case of no transition. We just read the last byte in this frame.
+    // Handle the case of no more bytes in this frame.
     if (!has_more_bytes) {
       // Verify min byte count.
       if (bytes_read_ < LinFrame::kMinBytes) {
