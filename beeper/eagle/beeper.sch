@@ -16243,7 +16243,7 @@ Source: www.kingbright.com</description>
 <part name="D5" library="led" deviceset="LED" device="SMT1206" value="RED"/>
 <part name="D6" library="led" deviceset="LED" device="SMT1206" value="GREEN"/>
 <part name="D7" library="led" deviceset="LED" device="SMT1206" value="GREEN"/>
-<part name="C1" library="rcl" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF"/>
+<part name="C1" library="rcl" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF 40V"/>
 <part name="C2" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="C5" library="rcl" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
 <part name="C4" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
@@ -16358,7 +16358,10 @@ max volume</text>
 <instance part="D5" gate="G$1" x="259.08" y="83.82"/>
 <instance part="D6" gate="G$1" x="271.78" y="83.82"/>
 <instance part="D7" gate="G$1" x="284.48" y="83.82"/>
-<instance part="C1" gate="G$1" x="152.4" y="195.58"/>
+<instance part="C1" gate="G$1" x="152.4" y="195.58" smashed="yes">
+<attribute name="NAME" x="153.416" y="196.215" size="1.778" layer="95"/>
+<attribute name="VALUE" x="140.716" y="191.389" size="1.778" layer="96"/>
+</instance>
 <instance part="C2" gate="G$1" x="167.64" y="195.58"/>
 <instance part="C5" gate="G$1" x="167.64" y="172.72"/>
 <instance part="C4" gate="G$1" x="205.74" y="144.78" rot="R90"/>

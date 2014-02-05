@@ -1889,7 +1889,7 @@ design rules under a new name.</description>
 <element name="D7" library="led" package="1206" value="GREEN" x="21.59" y="3.81" smashed="yes" rot="R270">
 <attribute name="NAME" x="18.923" y="4.318" size="1.016" layer="25"/>
 </element>
-<element name="C1" library="rcl" package="UD-6,3X5,8_NICHICON" value="22uF" x="10.16" y="24.765" smashed="yes">
+<element name="C1" library="rcl" package="UD-6,3X5,8_NICHICON" value="22uF 40V" x="10.16" y="24.765" smashed="yes">
 <attribute name="NAME" x="13.4366" y="23.114" size="1.016" layer="25"/>
 </element>
 <element name="C2" library="rcl" package="C0805" value="0.1uF" x="3.3528" y="23.0124" smashed="yes" rot="R180">

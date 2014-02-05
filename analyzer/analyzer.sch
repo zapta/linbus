@@ -15033,7 +15033,7 @@ Source: &lt;a href="http://www.fairchildsemi.com/ds/MO%2FMOCD207-M.pdf"&gt; Data
 <part name="GND8" library="analyzer" deviceset="GND" device=""/>
 <part name="D3" library="led" deviceset="LED" device="SMT1206" value="RED"/>
 <part name="D4" library="led" deviceset="LED" device="SMT1206" value="GREEN"/>
-<part name="C5" library="rcl" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF"/>
+<part name="C5" library="rcl" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF 40V"/>
 <part name="C7" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="F1" library="analyzer" deviceset="FUSE" device="" value="250ma"/>
 <part name="C9" library="rcl" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
@@ -15138,7 +15138,10 @@ Source: &lt;a href="http://www.fairchildsemi.com/ds/MO%2FMOCD207-M.pdf"&gt; Data
 <instance part="GND8" gate="1" x="289.56" y="147.32" rot="MR0"/>
 <instance part="D3" gate="G$1" x="276.86" y="111.76"/>
 <instance part="D4" gate="G$1" x="289.56" y="111.76"/>
-<instance part="C5" gate="G$1" x="142.24" y="190.5"/>
+<instance part="C5" gate="G$1" x="142.24" y="190.5" smashed="yes">
+<attribute name="NAME" x="143.256" y="191.135" size="1.778" layer="95"/>
+<attribute name="VALUE" x="138.176" y="183.769" size="1.778" layer="96" rot="R90"/>
+</instance>
 <instance part="C7" gate="G$1" x="152.4" y="190.5"/>
 <instance part="F1" gate="G$1" x="106.68" y="195.58"/>
 <instance part="C9" gate="G$1" x="172.72" y="170.18"/>
@@ -15153,7 +15156,9 @@ Source: &lt;a href="http://www.fairchildsemi.com/ds/MO%2FMOCD207-M.pdf"&gt; Data
 <instance part="GND20" gate="1" x="86.36" y="45.72"/>
 <instance part="SUPPLY1" gate="G$1" x="88.9" y="157.48"/>
 <instance part="SUPPLY2" gate="G$1" x="88.9" y="185.42"/>
-<instance part="SUPPLY3" gate="G$1" x="142.24" y="182.88"/>
+<instance part="SUPPLY3" gate="G$1" x="142.24" y="182.88" smashed="yes">
+<attribute name="VALUE" x="140.081" y="179.705" size="1.778" layer="96"/>
+</instance>
 <instance part="SUPPLY4" gate="G$1" x="152.4" y="182.88"/>
 <instance part="SUPPLY5" gate="G$1" x="99.06" y="116.84"/>
 <instance part="SUPPLY6" gate="G$1" x="124.46" y="116.84"/>
