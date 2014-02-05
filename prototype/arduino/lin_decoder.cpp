@@ -139,7 +139,7 @@ private:
   DEFINE_INPUT_PIN(rx1_pin, D, 2);
   DEFINE_OUTPUT_PIN(tx1_pin, C, 2);
   
-  // Slae LIN interface.  
+  // Slave LIN interface.  
   DEFINE_INPUT_PIN(rx2_pin, C, 1);
   DEFINE_OUTPUT_PIN(tx2_pin, D, 4);
   
@@ -631,8 +631,8 @@ private:
       return;
     }  
     
-    // If this is a stop bit of a sync byte, verify that it has
-    // the expected value.
+    // If we just read the LIN sync byte, verify that it has
+    // the expected value.    // the expected value.
     if (bytes_read_ == 1) {
       // Should be exactly 0x55. We don't append this byte to the buffer.
       if (byte_buffer_ != 0x55) {

@@ -21,7 +21,6 @@
 
 // Config for P981/Cayman.
 static const uint16 kLinSpeed = 19200;
-static const boolean kUseLinV2Checksum = true;
 
 // Config pin. Sampled once during initialization and does not change value
 // after that. Slects one of two configurations. Default configuration is when
@@ -103,7 +102,7 @@ void loop()
     // Handle recieved LIN frames.
     LinFrame frame;
     if (lin_decoder::readNextFrame(&frame)) {
-      const boolean frameOk = frame.isValid(kUseLinV2Checksum);
+      const boolean frameOk = frame.isValid();
       if (frameOk) {
         frames_activity_led.action();
       } 
