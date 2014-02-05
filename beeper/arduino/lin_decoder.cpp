@@ -29,7 +29,38 @@ static const uint16 kDefaultBaud = 9600;
 // to the start bit of next byte.
 static const uint8 kMaxSpaceBits = 4;
 
-// ----- Debugging outputs
+// Define an input pin with fast access. Using the macro does
+// not increase the pin access time compared to direct bit manipulation.
+// Pin is setup with active pullup.
+#define DEFINE_INPUT_PIN(name, port_letter, bit_index) \
+  namespace name { \
+    static const uint8 kPinMask  = H(bit_index); \
+    static inline void setup() { \
+      DDR ## port_letter &= ~kPinMask;  \
+      PORT ## port_letter |= kPinMask;  \
+    } \
+    static inline uint8 isHigh() { \
+      return  PIN##port_letter & kPinMask; \
+    } \
+  } 
+ 
+// Define an output pin with fast access. Using the macro does
+// not increase the pin access time compared to direct bit manipulation.
+#define DEFINE_OUTPUT_PIN(name, port_letter, bit_index) \
+  namespace name { \
+    static const uint8 kPinMask  = H(bit_index); \
+    static inline void setup() { \
+      DDR ## port_letter |= kPinMask;  \
+      PORT ## port_letter |= kPinMask; \
+    } \
+    static inline void setHigh() { \
+      PORT ## port_letter |= kPinMask; \
+    } \
+    static inline void setLow() { \
+      PORT ## port_letter &= ~kPinMask; \
+    } \
+  }  
+  
 
 namespace lin_decoder {
 
@@ -94,78 +125,15 @@ private:
   //
   // NOTE: we use direct register access instead the abstractions in io_pins.h. 
   // This way we shave a few cycles from the ISR.
-
-  // Master LIN RX - input, PD2. Lin bus input.
-  namespace rx_pin {
-    static const uint8 kPinMask  = H(PIND2);
-    static inline void setup() {
-      DDRD &= ~kPinMask;  // input
-      PORTD |= kPinMask;  // pullup
-    }
-    static inline uint8 isHigh() {
-      return  PIND & kPinMask;
-    }
-  }  // namespace rx_pin
+    
+  // LIN interface.
+  DEFINE_INPUT_PIN(rx_pin, D, 2);
   
-  // BREAK - output, PC0. Indicates detection of a break. For debugging.
-  namespace break_pin {
-    static const uint8 kPinMask  = H(PINC0);
-    static inline void setup() {
-      DDRC |= kPinMask;    // output
-      PORTC &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTC |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTC &= ~kPinMask;
-    }
-  }  // namespace break_pin
-
-  // SAMPLE - output, PB4 (MISO). Indicates input bit sampling. For debugging.
-  namespace sample_pin {
-    static const uint8 kPinMask  = H(PINB4);
-    static inline void setup() {
-      DDRB |= kPinMask;    // output
-      PORTB &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTB |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTB &= ~kPinMask;
-    }
-  }  // namespace sample_pin
-
-  // ERROR - output, PB3 (MOSI). Indicates errors detection. For debugging.
-  namespace error_pin {
-    static const uint8 kPinMask  = H(PINB3);
-    static inline void setup() {
-      DDRB |= kPinMask;    // output
-      PORTB &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTB |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTB &= ~kPinMask;
-    }
-  }  // namespace error_pin
-
-  // ISR - output, PC3. Indicate ISR execution period. For debugging.
-  namespace isr_pin {
-    static const uint8 kPinMask  = H(PINC3);
-    static inline void setup() {
-      DDRC |= kPinMask;    // output
-      PORTC &= ~kPinMask;  // low
-    }
-    static inline void setHigh() {
-      PORTC |= kPinMask;
-    }
-    static inline void setLow() {
-      PORTC &= ~kPinMask;
-    }
-  }  // namespace isr_pin
+  // Debugging signals.
+  DEFINE_OUTPUT_PIN(break_pin, C, 0);
+  DEFINE_OUTPUT_PIN(sample_pin, B, 4);
+  DEFINE_OUTPUT_PIN(error_pin, B, 3);
+  DEFINE_OUTPUT_PIN(isr_pin, C, 3);
 
   // Called one during initialization.
   static inline void setupPins() {
@@ -534,42 +502,39 @@ private:
       bits_read_in_byte_++;
       return;
     }
+    
+    // Here when in a stop bit. 
+    bytes_read_++;
+    bits_read_in_byte_ = 0;
 
-    // Here when stop bit. Error if not high.
+    // Error if stop bit is not high.
     if (!is_rx_high) {
       // If in sync byte, report as sync error.
       setErrorFlags(bytes_read_ == 0 ? errors::SYNC_BYTE : errors::STOP_BIT);
       StateDetectBreak::enter();
       return;
     }  
-
-    // Handle sync byte.
-    if (bytes_read_ == 0) {
+    
+    // If we just read the LIN sync byte, verify that it has
+    // the expected value.
+    if (bytes_read_ == 1) {
       // Should be exactly 0x55. We don't append this byte to the buffer.
       if (byte_buffer_ != 0x55) {
         setErrorFlags(errors::SYNC_BYTE);
         StateDetectBreak::enter();
         return;
       }
-    } 
-    // Handle non sync byte. We append it to the buffer.
-    else {
+    }  else {   
+      // Handle non sync byte. We append it to the buffer.
       // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
       // will not cause a buffer overlow.
       rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);
-      //LinFrame* const frame_buffer = &rx_frame_buffers[head_frame_buffer];
-      //frame_buffer->bytes_[frame_buffer->num_bytes_++] = byte_buffer_;
     }
-
-    // Preper for next byte. We will reset the byte_buffer in the next start
-    // bit, not here.
-    bytes_read_++;
-    bits_read_in_byte_ = 0;
 
     // Wait for the high to low transition of start bit of next byte.
     const boolean has_more_bytes =  waitForRxLow(config.clock_ticks_per_until_start_bit());
 
-    // Handle the case of no transition. We just read the last byte in this frame.
+    // Handle the case of no more bytes in this frame.
     if (!has_more_bytes) {
       // Verify min byte count.
       if (bytes_read_ < LinFrame::kMinBytes) {
