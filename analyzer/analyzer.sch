@@ -15091,7 +15091,7 @@ Source: &lt;a href="http://www.fairchildsemi.com/ds/MO%2FMOCD207-M.pdf"&gt; Data
 <text x="76.2" y="185.42" size="1.778" layer="91">LIN1</text>
 <text x="76.2" y="157.48" size="1.778" layer="91">LIN2</text>
 <text x="121.92" y="35.56" size="2.54" layer="97">USB/Serial</text>
-<text x="116.84" y="106.68" size="2.54" layer="97">LINBUS Interface</text>
+<text x="111.76" y="106.68" size="2.54" layer="97">Isolated LINBUS Interface</text>
 <text x="251.46" y="68.58" size="2.54" layer="97">ICSP</text>
 <text x="251.46" y="96.52" size="2.54" layer="97">MCU</text>
 <text x="231.14" y="53.34" size="2.54" layer="97" font="vector">DESIGN NOT VERIFIED YET</text>
