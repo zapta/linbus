@@ -321,7 +321,7 @@
 <wire x1="15.24" y1="30.48" x2="15.24" y2="-38.1" width="0.254" layer="94"/>
 <wire x1="15.24" y1="-38.1" x2="-15.24" y2="-38.1" width="0.254" layer="94"/>
 <wire x1="-15.24" y1="-38.1" x2="-15.24" y2="30.48" width="0.254" layer="94"/>
-<pin name="LIN_RXI" x="-20.32" y="20.32" length="middle" direction="in"/>
+<pin name="LIN_RXI" x="-20.32" y="17.78" length="middle" direction="in"/>
 <pin name="+5V@2" x="0" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="GND@1" x="-5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
 <pin name="GND@2" x="0" y="-43.18" length="middle" direction="pwr" rot="R90"/>
@@ -333,13 +333,10 @@
 <pin name="RST" x="-20.32" y="-33.02" length="middle" direction="in" function="dot"/>
 <text x="12.7" y="-43.18" size="1.778" layer="96">&gt;VALUE</text>
 <text x="12.7" y="-40.64" size="1.778" layer="95">&gt;NAME</text>
-<pin name="LIN_TICK" x="20.32" y="10.16" length="middle" direction="out" rot="R180"/>
-<pin name="SCK" x="-20.32" y="-17.78" length="middle" direction="out"/>
-<pin name="LIN_BREAK" x="20.32" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="MOSI" x="-20.32" y="-22.86" length="middle" direction="in"/>
-<pin name="MISO" x="-20.32" y="-20.32" length="middle" direction="in"/>
+<pin name="SCK" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
+<pin name="MOSI" x="20.32" y="2.54" length="middle" direction="in" rot="R180"/>
+<pin name="MISO" x="20.32" y="5.08" length="middle" direction="in" rot="R180"/>
 <pin name="BUZZER" x="20.32" y="-10.16" length="middle" direction="out" rot="R180"/>
-<pin name="LIN_ISR" x="20.32" y="7.62" length="middle" direction="out" rot="R180"/>
 <pin name="+5V@3" x="5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="+5V@1" x="-5.08" y="35.56" length="middle" direction="pwr" rot="R270"/>
 <pin name="GND@3" x="5.08" y="-43.18" length="middle" direction="pwr" rot="R90"/>
@@ -351,20 +348,20 @@
 <pin name="GND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
 </symbol>
 <symbol name="ATA6631">
-<pin name="LIN" x="-15.24" y="0" length="middle"/>
-<wire x1="-10.16" y1="17.78" x2="-10.16" y2="-25.4" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="-25.4" x2="10.16" y2="-25.4" width="0.254" layer="94"/>
-<wire x1="10.16" y1="-25.4" x2="10.16" y2="17.78" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="17.78" x2="10.16" y2="17.78" width="0.254" layer="94"/>
-<pin name="VS" x="0" y="20.32" length="short" direction="pwr" rot="R270"/>
-<pin name="GND" x="0" y="-27.94" length="short" direction="pwr" rot="R90"/>
-<pin name="RXO" x="15.24" y="-20.32" length="middle" direction="out" rot="R180"/>
+<pin name="LIN" x="-15.24" y="-10.16" length="middle"/>
+<wire x1="-10.16" y1="7.62" x2="-10.16" y2="-27.94" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-27.94" x2="10.16" y2="-27.94" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-27.94" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<pin name="VS" x="0" y="10.16" length="short" direction="pwr" rot="R270"/>
+<pin name="GND" x="0" y="-30.48" length="short" direction="pwr" rot="R90"/>
+<pin name="RXO" x="15.24" y="-22.86" length="middle" direction="out" rot="R180"/>
 <pin name="TXI" x="15.24" y="-15.24" length="middle" direction="in" rot="R180"/>
-<pin name="ENI" x="15.24" y="2.54" length="middle" direction="in" rot="R180"/>
-<pin name="NRES" x="-15.24" y="-15.24" length="middle" direction="out" function="dot"/>
-<text x="7.62" y="-27.94" size="1.778" layer="95">&gt;NAME</text>
-<text x="7.62" y="-30.48" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="+5V" x="15.24" y="12.7" length="middle" direction="sup" rot="R180"/>
+<pin name="ENI" x="15.24" y="-5.08" length="middle" direction="in" rot="R180"/>
+<pin name="NRES" x="-15.24" y="-17.78" length="middle" direction="out" function="dot"/>
+<text x="7.62" y="-30.48" size="1.778" layer="95">&gt;NAME</text>
+<text x="7.62" y="-33.02" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="+5V" x="15.24" y="0" length="middle" direction="sup" rot="R180"/>
 </symbol>
 <symbol name="SPEAKER">
 <wire x1="-1.905" y1="-0.635" x2="1.905" y2="-0.635" width="0.254" layer="94"/>
@@ -446,10 +443,7 @@
 <connect gate="G$1" pin="GND@1" pad="3"/>
 <connect gate="G$1" pin="GND@2" pad="21"/>
 <connect gate="G$1" pin="GND@3" pad="5"/>
-<connect gate="G$1" pin="LIN_BREAK" pad="23"/>
-<connect gate="G$1" pin="LIN_ISR" pad="26"/>
 <connect gate="G$1" pin="LIN_RXI" pad="32"/>
-<connect gate="G$1" pin="LIN_TICK" pad="1"/>
 <connect gate="G$1" pin="MISO" pad="16"/>
 <connect gate="G$1" pin="MOSI" pad="15"/>
 <connect gate="G$1" pin="RST" pad="29"/>
