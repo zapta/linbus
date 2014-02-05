@@ -12,13 +12,13 @@
 
 #include "lin_frame.h"
 
-// A container for a single lin frame, including the id, data and checksum.
-uint8 LinFrame::computeChecksum(boolean use_lin_v2_checksum) const {
-  // LIN V2 includes ID byte in checksum, V1 does not.
-  // Per the assumption above, we have at least one byte.
-  const uint8 startByte = use_lin_v2_checksum ? 0 : 1;
+// Compute the checksum of the frame. For now using LIN checksum V2 only.
+uint8 LinFrame::computeChecksum() const {
+  // LIN V2 checksum includes the ID byte.
+  const uint8 startByte = 0;
   const uint8* p = &bytes_[startByte];
-  // Exclude also the checksum at the end.
+  
+  // Exclude the checksum byte at the end of the frame.
   uint8 nBytes = num_bytes_ - (startByte + 1);
 
   // Sum bytes. We should not have 16 bit overflow here since the frame has a limited size.
@@ -74,7 +74,7 @@ uint8 LinFrame::setLinIdChecksumBits(uint8 id) {
   return (p1_at_b7 & 0b10000000) | (p0_at_b6 & 0b01000000) | (id & 0b00111111);
 }
 
-boolean LinFrame::isValid(boolean use_lin_v2_checksum) const {
+boolean LinFrame::isValid() const {
   const uint8 n = num_bytes_;
 
   // Check frame size.
@@ -93,7 +93,7 @@ boolean LinFrame::isValid(boolean use_lin_v2_checksum) const {
 
   // If not an ID only frame, check also the overall checksum.
   if (n > 1) {
-    if (bytes_[n - 1] != computeChecksum(use_lin_v2_checksum)) {
+    if (bytes_[n - 1] != computeChecksum()) {
       return false;
     }  
   }

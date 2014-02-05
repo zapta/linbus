@@ -25,7 +25,7 @@
 // If an out of range speed is specified, using this one.
 static const uint16 kDefaultBaud = 9600;
 
-// Wait at most 4 bits from the end of the stop bit of previous byte
+// Wait at most N bits from the end of the stop bit of previous byte
 // to the start bit of next byte.
 static const uint8 kMaxSpaceBits = 4;
 
@@ -493,7 +493,8 @@ private:
       return;
     }
 
-    // Handle next, out of 8, data bits. Collect the current bit into byte_buffer_, lsb first.
+    // Handle next data bit, 1 out of total of 8. 
+    // Collect the current bit into byte_buffer_, lsb first.
     if (bits_read_in_byte_ <= 8) {
       if (is_rx_high) {
         byte_buffer_ |= byte_buffer_bit_mask_;

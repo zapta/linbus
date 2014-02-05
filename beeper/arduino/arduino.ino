@@ -21,7 +21,6 @@
 
 // Config for P981/Cayman.
 static const uint16 kLinSpeed = 19200;
-static const boolean kUseLinV2Checksum = true;
 
 // ERRORS LED - blinks when detecting errors.
 static ActionLed errors_activity_led(PORTB, 1);
@@ -45,7 +44,7 @@ void setup()
   // Uses Timer1, no interrupts.
   hardware_clock::setup();
 
-  // Uses Timer2 with interrupts, and a few i/o pins. See file for details.
+  // Uses Timer2 with interrupts, and a few i/o pins. See source code for details.
   lin_decoder::setup(kLinSpeed);
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
@@ -105,7 +104,7 @@ void loop()
     // Handle recieved LIN frames.
     LinFrame frame;
     if (lin_decoder::readNextFrame(&frame)) {
-      const boolean frameOk = frame.isValid(kUseLinV2Checksum);
+      const boolean frameOk = frame.isValid();
       if (frameOk) {
         // Make the FRAMES led blinking.
         frames_activity_led.action();

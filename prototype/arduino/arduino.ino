@@ -22,14 +22,6 @@
 // Config for P981/Cayman.
 static const uint16 kLinSpeed = 19200;
 
-// Config pin. Sampled once during initialization and does not change value
-// after that. Slects one of two configurations. Default configuration is when
-// high (pullup input left unconnected).
-//static io_pins::ConfigInputPin alt_config_pin(PORTB, 2);
-
-// Status LEDs.
-//static io_pins::OutputPin status_led(PORTD, 6);
-
 // Action LEDs. Indicates activity by blinking. Require periodic calls to
 // update().
 static ActionLed errors_activity_led(PORTB, 1);
@@ -48,7 +40,7 @@ void setup()
   // Uses Timer1, no interrupts.
   hardware_clock::setup();
 
-  // Uses Timer2 with interrupts, and a few i/o pins. See code for details.
+  // Uses Timer2 with interrupts, and a few i/o pins. See source code for details.
   lin_decoder::setup(kLinSpeed);
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
@@ -56,6 +48,7 @@ void setup()
   sei(); 
 }
 
+// Arduino loop() method. Called after setup(). Never returns.
 // This is a quick loop that does not use delay() or other busy loops or blocking calls.
 // The iterations are are at the or  sio::waitUntilFlushed();
 void loop()
@@ -71,7 +64,7 @@ void loop()
     frames_activity_led.loop();
     errors_activity_led.loop();  
 
-    // Generate periodic messages if no activiy.
+    // Print periodic text messages if no activiy.
     static PassiveTimer idle_timer;
     if (idle_timer.timeMillis() >= 3000) {
       status_activity_led.action(); 
@@ -81,14 +74,19 @@ void loop()
 
     // Handle LIN decoder error flags.
     {
+      // Used to trigger periodic error printing.
       static PassiveTimer lin_errors_timeout;
+      // Accomulates error flags until next printing.
       static uint8 pending_lin_errors = 0;
+      
       const uint8 new_lin_errors = lin_decoder::getAndClearErrorFlags();
       if (new_lin_errors) {
+        // Make the ERRORS led blinking.
         errors_activity_led.action();
         idle_timer.restart();
       }
 
+      // If pending errors and time to print then print and clear.
       pending_lin_errors |= new_lin_errors;
       if (pending_lin_errors && lin_errors_timeout.timeMillis() > 1000) {
         sio::print(F("LIN errors: "));
@@ -104,12 +102,15 @@ void loop()
     if (lin_decoder::readNextFrame(&frame)) {
       const boolean frameOk = frame.isValid();
       if (frameOk) {
+        // Make the FRAMES led blinking.
         frames_activity_led.action();
       } 
       else {
+        // Make the ERRORS frame blinking.
         errors_activity_led.action();
       }
-      // Dump frame.
+      
+      // Print frame to serial port.
       for (int i = 0; i < frame.num_bytes(); i++) {
         if (i > 0) {
           sio::printchar(' ');  
@@ -122,15 +123,14 @@ void loop()
       sio::println();  
       idle_timer.restart(); 
 
-      // Sample frame action.    
-      // Handle reverse gear alarm. Tested with P981/CS when connecting to the
-      // linbus near the windshiled mirror (homelink unit).
+      // Specific logic for P981/CS linbus of the homelink console. Triggers the
+      // buzzer when rear gear is engaged.
       // Test frame: 39 04 00 00 00 00 00.
       if (frameOk) {
         // Data bytes are between id and checksum bytes.
         const uint8 data_size = frame.num_bytes() - 2;
         const uint8 id = frame.get_byte(0);
-        if (data_size == 6 && id == 0x39) {
+        if (id == 0x39 && data_size == 6) {
           const boolean reverse_gear = frame.get_byte(1) & H(2);
           action_buzzer::action(reverse_gear);  
         }

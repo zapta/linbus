@@ -632,7 +632,7 @@ private:
     }  
     
     // If we just read the LIN sync byte, verify that it has
-    // the expected value.    // the expected value.
+    // the expected value.
     if (bytes_read_ == 1) {
       // Should be exactly 0x55. We don't append this byte to the buffer.
       if (byte_buffer_ != 0x55) {

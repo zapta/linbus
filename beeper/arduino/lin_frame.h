@@ -33,11 +33,11 @@ public:
   // [P1,P0][5:0] which is the wire representation of this id.
   static uint8 setLinIdChecksumBits(uint8 id);
   
-  boolean isValid(boolean use_lin_v2_checksum) const;
+  boolean isValid() const;
   
   // Compute LIN frame checksum. Assuming buffer has at least one byte. A valid 
   // frame should contain one byte for id, 1-8 bytes for data, one byte for checksum.
-  uint8 computeChecksum(boolean use_lin_v2_checksum) const;
+  uint8 computeChecksum() const;
 
   inline void reset() {
     num_bytes_ = 0;
