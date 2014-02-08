@@ -15,6 +15,9 @@
 #include <stdarg.h>
 
 namespace sio {
+  // TODO: do we need to set the i/o pins (PD0, PD1)? Do we rely on setting by 
+  // the bootloader?
+  
   // Size of output bytes queue. Shuold be <= 128 to avoid overflow.
   static const uint8 kQueueSize = 80;
   static uint8 buffer[kQueueSize];
