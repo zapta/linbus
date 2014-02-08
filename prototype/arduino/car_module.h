@@ -10,26 +10,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BUZZER_H
-#define BUZZER_H
+#ifndef CAR_MODULE_H
+#define CAR_MODULE_H
 
-#include <arduino.h>
 #include "avr_util.h"
+#include "lin_frame.h"
 
-// Controlled the buzzer signal on OC0B/PD5 pin. Uses timer 0.
-namespace action_buzzer {
-  // Call once from main setup(). Buzzer starts in off state.
+// Implement a car model specific functionality.
+namespace car_module {
+  // Called once during initialization.
   extern void setup();
 
-  // Call from each main loop().
+  // Called once on each iteration of the Arduino main loop().
   extern void loop();
 
-  // Buzzer wil keep beeping as long as this is called with true.
-  // Calling with false  cancels pending actions.
-  extern void action(boolean flag);  
-}  // namespace hardware_clock
+  // Called once when a new valid frame was recieved.
+  extern void frameArrived(const LinFrame& frame);
+  
+}  // namespace car_module
 
-#endif  
-
-
+#endif
 

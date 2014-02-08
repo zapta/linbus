@@ -12,7 +12,7 @@
 
 #include "action_led.h"
 #include "avr_util.h"
-#include "action_buzzer.h"
+#include "car_module.h"
 #include "hardware_clock.h"
 #include "io_pins.h"
 #include "lin_decoder.h"
@@ -22,26 +22,26 @@
 // Config for P981/Cayman.
 static const uint16 kLinSpeed = 19200;
 
-// Action LEDs. Indicates activity by blinking. Require periodic calls to
-// update().
+// ERRORS LED - blinks when detecting errors.
 static ActionLed errors_activity_led(PORTB, 1);
-static ActionLed frames_activity_led(PORTB, 0);
-static ActionLed status_activity_led(PORTD, 7);
 
+// FRAMES LED - blinks when detecting valid frames.
+static ActionLed frames_activity_led(PORTB, 0);
+
+// Arduino setup function. Called once during initialization.
 void setup()
 {
   // Hard coded to 115.2k baud. Uses URART0, no interrupts.
   // Initialize this first since some setup methods uses it.
   sio::setup();
 
-  // Init buzzer. Leaves in off state.
-  action_buzzer::setup();
-
   // Uses Timer1, no interrupts.
   hardware_clock::setup();
 
   // Uses Timer2 with interrupts, and a few i/o pins. See source code for details.
   lin_decoder::setup(kLinSpeed);
+  
+  car_module::setup();
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
   // the lin decoder to reduce ISR jitter.
@@ -49,8 +49,8 @@ void setup()
 }
 
 // Arduino loop() method. Called after setup(). Never returns.
-// This is a quick loop that does not use delay() or other busy loops or blocking calls.
-// The iterations are are at the or  sio::waitUntilFlushed();
+// This is a quick loop that does not use delay() or other busy loops or 
+// blocking calls.
 void loop()
 {
   // Having our own loop shaves about 4 usec per iteration. It also eliminate
@@ -59,15 +59,15 @@ void loop()
     // Periodic updates.
     system_clock::loop();    
     sio::loop();
-    action_buzzer::loop();
-    status_activity_led.loop();
     frames_activity_led.loop();
     errors_activity_led.loop();  
+    car_module::loop();
 
-    // Print periodic text messages if no activiy.
+    // Print a periodic text messages if no activiy.
     static PassiveTimer idle_timer;
     if (idle_timer.timeMillis() >= 3000) {
-      status_activity_led.action(); 
+      // Slow blinking indicates waiting.
+      frames_activity_led.action(); 
       sio::println(F("waiting..."));
       idle_timer.restart();
     }
@@ -123,17 +123,9 @@ void loop()
       sio::println();  
       idle_timer.restart(); 
 
-      // Specific logic for P981/CS linbus of the homelink console. Triggers the
-      // buzzer when rear gear is engaged.
-      // Test frame: 39 04 00 00 00 00 00.
+      // Inform the car module about the incoming frame.
       if (frameOk) {
-        // Data bytes are between id and checksum bytes.
-        const uint8 data_size = frame.num_bytes() - 2;
-        const uint8 id = frame.get_byte(0);
-        if (id == 0x39 && data_size == 6) {
-          const boolean reverse_gear = frame.get_byte(1) & H(2);
-          action_buzzer::action(reverse_gear);  
-        }
+        car_module::frameArrived(frame);
       }
     }
   }

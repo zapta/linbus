@@ -43,12 +43,12 @@ public:
     num_bytes_ = 0;
   }
 
-  inline uint8 num_bytes() {
+  inline uint8 num_bytes() const {
     return num_bytes_;
   }
   
   // Caller should verify that index < num_bytes.
-  inline uint8 get_byte(uint8 index) {
+  inline uint8 get_byte(uint8 index) const {
     return bytes_[index];
   }
   
