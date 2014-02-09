@@ -1,0 +1,29 @@
+TODO list for Linbus Beeper
+
+SCHEMATIC
+* Add a +5V LED.
+* Remove the buzzer series resistor (short it).
+* Change reset capacitor to 0.1uf (reduce SKU count)
+
+
+LAYOUT
+* Extend the pads of the MBR0540 diodes.
+* Extend the pads of the 22uf cap to allow hand soldering.
+* Add polarity marking for the 10Uf cap.
+* Add placement outline for the ata6631 chip.
+* Have consistent component name font size (e.g. F1 is larger than the rest).
+* Add pin1 marking for the serial interface header.
+
+
+SOFTWARE
+* Change the beep pattern, more aggressive sound brief sound when the reverse gear is engaged.
+* Have the status LED showing indictation as soon as the board is powered.
+
+
+MISCELLANEOUS
+* Add BOM document.
+* Improve documentation (e.g. how to attache to the car).
+
+
+
+
