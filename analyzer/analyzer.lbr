@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -707,7 +707,7 @@ Source: &lt;a href="http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_
 <pin name="VCC" x="0" y="17.78" length="short" direction="pwr" rot="R270"/>
 <pin name="TXO" x="17.78" y="10.16" length="middle" direction="out" rot="R180"/>
 <pin name="RXI" x="17.78" y="7.62" length="middle" direction="in" rot="R180"/>
-<pin name="RTSO" x="17.78" y="0" length="middle" direction="out" rot="R180"/>
+<pin name="RTSO" x="17.78" y="2.54" length="middle" direction="out" rot="R180"/>
 <pin name="3V3OUT" x="17.78" y="-5.08" length="middle" direction="pwr" rot="R180"/>
 <pin name="VCCIO" x="17.78" y="-7.62" length="middle" direction="pwr" rot="R180"/>
 <pin name="RESET" x="17.78" y="-10.16" length="middle" direction="in" rot="R180"/>
