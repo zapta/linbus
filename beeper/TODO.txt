@@ -2,12 +2,14 @@ TODO list for Linbus Beeper
 
 SCHEMATIC
 * Add a +5V LED.
-* Remove the buzzer series resistor (short it).
 * Change reset capacitor to 0.1uf (reduce SKU count)
+* Lourder beep (feed from +12V?)
+* Clean library (include all and nothing but what is used in the schematic).
 
 
 LAYOUT
 * Extend the pads of the MBR0540 diodes.
+* More clearance for the ICSP connector (on the serial connector side).
 * Extend the pads of the 22uf cap to allow hand soldering.
 * Add polarity marking for the 10Uf cap.
 * Add placement outline for the ata6631 chip.
