@@ -16200,8 +16200,8 @@ Source: www.kingbright.com</description>
 </classes>
 <parts>
 <part name="R5" library="rcl" deviceset="R-US_" device="R0805" value="3.3K"/>
-<part name="R6" library="rcl" deviceset="R-US_" device="R0805" value="470"/>
-<part name="R7" library="rcl" deviceset="R-US_" device="R0805" value="470"/>
+<part name="R6" library="rcl" deviceset="R-US_" device="R0805" value="3.3K"/>
+<part name="R7" library="rcl" deviceset="R-US_" device="R0805" value="3.3K"/>
 <part name="C6" library="rcl" deviceset="C-US" device="C0805" value="220pF"/>
 <part name="J1" library="pinhead" deviceset="PINHD-1X3" device=""/>
 <part name="FRAME2" library="frames" deviceset="LETTER_L" device=""/>
@@ -16211,7 +16211,7 @@ Source: www.kingbright.com</description>
 <part name="GND7" library="beeper" deviceset="GND" device=""/>
 <part name="C3" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="GND12" library="beeper" deviceset="GND" device=""/>
-<part name="C7" library="rcl" deviceset="C-US" device="C0805" value="0.01uF"/>
+<part name="C7" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
 <part name="R1" library="rcl" deviceset="R-US_" device="R0805" value="10k"/>
 <part name="R2" library="rcl" deviceset="R-US_" device="R0805" value="10k"/>
@@ -16221,11 +16221,11 @@ Source: www.kingbright.com</description>
 <part name="J4" library="pinhead" deviceset="PINHD-2X3" device="" value="ICSP"/>
 <part name="GND14" library="beeper" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
-<part name="R3" library="rcl" deviceset="R-US_" device="R0805" value="5K"/>
+<part name="R3" library="rcl" deviceset="R-US_" device="R0805" value="3.3K"/>
 <part name="T1" library="transistor" deviceset="*-NPN-" device="SOT23-BEC" technology="MMBT3904LT1" value="MMBT3904"/>
 <part name="GND18" library="beeper" deviceset="GND" device=""/>
 <part name="P+3" library="supply1" deviceset="+5V" device=""/>
-<part name="R4" library="rcl" deviceset="R-US_" device="R0805" value="220"/>
+<part name="R4" library="rcl" deviceset="R-US_" device="R0805" value="0"/>
 <part name="R8" library="rcl" deviceset="R-US_" device="R0805" value="10k"/>
 <part name="P+6" library="supply1" deviceset="+5V" device=""/>
 <part name="U1" library="beeper" deviceset="ATA6631" device=""/>
@@ -16239,7 +16239,7 @@ Source: www.kingbright.com</description>
 <part name="X1" library="beeper" deviceset="RESONATOR" device="SMD" value="16MHz"/>
 <part name="GND8" library="beeper" deviceset="GND" device=""/>
 <part name="SP1" library="beeper" deviceset="AL60P" device="" value="WT-1205"/>
-<part name="D4" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0560"/>
+<part name="D4" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
 <part name="D5" library="led" deviceset="LED" device="SMT1206" value="RED"/>
 <part name="D6" library="led" deviceset="LED" device="SMT1206" value="GREEN"/>
 <part name="D7" library="led" deviceset="LED" device="SMT1206" value="GREEN"/>
@@ -16272,8 +16272,8 @@ Source: www.kingbright.com</description>
 <text x="248.92" y="71.12" size="2.54" layer="97">DIGANOSTIC LEDS (Optional)</text>
 <text x="261.62" y="134.62" size="2.54" layer="97">BUZZER</text>
 <text x="215.9" y="53.34" size="2.54" layer="97">DESIGN NOT VERIFIED YET</text>
-<text x="274.828" y="180.34" size="1.778" layer="91">Short Ohm for 
-max volume</text>
+<text x="274.828" y="180.34" size="1.778" layer="91">Increase resistrance to
+reduce volume</text>
 </plain>
 <instances>
 <instance part="R5" gate="G$1" x="261.62" y="99.06" rot="R90"/>
