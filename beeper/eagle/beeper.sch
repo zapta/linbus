@@ -12424,9 +12424,8 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <pin name="GND@2" x="0" y="-43.18" length="middle" direction="pwr" rot="R90"/>
 <pin name="RXI" x="20.32" y="17.78" length="middle" direction="out" rot="R180"/>
 <pin name="TXO" x="20.32" y="20.32" length="middle" direction="in" rot="R180"/>
-<pin name="STATUS_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
-<pin name="FRAME_LED" x="20.32" y="-22.86" length="middle" direction="out" rot="R180"/>
-<pin name="ERROR_LED" x="20.32" y="-25.4" length="middle" direction="out" rot="R180"/>
+<pin name="FRAME_LED" x="20.32" y="-20.32" length="middle" direction="out" rot="R180"/>
+<pin name="ERROR_LED" x="20.32" y="-22.86" length="middle" direction="out" rot="R180"/>
 <pin name="RST" x="-20.32" y="-33.02" length="middle" direction="in" function="dot"/>
 <text x="12.7" y="-43.18" size="1.778" layer="96">&gt;VALUE</text>
 <text x="12.7" y="-40.64" size="1.778" layer="95">&gt;NAME</text>
@@ -12561,7 +12560,6 @@ Source: http://products.nichicon.co.jp/en/pdf/XJA043/e-ud.pdf</description>
 <connect gate="G$1" pin="RST" pad="29"/>
 <connect gate="G$1" pin="RXI" pad="30"/>
 <connect gate="G$1" pin="SCK" pad="17"/>
-<connect gate="G$1" pin="STATUS_LED" pad="11"/>
 <connect gate="G$1" pin="TXO" pad="31"/>
 <connect gate="G$1" pin="XTAL1" pad="7"/>
 <connect gate="G$1" pin="XTAL2" pad="8"/>
@@ -16201,7 +16199,6 @@ Source: www.kingbright.com</description>
 <parts>
 <part name="R5" library="rcl" deviceset="R-US_" device="R0805" value="3.3K"/>
 <part name="R6" library="rcl" deviceset="R-US_" device="R0805" value="3.3K"/>
-<part name="R7" library="rcl" deviceset="R-US_" device="R0805" value="3.3K"/>
 <part name="C6" library="rcl" deviceset="C-US" device="C0805" value="220pF"/>
 <part name="J1" library="pinhead" deviceset="PINHD-1X3" device=""/>
 <part name="FRAME2" library="frames" deviceset="LETTER_L" device=""/>
@@ -16216,7 +16213,6 @@ Source: www.kingbright.com</description>
 <part name="R1" library="rcl" deviceset="R-US_" device="R0805" value="10k"/>
 <part name="R2" library="rcl" deviceset="R-US_" device="R0805" value="10k"/>
 <part name="GND2" library="beeper" deviceset="GND" device=""/>
-<part name="GND13" library="beeper" deviceset="GND" device=""/>
 <part name="GND16" library="beeper" deviceset="GND" device=""/>
 <part name="J4" library="pinhead" deviceset="PINHD-2X3" device="" value="ICSP"/>
 <part name="GND14" library="beeper" deviceset="GND" device=""/>
@@ -16242,7 +16238,6 @@ Source: www.kingbright.com</description>
 <part name="D4" library="diode" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
 <part name="D5" library="led" deviceset="LED" device="SMT1206" value="RED"/>
 <part name="D6" library="led" deviceset="LED" device="SMT1206" value="GREEN"/>
-<part name="D7" library="led" deviceset="LED" device="SMT1206" value="GREEN"/>
 <part name="C1" library="rcl" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF 40V"/>
 <part name="C2" library="rcl" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="C5" library="rcl" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
@@ -16278,7 +16273,6 @@ reduce volume</text>
 <instances>
 <instance part="R5" gate="G$1" x="261.62" y="99.06" rot="R90"/>
 <instance part="R6" gate="G$1" x="274.32" y="99.06" rot="R90"/>
-<instance part="R7" gate="G$1" x="287.02" y="99.06" rot="R90"/>
 <instance part="C6" gate="G$1" x="99.06" y="154.94"/>
 <instance part="J1" gate="A" x="76.2" y="198.12" rot="MR0"/>
 <instance part="FRAME2" gate="G$1" x="60.96" y="25.4"/>
@@ -16303,7 +16297,6 @@ reduce volume</text>
 <attribute name="VALUE" x="102.616" y="60.198" size="1.778" layer="96" rot="MR0"/>
 </instance>
 <instance part="GND2" gate="1" x="274.32" y="81.28"/>
-<instance part="GND13" gate="1" x="287.02" y="81.28"/>
 <instance part="GND16" gate="1" x="185.42" y="60.96"/>
 <instance part="J4" gate="A" x="93.98" y="121.92"/>
 <instance part="GND14" gate="1" x="111.76" y="114.3"/>
@@ -16357,7 +16350,6 @@ reduce volume</text>
 <instance part="D4" gate="G$1" x="264.16" y="167.64" rot="MR90"/>
 <instance part="D5" gate="G$1" x="261.62" y="88.9"/>
 <instance part="D6" gate="G$1" x="274.32" y="88.9"/>
-<instance part="D7" gate="G$1" x="287.02" y="88.9"/>
 <instance part="C1" gate="G$1" x="152.4" y="195.58" smashed="yes">
 <attribute name="NAME" x="153.416" y="196.215" size="1.778" layer="95"/>
 <attribute name="VALUE" x="140.716" y="191.389" size="1.778" layer="96"/>
@@ -16440,10 +16432,6 @@ reduce volume</text>
 <pinref part="D6" gate="G$1" pin="C"/>
 </segment>
 <segment>
-<pinref part="GND13" gate="1" pin="GND"/>
-<pinref part="D7" gate="G$1" pin="C"/>
-</segment>
-<segment>
 <pinref part="C4" gate="G$1" pin="2"/>
 <pinref part="GND9" gate="1" pin="GND"/>
 <wire x1="210.82" y1="144.78" x2="215.9" y2="144.78" width="0.1524" layer="91"/>
@@ -16478,13 +16466,6 @@ reduce volume</text>
 <segment>
 <pinref part="C5" gate="G$1" pin="-"/>
 <pinref part="GND10" gate="1" pin="GND"/>
-</segment>
-</net>
-<net name="N$2" class="0">
-<segment>
-<pinref part="R7" gate="G$1" pin="1"/>
-<pinref part="D7" gate="G$1" pin="A"/>
-<wire x1="287.02" y1="93.98" x2="287.02" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$3" class="0">
@@ -16753,35 +16734,22 @@ reduce volume</text>
 <label x="248.92" y="106.68" size="1.778" layer="95"/>
 </segment>
 <segment>
-<wire x1="205.74" y1="83.82" x2="223.52" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="205.74" y1="86.36" x2="223.52" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="U2" gate="G$1" pin="ERROR_LED"/>
-<label x="208.28" y="83.82" size="1.778" layer="95"/>
+<label x="208.28" y="86.36" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="FRAME_LED" class="0">
 <segment>
-<wire x1="205.74" y1="86.36" x2="223.52" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="205.74" y1="88.9" x2="223.52" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="U2" gate="G$1" pin="FRAME_LED"/>
-<label x="208.28" y="86.36" size="1.778" layer="95"/>
+<label x="208.28" y="88.9" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
 <wire x1="274.32" y1="111.76" x2="274.32" y2="104.14" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="111.76" x2="274.32" y2="111.76" width="0.1524" layer="91"/>
 <label x="248.92" y="111.76" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="STATUS_LED" class="0">
-<segment>
-<wire x1="205.74" y1="88.9" x2="223.52" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="U2" gate="G$1" pin="STATUS_LED"/>
-<label x="208.28" y="88.9" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="R7" gate="G$1" pin="2"/>
-<wire x1="287.02" y1="116.84" x2="287.02" y2="104.14" width="0.1524" layer="91"/>
-<wire x1="248.92" y1="116.84" x2="287.02" y2="116.84" width="0.1524" layer="91"/>
-<label x="248.92" y="116.84" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$31" class="0">

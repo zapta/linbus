@@ -25,12 +25,6 @@ static const uint16 kLinSpeed = 19200;
 // ERRORS LED - blinks when detecting errors.
 static ActionLed errors_activity_led(PORTB, 1);
 
-// FRAMES LED - blinks when detecting valid frames.
-static ActionLed frames_activity_led(PORTB, 0);
-
-// STATUS LED - blink slowly when waiting for frames.
-static ActionLed status_activity_led(PORTD, 7);
-
 // Arduino setup function. Called once during initialization.
 void setup()
 {
@@ -62,15 +56,12 @@ void loop()
     // Periodic updates.
     system_clock::loop();    
     sio::loop();
-    status_activity_led.loop();
-    frames_activity_led.loop();
     errors_activity_led.loop();  
     car_module::loop();
 
     // Print a periodic text messages if no activiy.
     static PassiveTimer idle_timer;
-    if (idle_timer.timeMillis() >= 3000) {
-      status_activity_led.action(); 
+    if (idle_timer.timeMillis() >= 5000) {
       sio::println(F("waiting..."));
       idle_timer.restart();
     }
@@ -104,30 +95,28 @@ void loop()
     LinFrame frame;
     if (lin_decoder::readNextFrame(&frame)) {
       const boolean frameOk = frame.isValid();
-      if (frameOk) {
-        // Make the FRAMES led blinking.
-        frames_activity_led.action();
-      } 
-      else {
-        // Make the ERRORS frame blinking.
-        errors_activity_led.action();
-      }
       
       // Print frame to serial port.
-      for (int i = 0; i < frame.num_bytes(); i++) {
-        if (i > 0) {
-          sio::printchar(' ');  
+      {
+        for (int i = 0; i < frame.num_bytes(); i++) {
+          if (i > 0) {
+            sio::printchar(' ');  
+          }
+          sio::printhex2(frame.get_byte(i));  
         }
-        sio::printhex2(frame.get_byte(i));  
+        if (!frameOk) {
+          sio::print(F(" ERR"));
+        }
+        sio::println();  
+        // Supress the 'waiting' messages.
+        idle_timer.restart(); 
       }
-      if (!frameOk) {
-        sio::print(F(" ERR"));
-      }
-      sio::println();  
-      idle_timer.restart(); 
 
-      // Inform the car module about the incoming frame.
-      if (frameOk) {
+      if (!frameOk) {
+        // Make the ERRORS frame blinking.
+        errors_activity_led.action();
+      } else {
+        // Inform the car module about the incoming frame.
         car_module::frameArrived(frame);
       }
     }

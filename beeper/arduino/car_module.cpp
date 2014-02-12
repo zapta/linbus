@@ -12,19 +12,38 @@
 
 #include "car_module.h"
 #include "action_buzzer.h"
+#include "action_led.h"
 #include "sio.h"
 
 namespace car_module {
   
+// FRAMES LED - blinks when detecting valid frames.
+static ActionLed frame_activity_led(PORTB, 0);
+  
+// Used to generate slow blinking to show the board is live, even when
+// there are no frames.
+static PassiveTimer idle_timer;
+
 void setup() {
   action_buzzer::setup();
+  
+  // Force a startup single blink. 
+  frame_activity_led.action();
 }
   
 void loop() {
   action_buzzer::loop();
+  frame_activity_led.loop();
+  
+  if (idle_timer.timeMillis() >= 1000) {
+    frame_activity_led.action();
+    idle_timer.restart();
+  }
 }
   
 void frameArrived(const LinFrame& frame) {
+  frame_activity_led.action();
+
   // We handle only framed of id 39.
   const uint8 id = frame.get_byte(0);
   if (id != 0x39) {
