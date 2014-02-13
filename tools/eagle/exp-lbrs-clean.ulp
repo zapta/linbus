@@ -15,6 +15,46 @@
 
 string Version = "6.0";
 
+// >>> *******************************************************************************************
+
+if (!schematic)
+{
+  dlgMessageBox (usage + "<hr><b>ERROR: No schematic!</b><p>\nThis program can only work in"
+                 " the schematic editor.");
+  exit (1);
+}
+
+string device_package_keys[];
+int device_package_keys_count = 0;
+
+string package_keys[];
+int package_keys_count = 0;
+
+schematic (SCH)
+{
+  SCH.parts (P)
+  {
+    string device_name = P.deviceset.name;
+    string package_name = P.device.package ? P.device.package.name : "";
+
+    // Build set of packages used.
+    string key = "package:[" + package_name + "]";  
+    if (!lookup(package_keys, key, 0))
+    {
+      package_keys[package_keys_count++] = key;
+    }
+ 
+    // Build a set of <device, package> used.
+    key = "device:[" + device_name + "], package:[" + package_name + "]";  
+    if (!lookup(device_package_keys, key, 0))
+    {
+      device_package_keys[device_package_keys_count++] = key;
+    }
+  }
+}
+
+// >>> *******************************************************************************************
+
 // Language:
 //----------
 // Please keep to alphabetic sorting for maintainability !
@@ -110,7 +150,7 @@ int    NameIndex = 0;
 int    Merge = 0;
 
 char   ascii127[]       =   { 181,  196,  214,  220,  223, 0 }; // not allowed character 2010-05-12
-// www: In 8859-1 these chars are { � ,Ä ,Ö, Ü, ß } and therefore actually allowed as object names.
+// www: In 8859-1 these chars are { ﾵ ,ￃﾄ ,ￃﾖ, ￃﾜ, ￃﾟ } and therefore actually allowed as object names.
 //      Change this if requested ! What's also allowed but deprecated is { ä, ö, ü }. Should be replaced
 //      by { Ä, Ö, Ü }. All other chars allowed for file names are allwoed also for object names.
 //      Lower case is automatically converted to upper case (except the umlauts).
@@ -540,6 +580,13 @@ void DrawDevice(UL_DEVICESET D, UL_LIBRARY LBR) {
       string pacname = ReplaceAt(DV.package.name); // !!!
       if (Merge == 1)
         pacname = LbrPrefix(LBR.name) + pacname;
+      // <<<
+      string key = "device:[" + D.name + "], package:[" + DV.package.name + "]";  
+      if (!lookup(device_package_keys, key, 0))
+      {
+        continue;
+      }
+      // >>>
       cmd += "PACKAGE '" + addApostroph(pacname) + "' " + DV.name + ";\n"; // addApostroph here problematic !
     }
     DV.gates(G) {
@@ -605,6 +652,13 @@ void CreateOneLibHeader(UL_LIBRARY LBR, string project_name) {
 // ---------
 void OutputPackages(UL_LIBRARY LBR) {
   LBR.packages(P) {
+    // <<<
+    string key = "package:[" + P.name + "]";  
+    if (!lookup(package_keys, key, 0))
+    {
+      continue;
+    }
+    // >>>
     string pacname = ReplaceAt(P.name);
     if (Merge == 1)
        pacname = LbrPrefix(LBR.name) + pacname;
