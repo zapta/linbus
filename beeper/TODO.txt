@@ -15,6 +15,7 @@ LAYOUT
 * Add placement outline for the ata6631 chip.
 * Have consistent component name font size (e.g. F1 is larger than the rest).
 * Add pin1 marking for the serial interface header.
+* Add polarity marking for the LEDs.
 
 
 SOFTWARE
