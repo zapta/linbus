@@ -15,46 +15,6 @@
 
 string Version = "6.0";
 
-// >>> *******************************************************************************************
-
-if (!schematic)
-{
-  dlgMessageBox (usage + "<hr><b>ERROR: No schematic!</b><p>\nThis program can only work in"
-                 " the schematic editor.");
-  exit (1);
-}
-
-string device_package_keys[];
-int device_package_keys_count = 0;
-
-string package_keys[];
-int package_keys_count = 0;
-
-schematic (SCH)
-{
-  SCH.parts (P)
-  {
-    string device_name = P.deviceset.name;
-    string package_name = P.device.package ? P.device.package.name : "";
-
-    // Build set of packages used.
-    string key = "package:[" + package_name + "]";  
-    if (!lookup(package_keys, key, 0))
-    {
-      package_keys[package_keys_count++] = key;
-    }
- 
-    // Build a set of <device, package> used.
-    key = "device:[" + device_name + "], package:[" + package_name + "]";  
-    if (!lookup(device_package_keys, key, 0))
-    {
-      device_package_keys[device_package_keys_count++] = key;
-    }
-  }
-}
-
-// >>> *******************************************************************************************
-
 // Language:
 //----------
 // Please keep to alphabetic sorting for maintainability !
@@ -104,6 +64,69 @@ string TR(string s) {
   string t = lookup(Dictionary, s, LangIdx, '\v');
   return t ? t : s;
 }
+// <<< ************************************************************************
+
+// Boolean. Indicates if to restrict output to used parts.
+// Set by the dialog box.
+int DoFiltering = 0;
+
+// A set of keys representing library items used in the current schematic.
+string filtering_keys[];
+int filtering_keys_count = 0;
+
+// If key is not already in filtering_keys, then append it.
+// This implements a poor man Set<String>.
+void AddUniqueFilteringKey(string key) 
+{
+  if (!lookup(filtering_keys, key, 0))
+  {
+    filtering_keys[filtering_keys_count++] = key;
+  }
+}
+
+// Should the entity represented by this key be ommited from the output?
+int ShouldSkipKey(string key)
+{
+  return (DoFiltering && !lookup(filtering_keys, key, 0)) ?  1 : 0;
+}
+
+void CollectFilteringKeysFromOnePart(UL_PART P) 
+{
+  string device_name = P.deviceset.name;
+  string technology_name = P.device.activetechnology;
+  string package_name = P.device.package ? P.device.package.name : "";
+
+  string key = "package:[" + package_name + "]";  
+  AddUniqueFilteringKey(key);
+
+  key = "device:[" + device_name + "], package:[" + package_name + "]";  
+  AddUniqueFilteringKey(key);
+
+  key = "device:[" + device_name + "], tech:[" + technology_name + "]";  
+  AddUniqueFilteringKey(key);
+}
+
+// Collect keys of library items in the current schematic.
+void CollectAllFilteringKeys() 
+{
+  if (!schematic) 
+  {
+    dlgMessageBox(TR("Please start from schematic editor!"));
+    exit(1);
+  }
+
+  // Collect keys from the individual parts used in the schema.
+  schematic(SCH)
+  {
+    SCH.parts(P)
+    {
+      CollectFilteringKeysFromOnePart(P);
+    }
+  }
+}
+
+// >>> ************************************************************************
+
 //-----------------------------------------------------------------------------
 
 // Used in DrawText
@@ -580,13 +603,10 @@ void DrawDevice(UL_DEVICESET D, UL_LIBRARY LBR) {
       string pacname = ReplaceAt(DV.package.name); // !!!
       if (Merge == 1)
         pacname = LbrPrefix(LBR.name) + pacname;
-      // <<<
+      // <<< ************************************************************************
       string key = "device:[" + D.name + "], package:[" + DV.package.name + "]";  
-      if (!lookup(device_package_keys, key, 0))
-      {
-        continue;
-      }
-      // >>>
+      if (ShouldSkipKey(key)) continue;
+      // >>> ************************************************************************
       cmd += "PACKAGE '" + addApostroph(pacname) + "' " + DV.name + ";\n"; // addApostroph here problematic !
     }
     DV.gates(G) {
@@ -613,6 +633,10 @@ void DrawDevice(UL_DEVICESET D, UL_LIBRARY LBR) {
     string t[];
     int n = strsplit(t, DV.technologies, ' ');
     for (int i = 0; i < n; i++) {
+      // <<< ************************************************************************
+      string key = "device:[" + D.name + "], tech:[" + t[i] + "]";  
+      if (ShouldSkipKey(key)) continue;
+      // >>> ************************************************************************
       sprintf(h,"TECHNOLOGY '%s';\n", addApostroph(t[i]));  // 2012-03-23
       cmd += h;
       DV.attributes(A, t[i]) {
@@ -652,13 +676,10 @@ void CreateOneLibHeader(UL_LIBRARY LBR, string project_name) {
 // ---------
 void OutputPackages(UL_LIBRARY LBR) {
   LBR.packages(P) {
-    // <<<
+    // <<< ************************************************************************
     string key = "package:[" + P.name + "]";  
-    if (!lookup(package_keys, key, 0))
-    {
-      continue;
-    }
-    // >>>
+    if (ShouldSkipKey(key)) continue;
+    // >>> ************************************************************************
     string pacname = ReplaceAt(P.name);
     if (Merge == 1)
        pacname = LbrPrefix(LBR.name) + pacname;
@@ -827,11 +848,19 @@ int Result = dlgDialog(TR("Export EAGLE libraries from drawing")) {
       dlgRadioButton("&" + TR("Merge to one library, ") +       TR("original library names as prefix for symbol, package and device names"), Merge);
       dlgRadioButton(      TR("Merge to one library, ") + "&" + TR("unchanged symbol, package and device names"), Merge);
     }
+    // <<< ************************************************************************
+    dlgGroup(TR("Options")) {
+      dlgCheckBox("&" + TR("Export only items that are used in the schematic"), DoFiltering); 
+    }
+    // >>> ************************************************************************
     dlgLabel(Status, 1);
     dlgHBoxLayout {
       dlgStretch(1);
       dlgPushButton("&" + TR("Help") + "...")  DisplayHelp();
       dlgPushButton("+&" + TR("OK")) {
+        // <<< ************************************************************************
+        if (DoFiltering) CollectAllFilteringKeys();
+        // >>> ************************************************************************
         cmd = "";
         if (Merge > 0)
            make_one_lbr();
