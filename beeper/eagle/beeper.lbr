@@ -1158,7 +1158,7 @@ by exp-lbrs-filter.ulp</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="NC">
+<deviceset name="NC" prefix="NC">
 <gates>
 <gate name="G$1" symbol="NC" x="0" y="0"/>
 </gates>
