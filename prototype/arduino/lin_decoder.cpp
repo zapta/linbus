@@ -245,7 +245,7 @@ private:
   class StateDetectBreak {
 public:
     static inline void enter() ;
-    static inline void handle_isr();
+    static inline void handleIsr();
 private:
     static uint8 low_bits_counter_;
   };
@@ -254,10 +254,15 @@ private:
 public:
     // Should be called after the break stop bit was detected.
     static inline void enter();
-    static inline void handle_isr();
+    static inline void handleIsr();
 private:
     // Indicates if we read bytes from master (true) or slave (false).
     static boolean rx_from_lin1_;
+    
+    // Indicates the transfer function of the next rx bit. One of rx_bit_transfer_functions
+    // values.
+    static byte rx_bit_transfer_function_;
+    
     // Number of complete bytes read so far. Includes all bytes, even
     // sync, id and checksum.
     static uint8 bytes_read_;
@@ -270,6 +275,8 @@ private:
     // be computed as (1 << (bits_read_in_byte_ - 1)). We use this cached value
     // recude ISR computation.
     static uint8 byte_buffer_bit_mask_;
+    
+    static inline boolean readRxBit();
   };
 
   // ----- Error Flag. -----
@@ -510,7 +517,7 @@ private:
   }
 
   // Return true if enough time to service rx request.
-  inline void StateDetectBreak::handle_isr() {
+  inline void StateDetectBreak::handleIsr() {
     if (rx1_pin::isHigh()) {
       tx2_pin::setHigh();
       low_bits_counter_ = 0;
@@ -544,9 +551,17 @@ private:
 
   // ----- Read-Data State Implementation -----
 
+  // A 8 bit enum reprsenging possible trasnfer on recieved bits.
+  namespace rx_bit_transfer_functions {
+    static const uint8 COPY_BIT = 0;
+    static const uint8 FORCE_1_BIT = 1;
+    static const uint8 FORCE_0_BIT = 2;
+  }
+
   uint8 StateReadData::bytes_read_;
   uint8 StateReadData::bits_read_in_byte_;
   boolean StateReadData::rx_from_lin1_;
+  byte StateReadData::rx_bit_transfer_function_;
   uint8 StateReadData::byte_buffer_;
   uint8 StateReadData::byte_buffer_bit_mask_;
 
@@ -557,8 +572,9 @@ private:
     bits_read_in_byte_ = 0;
     rx_frame_buffers[head_frame_buffer].reset();
     
-    // True: reading from rx1. False: reading from rx2.
+    // True = reading from master, sending to slave.
     rx_from_lin1_ = true;
+    rx_bit_transfer_function_ = rx_bit_transfer_functions::COPY_BIT;
 
     // TODO: handle post break timeout errors.
     // TODO: set a reasonable time limit.
@@ -566,30 +582,88 @@ private:
     setTimerToHalfTick();   
   }
 
-  inline void StateReadData::handle_isr() {
-    // Sample data bit ASAP to avoid jitter and porpogate to the other
-    // channel. Since we sample at the middle of the bit, the output
-    // channel is delayed by 1/2 bit.
-    //
-    // TODO: refactor to a seperate method.
-    boolean is_rx_high;
-    sample_pin::setHigh();
+  // Called from ISR. Read an rx bit and transfer to the other interface with
+  // possible transformation. Uses rx_from_lin1_ to determine direction and uses
+  // rx_bit_transfer_function to determine bit transformation function.
+  // Returns the read bit post transformation.
+  //
+  // TODO: currently when forcing a 1 or 0 bit, we completely ignore the input
+  // bit. Ideally we should read it, verify the checksum of the incoming frame
+  // and if invalid (e.g. due to electrical noise), corrupt the checksum of 
+  // the modify frame. Otherwise we may laundering bad bits when recaclulating
+  // the checksum for the transformed frame.
+  //
+  // NOTE: this function is optimized for runtime efficiency over code size.
+  inline boolean StateReadData::readRxBit() {
+    boolean is_rx_high = true;    
+
     if (rx_from_lin1_) {
-      is_rx_high = rx1_pin::isHigh();
-      if (is_rx_high) {
-        tx2_pin::setHigh();
-      } else {
-        tx2_pin::setLow();
+      // Master interface to slave interface transfer.
+      switch (rx_bit_transfer_function_) {
+        case rx_bit_transfer_functions::COPY_BIT:
+          is_rx_high = rx1_pin::isHigh();
+          if (is_rx_high) {
+            tx2_pin::setHigh();
+          } else {
+            tx2_pin::setLow();
+          }
+          break;
+
+        case rx_bit_transfer_functions::FORCE_1_BIT:
+          is_rx_high = true;
+          tx2_pin::setHigh();
+          break;
+  
+        case rx_bit_transfer_functions::FORCE_0_BIT:
+          is_rx_high = false;
+          tx2_pin::setLow();
+          break;
+
+        default:
+          // TODO: set an error flag.
+          // For errors, we use the passive state of the LIN bus.
+          is_rx_high = true;
+          break;
       }
     } else {
-      is_rx_high = rx2_pin::isHigh();
-      if (is_rx_high) {
-        tx1_pin::setHigh();
-      } else {
-        tx1_pin::setLow();
+      // Slave interface to master interface transfer.
+      switch (rx_bit_transfer_function_) {
+        case rx_bit_transfer_functions::COPY_BIT:
+          is_rx_high = rx2_pin::isHigh();
+          if (is_rx_high) {
+            tx1_pin::setHigh();
+          } else {
+            tx1_pin::setLow();
+          }
+          break;
+
+        case rx_bit_transfer_functions::FORCE_1_BIT:
+          is_rx_high = true;
+          tx1_pin::setHigh();
+          break;
+  
+        case rx_bit_transfer_functions::FORCE_0_BIT:
+          is_rx_high = false;
+          tx1_pin::setLow();
+          break;
+
+        default:
+          // TODO: set an error flag.
+          // For errors, we use the passive state of the LIN bus.
+          is_rx_high = true;
+          break;
       }
     }
+    
     sample_pin::setLow();
+    return is_rx_high;
+  }
+
+  inline void StateReadData::handleIsr() {
+    // Sample and propogated the data bit ASAP to avoid jitter.
+    // Since we sample at the middle of the input bit, the output
+    // channel is delayed by 1/2 bit.
+    const boolean is_rx_high = readRxBit(); 
     
     // Handle byte's start bit.
     if (bits_read_in_byte_ == 0) {
@@ -715,10 +789,10 @@ private:
     // TODO: make this state a boolean instead of enum? (efficency).
     switch (state) {
     case states::DETECT_BREAK:
-      StateDetectBreak::handle_isr();
+      StateDetectBreak::handleIsr();
       break;
     case states::READ_DATA:
-      StateReadData::handle_isr();
+      StateReadData::handleIsr();
       break;
     default:
       setErrorFlags(errors::OTHER);
