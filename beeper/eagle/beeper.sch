@@ -115,9 +115,9 @@
 <wire x1="2.9" y1="-3.9" x2="-2.9" y2="-3.9" width="0.1998" layer="39"/>
 <wire x1="-2.9" y1="-3.9" x2="-2.9" y2="3.9" width="0.1998" layer="39"/>
 <wire x1="2.4" y1="1.265" x2="2.4" y2="-0.8285" width="0.2032" layer="21"/>
-<wire x1="2.4" y1="-0.8285" x2="2.4" y2="-1.265" width="0.2032" layer="51"/>
+<wire x1="2.4" y1="-0.8285" x2="2.4" y2="-1.265" width="0.2032" layer="21"/>
 <wire x1="2.4" y1="-1.265" x2="-2.4" y2="-1.265" width="0.2032" layer="21"/>
-<wire x1="-2.4" y1="-1.265" x2="-2.4" y2="-0.8285" width="0.2032" layer="51"/>
+<wire x1="-2.4" y1="-1.265" x2="-2.4" y2="-0.8285" width="0.2032" layer="21"/>
 <wire x1="-2.4" y1="-0.8285" x2="-2.4" y2="1.265" width="0.2032" layer="21"/>
 <wire x1="-2.4" y1="1.265" x2="2.4" y2="1.265" width="0.2032" layer="21"/>
 <rectangle x1="-2.1501" y1="-3.1001" x2="-1.6599" y2="-2" layer="51"/>
@@ -206,13 +206,9 @@
 <text x="-1.27" y="-2.54" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 <package name="UD-6,3X5,8_NICHICON">
-<circle x="0" y="0" radius="3.1001" width="0.1016" layer="51"/>
-<wire x1="-3.25" y1="3.25" x2="2.45" y2="3.25" width="0.1016" layer="51"/>
-<wire x1="2.45" y1="3.25" x2="3.25" y2="2.45" width="0.1016" layer="51"/>
-<wire x1="3.25" y1="2.45" x2="3.25" y2="-2.45" width="0.1016" layer="51"/>
-<wire x1="3.25" y1="-2.45" x2="2.45" y2="-3.25" width="0.1016" layer="51"/>
-<wire x1="2.45" y1="-3.25" x2="-3.25" y2="-3.25" width="0.1016" layer="51"/>
-<wire x1="-3.25" y1="-3.25" x2="-3.25" y2="3.25" width="0.1016" layer="51"/>
+<circle x="0" y="0" radius="3.1001" width="0.1016" layer="21"/>
+<wire x1="3.25" y1="2.45" x2="3.25" y2="-2.45" width="0.1016" layer="21"/>
+<wire x1="-3.25" y1="-3.25" x2="-3.25" y2="3.25" width="0.1016" layer="21"/>
 <wire x1="-3" y1="0.775" x2="2.975" y2="0.85" width="0.1016" layer="21" curve="-149.753145"/>
 <wire x1="-3.25" y1="0.8" x2="-3.25" y2="3.25" width="0.1016" layer="21"/>
 <wire x1="-3.25" y1="3.25" x2="2.45" y2="3.25" width="0.1016" layer="21"/>
@@ -225,7 +221,7 @@
 <smd name="-" x="-2.5" y="0" dx="3.1" dy="1" layer="1"/>
 <text x="-3.175" y="3.81" size="1.016" layer="25">&gt;NAME</text>
 <text x="-3.175" y="-4.445" size="1.016" layer="27">&gt;VALUE</text>
-<polygon width="0.1016" layer="51">
+<polygon width="0.1016" layer="21">
 <vertex x="-2.2" y="2.15" curve="88.581463"/>
 <vertex x="-2.2" y="-2.15"/>
 </polygon>
@@ -1885,15 +1881,15 @@ reduce volume</text>
 </sheets>
 <errors>
 <approved hash="104,1,127,187.96,U1,VS,+12V,,,"/>
-<approved hash="104,1,172.72,83.82,U2,AGND,GND,,,"/>
-<approved hash="104,1,172.72,137.16,U2,AVCC,+5V,,,"/>
-<approved hash="104,1,172.72,134.62,U2,VCC,+5V,,,"/>
-<approved hash="104,1,172.72,132.08,U2,VCC,+5V,,,"/>
-<approved hash="117,1,172.72,127,AREF,,,,,"/>
-<approved hash="106,1,220.98,99.06,GP_DEBUG,,,,,"/>
-<approved hash="106,1,220.98,137.16,LIN_BREAK,,,,,"/>
-<approved hash="106,1,220.98,129.54,LIN_ISR,,,,,"/>
-<approved hash="106,1,220.98,106.68,LIN_TICK,,,,,"/>
+<approved hash="104,1,170.18,81.28,U2,AGND,GND,,,"/>
+<approved hash="104,1,170.18,134.62,U2,AVCC,+5V,,,"/>
+<approved hash="104,1,170.18,132.08,U2,VCC,+5V,,,"/>
+<approved hash="104,1,170.18,129.54,U2,VCC,+5V,,,"/>
+<approved hash="117,1,170.18,124.46,AREF,,,,,"/>
+<approved hash="106,1,218.44,96.52,GP_DEBUG,,,,,"/>
+<approved hash="106,1,218.44,134.62,LIN_BREAK,,,,,"/>
+<approved hash="106,1,218.44,127,LIN_ISR,,,,,"/>
+<approved hash="106,1,218.44,104.14,LIN_TICK,,,,,"/>
 <approved hash="113,1,78.5029,199.521,J1,,,,,"/>
 <approved hash="113,1,81.0429,63.6312,J3,,,,,"/>
 <approved hash="113,1,78.5029,171.581,J2,,,,,"/>
