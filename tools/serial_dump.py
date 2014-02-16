@@ -60,7 +60,7 @@ def parseArgs(argv):
   parser = optparse.OptionParser()
   parser.add_option(
       "-p", "--port", dest="port",
-      default="/dev/cu.usbserial-A600dOYP",
+      default="/dev/cu.usbserial-AM01VGNC",
       help="serial port to read", metavar="PORT")
   parser.add_option(
       "-d", "--diff", dest="diff",
