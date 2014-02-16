@@ -47,7 +47,7 @@ namespace action_buzzer {
     60, // on
     150,
     60, // on
-    5000, 
+    3000, 
     0,   // end 
   };
   
@@ -175,9 +175,6 @@ namespace action_buzzer {
  
   // Called periodically from main loop() to do the state transitions. 
   void loop() {
-    // For testing.
-    action(true);
-    
     if (state_is_active) {
       loopInActiveState();
     } else {
