@@ -55,7 +55,7 @@ static const uint8 kMaxSpaceBits = 6;
     static const uint8 kPinMask  = H(bit_index); \
     static inline void setup() { \
       DDR ## port_letter |= kPinMask;  \
-      PORT ## port_letter |= kPinMask; \
+      PORT ## port_letter &= ~kPinMask; \
     } \
     static inline void setHigh() { \
       PORT ## port_letter |= kPinMask; \
