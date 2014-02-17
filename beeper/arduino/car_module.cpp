@@ -11,6 +11,7 @@
 // limitations under the License.
 
 #include "car_module.h"
+#include "car_module_config.h"
 #include "action_buzzer.h"
 #include "action_led.h"
 #include "sio.h"
@@ -50,9 +51,8 @@ void frameArrived(const LinFrame& frame) {
     return;
   }
 
-  // Data bytes are between id and checksum bytes.
-  const uint8 data_size = frame.num_bytes() - 2;
-  if (data_size != 6) {
+  // We expect a frame with one ID byte, 6 data bytes and one checksum byte.
+  if (frame.num_bytes()  != (1 + 6 + 1)) {
     return;
   }
   
@@ -60,7 +60,14 @@ void frameArrived(const LinFrame& frame) {
   // buzzer when rear gear is engaged.
   // Test frame: 39 04 00 00 00 00 00.
   const boolean reverse_gear = frame.get_byte(1) & H(2);
-  action_buzzer::action(reverse_gear);  
+  const boolean feature_enabled = car_module_config::isEnabled();
+  action_buzzer::action(reverse_gear && feature_enabled); 
+ 
+  // Tell the config module if to allow config changes via long
+  // presses. We allow this only when in reverse gear to allow
+  // better feedback via the buzzer and to eliminate the chance of
+  // unintended config changes.:w
+  car_module_config::allowConfigChanges(reverse_gear); 
 }
 
 }  // namespace car_module

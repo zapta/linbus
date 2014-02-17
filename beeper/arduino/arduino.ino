@@ -13,6 +13,7 @@
 #include "action_led.h"
 #include "avr_util.h"
 #include "car_module.h"
+#include "car_module_config.h"
 #include "hardware_clock.h"
 #include "io_pins.h"
 #include "lin_decoder.h"
@@ -38,6 +39,7 @@ void setup()
   // Uses Timer2 with interrupts, and a few i/o pins. See source code for details.
   lin_decoder::setup(kLinSpeed);
   
+  car_module_config::setup();
   car_module::setup();
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
@@ -57,6 +59,7 @@ void loop()
     system_clock::loop();    
     sio::loop();
     errors_activity_led.loop();  
+    car_module_config::loop();
     car_module::loop();
 
     // Print a periodic text messages if no activiy.
@@ -116,7 +119,8 @@ void loop()
         // Make the ERRORS frame blinking.
         errors_activity_led.action();
       } else {
-        // Inform the car module about the incoming frame.
+        // Inform the car specific logic about the incoming frame.
+        car_module_config::frameArrived(frame);
         car_module::frameArrived(frame);
       }
     }
