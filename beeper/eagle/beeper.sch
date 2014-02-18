@@ -797,7 +797,7 @@
 <pin name="PC3(ADC3)" x="25.4" y="17.78" length="middle" rot="R180"/>
 <pin name="PC4(ADC4/SDA)" x="25.4" y="15.24" length="middle" rot="R180"/>
 <pin name="PC5(ADC5/SCL)" x="25.4" y="12.7" length="middle" rot="R180"/>
-<pin name="PC6(/RESET)" x="-22.86" y="-17.78" length="middle" function="dot"/>
+<pin name="PC6(/RESET)" x="-22.86" y="-20.32" length="middle" function="dot"/>
 <pin name="PD0(RXD)" x="25.4" y="2.54" length="middle" rot="R180"/>
 <pin name="PD1(TXD)" x="25.4" y="0" length="middle" rot="R180"/>
 <pin name="PD2(INT0)" x="25.4" y="-2.54" length="middle" rot="R180"/>
@@ -1310,9 +1310,9 @@ reduce volume</text>
 </instance>
 <instance part="GND18" gate="1" x="266.7" y="147.32"/>
 <instance part="R4" gate="G$1" x="266.7" y="187.96" rot="R90"/>
-<instance part="R8" gate="G$1" x="165.1" y="101.6" rot="R90"/>
-<instance part="P+6" gate="1" x="165.1" y="109.22" smashed="yes">
-<attribute name="VALUE" x="162.56" y="105.918" size="1.778" layer="96" rot="R90"/>
+<instance part="R8" gate="G$1" x="165.1" y="96.52" rot="R90"/>
+<instance part="P+6" gate="1" x="165.1" y="106.68" smashed="yes">
+<attribute name="VALUE" x="162.56" y="103.378" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="U1" gate="G$1" x="127" y="177.8" smashed="yes">
 <attribute name="NAME" x="111.76" y="185.42" size="1.778" layer="95"/>
@@ -1520,12 +1520,12 @@ reduce volume</text>
 </segment>
 <segment>
 <pinref part="R8" gate="G$1" pin="1"/>
-<wire x1="165.1" y1="96.52" x2="165.1" y2="91.44" width="0.1524" layer="91"/>
-<wire x1="170.18" y1="91.44" x2="165.1" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="165.1" y1="91.44" x2="165.1" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="88.9" x2="165.1" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="U2" gate="G$1" pin="PC6(/RESET)"/>
-<label x="152.4" y="91.44" size="1.778" layer="95"/>
-<wire x1="165.1" y1="91.44" x2="152.4" y2="91.44" width="0.1524" layer="91"/>
-<junction x="165.1" y="91.44"/>
+<label x="152.4" y="88.9" size="1.778" layer="95"/>
+<wire x1="165.1" y1="88.9" x2="152.4" y2="88.9" width="0.1524" layer="91"/>
+<junction x="165.1" y="88.9"/>
 </segment>
 </net>
 <net name="LIN_RX" class="0">
@@ -1608,6 +1608,7 @@ reduce volume</text>
 <segment>
 <pinref part="R8" gate="G$1" pin="2"/>
 <pinref part="P+6" gate="1" pin="+5V"/>
+<wire x1="165.1" y1="101.6" x2="165.1" y2="104.14" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="+5V"/>
