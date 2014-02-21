@@ -26,7 +26,7 @@ void loop() {
 }
   
 // Handling of frame from sport mode button unit.
-// Test frame  8e 00 04 00 00 00 00 00 00 [checksum].
+// Test frame  8e 00 04 00 00 00 00 00 00 <checksum>.
 void frameArrived(const LinFrame& frame) {
   // We handle only framed of id 8e
   const uint8 id = frame.get_byte(0);
@@ -34,9 +34,8 @@ void frameArrived(const LinFrame& frame) {
     return;
   }
   
-  // Data bytes are between id and checksum bytes.
-  const uint8 data_size = frame.num_bytes() - 2;
-  if (data_size != 8) {
+  // We expect a frame with one id byte, 8 data bytes and one checksum byte.
+  if (frame.num_bytes() != (1 + 8 + 1)) {
     return;
   }
   
