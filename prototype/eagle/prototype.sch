@@ -1391,7 +1391,7 @@ by exp-lbrs-filter.ulp</description>
 <pin name="PC3(ADC3)" x="25.4" y="17.78" length="middle" rot="R180"/>
 <pin name="PC4(ADC4/SDA)" x="25.4" y="15.24" length="middle" rot="R180"/>
 <pin name="PC5(ADC5/SCL)" x="25.4" y="12.7" length="middle" rot="R180"/>
-<pin name="PC6(/RESET)" x="-22.86" y="-17.78" length="middle" function="dot"/>
+<pin name="PC6(/RESET)" x="-22.86" y="-20.32" length="middle" function="dot"/>
 <pin name="PD0(RXD)" x="25.4" y="2.54" length="middle" rot="R180"/>
 <pin name="PD1(TXD)" x="25.4" y="0" length="middle" rot="R180"/>
 <pin name="PD2(INT0)" x="25.4" y="-2.54" length="middle" rot="R180"/>
@@ -1492,12 +1492,11 @@ by exp-lbrs-filter.ulp</description>
 <part name="JP2" library="prototype" deviceset="PINHD-2X3" device="" value="ICSP"/>
 <part name="GND14" library="prototype" deviceset="GND" device=""/>
 <part name="P+5" library="prototype" deviceset="+5V" device=""/>
-<part name="SG1" library="prototype" deviceset="AL60P" device="" value=""/>
+<part name="B1" library="prototype" deviceset="AL60P" device="" value="CEM-1212S"/>
 <part name="R1" library="prototype" deviceset="R-US_" device="R0805" value="3.3K"/>
-<part name="T1" library="prototype" deviceset="*-NPN-" device="SOT23-BEC" technology="MMBT3904LT1" value="3904"/>
+<part name="Q1" library="prototype" deviceset="*-NPN-" device="SOT23-BEC" technology="MMBT3904LT1" value="MMBT3904"/>
 <part name="GND18" library="prototype" deviceset="GND" device=""/>
 <part name="D1" library="prototype" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
-<part name="P+3" library="prototype" deviceset="+5V" device=""/>
 <part name="R8" library="prototype" deviceset="R-US_" device="R0805" value="220"/>
 <part name="GND10" library="prototype" deviceset="GND" device=""/>
 <part name="C5" library="prototype" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
@@ -1565,6 +1564,7 @@ by exp-lbrs-filter.ulp</description>
 <part name="SUPPLY2" library="prototype" deviceset="+VBUS" device=""/>
 <part name="C6" library="prototype" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="GND30" library="prototype" deviceset="GND" device=""/>
+<part name="P+3" library="prototype" deviceset="+12V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1632,20 +1632,20 @@ by exp-lbrs-filter.ulp</description>
 <instance part="P+5" gate="1" x="187.96" y="63.5" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="190.5" y="60.198" size="1.778" layer="96" rot="MR90"/>
 </instance>
-<instance part="SG1" gate="G$1" x="289.56" y="114.3" rot="R270"/>
+<instance part="B1" gate="G$1" x="289.56" y="114.3" smashed="yes" rot="R270">
+<attribute name="NAME" x="298.45" y="110.49" size="1.778" layer="95"/>
+<attribute name="VALUE" x="290.83" y="106.045" size="1.778" layer="96"/>
+</instance>
 <instance part="R1" gate="G$1" x="274.32" y="99.06" smashed="yes">
 <attribute name="NAME" x="273.304" y="101.8286" size="1.778" layer="95"/>
 <attribute name="VALUE" x="272.796" y="94.996" size="1.778" layer="96"/>
 </instance>
-<instance part="T1" gate="G$1" x="281.94" y="99.06" smashed="yes">
+<instance part="Q1" gate="G$1" x="281.94" y="99.06" smashed="yes">
 <attribute name="NAME" x="284.48" y="99.06" size="1.778" layer="95"/>
 <attribute name="VALUE" x="287.02" y="93.98" size="1.778" layer="96"/>
 </instance>
 <instance part="GND18" gate="1" x="284.48" y="88.9"/>
 <instance part="D1" gate="G$1" x="279.4" y="114.3" rot="MR90"/>
-<instance part="P+3" gate="1" x="284.48" y="137.16" smashed="yes">
-<attribute name="VALUE" x="281.94" y="134.62" size="1.778" layer="96" rot="R90"/>
-</instance>
 <instance part="R8" gate="G$1" x="284.48" y="129.54" rot="R90"/>
 <instance part="GND10" gate="1" x="160.02" y="160.02"/>
 <instance part="C5" gate="G$1" x="182.88" y="185.42"/>
@@ -1744,6 +1744,7 @@ by exp-lbrs-filter.ulp</description>
 <attribute name="VALUE" x="155.829" y="140.97" size="1.778" layer="96"/>
 </instance>
 <instance part="GND30" gate="1" x="157.48" y="137.16"/>
+<instance part="P+3" gate="1" x="284.48" y="139.7" rot="MR0"/>
 </instances>
 <busses>
 </busses>
@@ -1779,7 +1780,7 @@ by exp-lbrs-filter.ulp</description>
 <wire x1="177.8" y1="53.34" x2="187.96" y2="53.34" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="T1" gate="G$1" pin="E"/>
+<pinref part="Q1" gate="G$1" pin="E"/>
 <pinref part="GND18" gate="1" pin="GND"/>
 <wire x1="284.48" y1="93.98" x2="284.48" y2="91.44" width="0.1524" layer="91"/>
 </segment>
@@ -1968,6 +1969,11 @@ by exp-lbrs-filter.ulp</description>
 <pinref part="P+1" gate="1" pin="+12V"/>
 <wire x1="111.76" y1="152.4" x2="119.38" y2="152.4" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="P+3" gate="1" pin="+12V"/>
+<pinref part="R8" gate="G$1" pin="2"/>
+<wire x1="284.48" y1="137.16" x2="284.48" y2="134.62" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="+5V" class="0">
 <segment>
@@ -1975,10 +1981,6 @@ by exp-lbrs-filter.ulp</description>
 <pinref part="P+5" gate="1" pin="+5V"/>
 <wire x1="177.8" y1="58.42" x2="187.96" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="187.96" y1="58.42" x2="187.96" y2="60.96" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="P+3" gate="1" pin="+5V"/>
-<pinref part="R8" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <wire x1="175.26" y1="190.5" x2="177.8" y2="190.5" width="0.1524" layer="91"/>
@@ -2075,10 +2077,10 @@ by exp-lbrs-filter.ulp</description>
 <segment>
 <pinref part="D1" gate="G$1" pin="A"/>
 <wire x1="279.4" y1="111.76" x2="279.4" y2="106.68" width="0.1524" layer="91"/>
-<pinref part="T1" gate="G$1" pin="C"/>
+<pinref part="Q1" gate="G$1" pin="C"/>
 <wire x1="279.4" y1="106.68" x2="284.48" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="284.48" y1="106.68" x2="284.48" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="SG1" gate="G$1" pin="2"/>
+<pinref part="B1" gate="G$1" pin="2"/>
 <wire x1="284.48" y1="106.68" x2="289.56" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="289.56" y1="106.68" x2="289.56" y2="109.22" width="0.1524" layer="91"/>
 <junction x="284.48" y="106.68"/>
@@ -2098,7 +2100,7 @@ by exp-lbrs-filter.ulp</description>
 </net>
 <net name="N$19" class="0">
 <segment>
-<pinref part="T1" gate="G$1" pin="B"/>
+<pinref part="Q1" gate="G$1" pin="B"/>
 <pinref part="R1" gate="G$1" pin="2"/>
 </segment>
 </net>
@@ -2106,7 +2108,7 @@ by exp-lbrs-filter.ulp</description>
 <segment>
 <pinref part="D1" gate="G$1" pin="C"/>
 <wire x1="279.4" y1="116.84" x2="279.4" y2="121.92" width="0.1524" layer="91"/>
-<pinref part="SG1" gate="G$1" pin="1"/>
+<pinref part="B1" gate="G$1" pin="1"/>
 <wire x1="279.4" y1="121.92" x2="284.48" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="284.48" y1="121.92" x2="289.56" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="289.56" y1="121.92" x2="289.56" y2="119.38" width="0.1524" layer="91"/>
@@ -2216,14 +2218,14 @@ by exp-lbrs-filter.ulp</description>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="PC6(/RESET)"/>
-<wire x1="175.26" y1="99.06" x2="162.56" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="96.52" x2="162.56" y2="96.52" width="0.1524" layer="91"/>
 <pinref part="R5" gate="G$1" pin="2"/>
 <pinref part="S2" gate="G$1" pin="P$3"/>
-<wire x1="162.56" y1="99.06" x2="149.86" y2="99.06" width="0.1524" layer="91"/>
-<wire x1="162.56" y1="101.6" x2="162.56" y2="99.06" width="0.1524" layer="91"/>
-<junction x="162.56" y="99.06"/>
-<wire x1="162.56" y1="99.06" x2="162.56" y2="93.98" width="0.1524" layer="91"/>
-<label x="149.86" y="99.06" size="1.778" layer="95"/>
+<wire x1="162.56" y1="96.52" x2="149.86" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="162.56" y1="101.6" x2="162.56" y2="96.52" width="0.1524" layer="91"/>
+<junction x="162.56" y="96.52"/>
+<wire x1="162.56" y1="96.52" x2="162.56" y2="93.98" width="0.1524" layer="91"/>
+<label x="149.86" y="96.52" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SCK" class="0">
