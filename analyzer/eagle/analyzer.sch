@@ -216,6 +216,10 @@
 <text x="-3.81" y="0" size="0.4064" layer="27">&gt;VALUE</text>
 <hole x="0" y="2.2" drill="0.9"/>
 <hole x="0" y="-2.2" drill="0.9"/>
+<pad name="P$1" x="-3" y="4.5" drill="0.381" diameter="1.27" stop="no"/>
+<pad name="P$2" x="-3" y="-4.5" drill="0.381" diameter="1.27" stop="no"/>
+<pad name="P$3" x="2.5" y="4.5" drill="0.381" diameter="1.27" stop="no"/>
+<pad name="P$4" x="2.5" y="-4.5" drill="0.381" diameter="1.27" stop="no"/>
 </package>
 <package name="TQFP32-08">
 <description>&lt;B&gt;Thin Plasic Quad Flat Package&lt;/B&gt; Grid 0.8 mm</description>
@@ -839,8 +843,8 @@
 <wire x1="3.175" y1="0" x2="3.175" y2="0.635" width="0.4064" layer="94"/>
 <wire x1="3.175" y1="0.635" x2="-0.635" y2="0.635" width="0.4064" layer="94"/>
 <wire x1="-0.635" y1="0.635" x2="-0.635" y2="0" width="0.4064" layer="94"/>
-<pin name="1" x="0" y="-2.54" visible="pad" length="short" direction="pas" rot="R90"/>
-<pin name="2" x="2.54" y="-2.54" visible="pad" length="short" direction="pas" rot="R90"/>
+<pin name="1" x="0" y="-2.54" visible="off" length="short" direction="pas" rot="R90"/>
+<pin name="2" x="2.54" y="-2.54" visible="off" length="short" direction="pas" rot="R90"/>
 <text x="-1.27" y="0" size="1.778" layer="95" rot="R90">&gt;NAME</text>
 <text x="5.715" y="0" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
 </symbol>
@@ -2047,9 +2051,9 @@
 <approved hash="106,1,259.08,187.96,LIN_ISR,,,,,"/>
 <approved hash="106,1,259.08,165.1,LIN_TICK,,,,,"/>
 <approved hash="113,1,68.3429,196.981,J1,,,,,"/>
-<approved hash="113,1,217.128,87.7612,J3,,,,,"/>
+<approved hash="113,1,217.128,87.7612,J5,,,,,"/>
 <approved hash="113,1,68.3429,163.961,J2,,,,,"/>
-<approved hash="113,1,100.001,168.029,JP1,,,,,"/>
+<approved hash="113,1,100.849,168.029,J4,,,,,"/>
 </errors>
 </schematic>
 </drawing>
