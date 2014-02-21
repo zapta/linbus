@@ -4,11 +4,8 @@ SCHEMATIC
 
 LAYOUT
 
-
 SOFTWARE
 * Change the beep pattern, more aggressive sound brief sound when the reverse gear is engaged.
-* Have the status LED showing indictation as soon as the board is powered.
-
 
 MISCELLANEOUS
 * Add BOM document.
