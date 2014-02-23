@@ -1,0 +1,23 @@
+"QTY","PARTS","VALUE","PACKAGE","SAMPLE SOURCE","COMMENTS"
+1,"J1","0.1"" 1x3 right angle header.",,"Digikey WM50026-03-ND","The Linbsu connector from the master plugs into to this header (pay attention to polarity)."
+1,"J2","3 wire pigtail to a 3 pin  0.1” Servo Connector.",,"http://bit.ly/1eFYfS3",
+1,"J3","0.1"" 1x6 header",,"Digikey WM50026-06-ND","For software development only, not needed for normal buzzer operation."
+1,"J4","0.1"" 2*3 header",,"Digikey 952-2120-ND","Can be omitted if programming using pogo pins."
+1,"F1","Fuse, 500ma Slow","1206","Digikey SF-1206S050-2CT-ND","Do not use a fast fuse, it may blow on power up. A lower 250ma slow fuse should also be fine. If you cannot find a fuse, a 10ohm 1/8w resistor may also work."
+1,"C1","Aluminum capacitor 22uF 20% 40V","4mm x 5.8mm","Digikey 493-2300-1-ND","Diameter x Height in mm."
+4,"C2, C3, C4,C7","Capacitor 0.1uF ceramic, 50V","0805","Digikey 399-1179-1-ND",
+1,"C5","Tantalum Capacitor 10uF, 10V","1206","Digikey 399-3684-1-ND",
+1,"C6","Ceramic capacitor 220pF 50V","0805","Digikey 311-1123-1-ND",
+3,"R1, R2, R8","Resistor 10k 1/8W 5%","0805","Digikey RMCF0805JT10K0CT-ND",
+1,"R4","Resistor 100 ohm 1/8W 5%","0805","Digikey RMCF0805JT100RCT-ND","Change value to increase/decrease beeper volume."
+4,"R3, R5, R6, R7","Resistor 3.3K 1/8W 5%","0805","Digikey RMCF0805JT3K30CT-ND",
+3,"D1, D2, D3, D4","MBR0540","SOD-123","Digikey MBR0540TPMSCT-ND","Schottky diode 40V 500ma."
+1,"D5","Red LED","1206","Sparkfun PRT-12619","Low current high brightness red LED (used at 1ma forward current)."
+1,"D6","Green LED","1206","Sparkfun PRT-12622","Low current high brightness green LED (used at 1ma forward current)."
+1,"X1","Resonator 16MHz with internal capacitors","1.3mm x 3.2mm","Digikey 490-1198-1-ND",
+1,"T1","MMBT3904 NPN transistor","SOT-23","Digikey MMBT3904FSCT-ND","general purpose NPN Transistor"
+1,"U1","ATA6631 LINBUS + LDO","SOIC 8","Digikey ATA6663-TAQYCT-ND","Prefer high temperature part."
+1,"U2","ATMEGA328P  AVR MCU","TQFP 32","Digikey ATMEGA328P-15AZTR-ND","Prefer high temperature part."
+1,"SP1","CEM-1212S 0V-12Vp magnetic buzzer","12mm diameter, 6.5mm spacing.","Digikey 102-1156-ND","12mm electro magnetic buzzer. Operated at 0-12V, 2400Hz."
+1,"PCB","LINBUS Beeper PCB Rev B",,"http://oshpark.com/shared_projects/skoN2gf1","OSHPark provides 3 boards for about $10 (as of Feb 2014). alternatively, order from the PCB house of your choice (2 layer)."
+1,,"1"" clear heat shrink tube",,"Digikey A100C-4-ND ","Use a short piece to protect the board. Cut a hole for the buzzer sound output. Clear material is require to view the status LEDs."

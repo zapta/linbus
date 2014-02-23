@@ -1224,7 +1224,7 @@
 <part name="GND15" library="beeper" deviceset="GND" device=""/>
 <part name="GND17" library="beeper" deviceset="GND" device=""/>
 <part name="GND11" library="beeper" deviceset="GND" device=""/>
-<part name="F1" library="beeper" deviceset="FUSE" device="" value="250ma Slow"/>
+<part name="F1" library="beeper" deviceset="FUSE" device="" value="500ma Slow"/>
 <part name="P+4" library="beeper" deviceset="+5V" device=""/>
 <part name="P+7" library="beeper" deviceset="+12V" device=""/>
 <part name="P+8" library="beeper" deviceset="+5V" device=""/>

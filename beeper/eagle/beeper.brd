@@ -818,7 +818,7 @@ design rules under a new name.</description>
 <element name="C4" library="beeper" package="C0805" value="0.1uF" x="14.8082" y="18.9484" smashed="yes" rot="R270">
 <attribute name="NAME" x="14.5034" y="22.3774" size="0.762" layer="25" rot="R270"/>
 </element>
-<element name="F1" library="beeper" package="1206" value="250ma Slow" x="3.81" y="29.845" smashed="yes">
+<element name="F1" library="beeper" package="1206" value="500ma Slow" x="3.81" y="29.845" smashed="yes">
 <attribute name="NAME" x="5.334" y="27.9908" size="0.762" layer="25"/>
 </element>
 </elements>
