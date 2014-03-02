@@ -3,12 +3,14 @@ TODO list for Linbus Analyzer
 SCHEMATIC
 
 LAYOUT
+* Add version label on bottom of PCB (similar to Beeper).
 
 SOFTWARE
 
 MISCELLANEOUS
 * Add BOM document.
 * Improve documentation (e.g. how to attache to the car).
+* Verify serial dumper on Windows.
 
 
 
