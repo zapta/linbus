@@ -1,0 +1,15 @@
+TODO list for Linbus Proxy
+
+SCHEMATIC
+
+LAYOUT
+
+SOFTWARE
+
+MISCELLANEOUS
+* Add BOM document.
+* Add documentation.
+
+
+
+

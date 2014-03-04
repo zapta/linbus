@@ -4,6 +4,7 @@ SCHEMATIC
 
 LAYOUT
 * Add version label on bottom of PCB (similar to Beeper).
+* Change header pads to round x 0.07 diameter.
 
 SOFTWARE
 

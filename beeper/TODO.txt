@@ -3,6 +3,7 @@ TODO list for Linbus Beeper
 SCHEMATIC
 
 LAYOUT
+* Change header pads to round x 0.07 diameter.
 
 SOFTWARE
 * Change the beep pattern, more aggressive sound brief sound when the reverse gear is engaged.
