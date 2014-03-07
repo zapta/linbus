@@ -3,18 +3,19 @@
 # A python script to dump to stdout the data recieved on serial port.
 # Tested on Max OSX 10.8.5 with python 2.7.2.
 #
-# Based on example from pySerial.
+# Requires installation of the PySerial library. INSTALLATION.txt for details.
 #
-# NOTE: Opening the serial port may cause a DTR level change that on
-# some Arduinos cause a CPU reset.
+# NOTE: Opening the serial port may cause a DTR signal change that may reset 
+# the analyzer board.
 
 import getopt
 import optparse
 import os
 import re
 import select
+import serial
 import sys
-import termios
+import traceback
 import time
 
 # Set later when parsing args.
@@ -60,7 +61,7 @@ def parseArgs(argv):
   parser = optparse.OptionParser()
   parser.add_option(
       "-p", "--port", dest="port",
-      default="/dev/cu.usbserial-AM01VGNC",
+      default="/dev/cu.usbserial-A702YSE3",
       help="serial port to read", metavar="PORT")
   parser.add_option(
       "-d", "--diff", dest="diff",
@@ -69,16 +70,16 @@ def parseArgs(argv):
   parser.add_option(
       "-s", "--speed", dest="speed",
       default=115200,
-      help="set baud rate, 0 for default")
+      help="use this serial port baud rate")
   (FLAGS, args) = parser.parse_args()
   if args:
     print "Uexpected arguments:", args
     print "Aborting"
     sys.exit(1)
   print "Flags:"
-  print "  --port:  ", FLAGS.port
-  print "  --diff:  ", FLAGS.diff
-  print "  --speed: ", FLAGS.speed
+  print ("  --port ..........[%s]" % FLAGS.port)
+  print ("  --speed .........[%s]" % FLAGS.speed)
+  print ("  --diff ..........[%s]" % FLAGS.diff)
 
 # Return time now in millis. We use it to comptute relative time.
 def timeMillis():
@@ -90,59 +91,39 @@ def formatRelativeTimeMillis(millis):
   millis_fraction = millis % 1000
   return "%05d.%03d" % (seconds, millis_fraction)
 
-# Clear pending chars until no more.
-def clearPendingChars(fd):
-  while (True):
-    ready,_,_ = select.select([fd],[],[], 1e-10)
-    if not ready:
-      return;
-    os.read(fd, 1)
-
-# Wait for next input character and return it as a single
-# char string.
-def readChar(fd):
-  # Wait for rx data ready. Timeout of 0 indicates wait forever.
-  ready,_,_ = select.select([fd],[],[], 0)
-  # Read and output one character
-  return os.read(fd, 1)
-
-# Read and return a single line, without the eol charcater.
-def readLine(fd):
-  line = [] 
-  while True:
-    char = readChar(fd)
-    if (char == "\n"):
-      return "".join(line)
-    line.append(char)
+# Read and return a single line, without the terminating EOL char.
+#def readLine(serial_port):
+#  line = serial_port.readline().rstrip('\n')
+#  return line.rstring('\n')
 
 # Open the serial port for reading at the specified speed.
-# Returns the port's fd.
+# Returns the opened serial port.
 def openPort():
-  while True:
-    try:
-      # Open port in read only mode. Call is blocking.
-      print "Opening port:", FLAGS.port
-      fd = os.open(FLAGS.port, os.O_RDONLY | os.O_NOCTTY )
-      print "Done"
-      break
-    except Exception:
-      print "Exception, will retry"
-      time.sleep(1)
-
-  # If speed requested, setup the port.
-  if FLAGS.speed != 0:
-    print "Setting port speed to", FLAGS.speed
-    iflag, oflag, cflag, lflag, ispeed, ospeed, cc = termios.tcgetattr(fd) 
-    ispeed = FLAGS.speed
-    ospeed = FLAGS.speed
-    termios.tcsetattr(fd, termios.TCSANOW, [iflag, oflag, cflag, lflag, ispeed, ospeed, cc])
-    print "Done"
-  else:
-    print "Using default speed"
-  print "Clearing pending chars"
-  clearPendingChars(fd)
-  print "Done"
-  return fd
+  try:
+    print "\nOpening port:", FLAGS.port
+    # First opening with zero read timeout (non blocking).
+    serial_port = serial.Serial(
+      FLAGS.port, 
+      FLAGS.speed, 
+      bytesize = serial.EIGHTBITS, 
+      parity = serial.PARITY_NONE, 
+      stopbits = serial.STOPBITS_ONE, 
+      timeout = 0)
+    # Read pending chars. This cleans left over bytes.
+    while (True):
+      b = serial_port.read()
+      if not b:
+        break
+    # Make serial port blocking for read.
+    serial_port.timeout = None
+    print "Done\n"
+  except:
+    print '-'*60
+    traceback.print_exc(file=sys.stdout)
+    print '-'*60
+    Print ("Failed to open port %s, aborting" % FLAGS.port)
+    sys.exit(1)
+  return serial_port
 
 # For now, assuming both are of same size.
 # Return a list of '0', '1' and '-', one per data bit.
@@ -161,11 +142,11 @@ def insertSeperators(str, n, sep):
 
 def main(argv):
   parseArgs(argv)  
-  fd = openPort()
+  serial_port = openPort()
   start_time_millis = timeMillis();
   last_bit_lists = {}
   while True:
-    line = readLine(fd);
+    line = serial_port.readline().rstrip('\n')
     rel_time_millis = timeMillis() - start_time_millis
     timestamp = formatRelativeTimeMillis(rel_time_millis);
     # Dump raw lines
