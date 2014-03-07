@@ -121,7 +121,7 @@ def openPort():
   while True:
     try:
       # Open port in read only mode. Call is blocking.
-      print "Opening port"
+      print "Opening port:", FLAGS.port
       fd = os.open(FLAGS.port, os.O_RDONLY | os.O_NOCTTY )
       print "Done"
       break
