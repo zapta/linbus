@@ -1333,7 +1333,7 @@
 <part name="P+7" library="supply1" deviceset="+12V" device=""/>
 <part name="P+6" library="supply1" deviceset="+12V" device=""/>
 <part name="D1" library="analyzer" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
-<part name="R1" library="analyzer" deviceset="R-US_" device="R0805" value="10K"/>
+<part name="R1" library="analyzer" deviceset="R-US_" device="R0805" value="1K"/>
 <part name="J4" library="analyzer" deviceset="JP1E" device=""/>
 <part name="P+8" library="supply1" deviceset="+12V" device=""/>
 <part name="R3" library="analyzer" deviceset="R-US_" device="R0805" value="10K"/>

@@ -21,6 +21,9 @@
 // Config for P981/Cayman. Change as needed.
 static const uint16 kLinSpeed = 19200;
 
+// FRAMES LED - blinks when detecting valid frames.
+static ActionLed frame_activity_led(PORTB, 0);
+
 // ERRORS LED - blinks when detecting errors.
 static ActionLed errors_activity_led(PORTB, 1);
 
@@ -36,6 +39,9 @@ void setup()
 
   // Uses Timer2 with interrupts, and a few i/o pins. See source code for details.
   lin_decoder::setup(kLinSpeed);
+  
+  // Force a startup single blink.
+  frame_activity_led.action();
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
   // the lin decoder to reduce ISR jitter.
@@ -53,12 +59,15 @@ void loop()
     // Periodic updates.
     system_clock::loop();    
     sio::loop();
+    frame_activity_led.loop();
     errors_activity_led.loop();  
 
     // Print a periodic text messages if no activiy.
     static PassiveTimer idle_timer;
-    if (idle_timer.timeMillis() >= 5000) {
+    if (idle_timer.timeMillis() >= 3000) {
       sio::println(F("waiting..."));
+      // This causes a slow blink on the FRAME led, to show that we are alive.
+      frame_activity_led.action();
       idle_timer.restart();
     }
 
@@ -76,7 +85,7 @@ void loop()
         idle_timer.restart();
       }
 
-      // If pending errors and time to print then print and clear.
+      // If pending errors and time to print errors then print and clear.
       pending_lin_errors |= new_lin_errors;
       if (pending_lin_errors && lin_errors_timeout.timeMillis() > 1000) {
         sio::print(F("LIN errors: "));
@@ -102,15 +111,16 @@ void loop()
         }
         if (!frameOk) {
           sio::print(F(" ERR"));
+          // Make the ERRORS led blink.
+          errors_activity_led.action();
+        } else {
+          // Make the FRAME led blink.
+          frame_activity_led.action();
         }
+        
         sio::println();  
         // Supress the 'waiting' messages.
         idle_timer.restart(); 
-      }
-
-      if (!frameOk) {
-        // Make the ERRORS led blinking.
-        errors_activity_led.action();
       }
     }
   }
