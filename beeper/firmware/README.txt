@@ -18,7 +18,7 @@ H  : 0xDA
 E  : 0x05
 LB : 0x3F
 
-Flash image: beeper.hex
+Flash image: beeper_flash.hex
 
 The image includes an Arduino Mini Pro bootloader so once
 programmed, you can program software changes directly from
