@@ -17,6 +17,9 @@ Atmega328 board.
 
 ![](doc/beeper_001.jpg)
 
+
+![](doc/beeper_002.jpg)
+
 -----
 
 The firmware decodes the lin frames using bit banging and timer's interrupts. To 
