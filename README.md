@@ -1,5 +1,5 @@
-LINBUS ARDUINO
-==============
+ARDUINO LINBUS GADGETS
+======================
 
 An Arduino based LINBUS stack that allow to explore and hack linbus based system.
 
