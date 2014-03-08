@@ -1,7 +1,9 @@
-LINBUS
-======
+LINBUS ARDUINO
+==============
 
 An Arduino based LINBUS stack that allow to explore and hack linbus based system.
+
+Unless specified otherwise, the PCBs can be used with standard Aruduino IDE, behaving as Arduino Pro Mini 5V 16Mhz with ATMEGA328.
 
 Beeper - a small PCB and firmware that monitors a linbus and activates a buzzer when certain conditions met. The provided firmware includes a car specific example that beeps when the reverse gear in my car is engaged. The car specific logic is in the car_module* files and can be adapted to different applications.
 
