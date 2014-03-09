@@ -16,6 +16,7 @@
 
 #include "avr_util.h"
 #include "hardware_clock.h"
+#include "car_module_injector.h"
 
 // TODO: for debugging. Remove.
 #include "sio.h"
@@ -243,19 +244,21 @@ private:
   static uint8 state;
 
   class StateDetectBreak {
-public:
+   public:
     static inline void enter() ;
     static inline void handleIsr();
-private:
+    
+   private:
     static uint8 low_bits_counter_;
   };
 
   class StateReadData {
-public:
+   public:
     // Should be called after the break stop bit was detected.
     static inline void enter();
     static inline void handleIsr();
-private:
+    
+   private:
     // Indicates if we read bytes from master (true) or slave (false).
     static boolean rx_from_lin1_;
     
@@ -266,17 +269,24 @@ private:
     // Number of complete bytes read so far. Includes all bytes, even
     // sync, id and checksum.
     static uint8 bytes_read_;
+    
     // Number of bits read so far in the current byte. Includes start bit, 
-    // 8 data bits and one stop bits.
+    // 8 data bits and one stop bits. 
     static uint8 bits_read_in_byte_;
-    // Buffer for the current byte we collect.
+    
+    // Buffer for the current proxied byte. This byte includes any signal 
+    // injection done on this frame.
     static uint8 byte_buffer_;
+    
     // When collecting the data bits, this goes (1 << 0) to (1 << 7). Could
     // be computed as (1 << (bits_read_in_byte_ - 1)). We use this cached value
     // recude ISR computation.
     static uint8 byte_buffer_bit_mask_;
     
-    static inline boolean readRxBit();
+    //static Injector injector_;
+    
+    static inline boolean proxyRxBit();
+    static inline uint8 nextBitFunction();
   };
 
   // ----- Error Flag. -----
@@ -479,7 +489,7 @@ private:
     boolean state2 = rx2_pin::isHigh();
     for(;;) {
       resetTickTimer();  
-      // High to low transition on channel 2?     
+      // Look for high to low transition on channel 1.    
       {
         const boolean new_state1 = rx1_pin::isHigh();
         if (state1 && !new_state1) {
@@ -487,7 +497,7 @@ private:
         }
         state1 = new_state1;
       }
-      // High to low transition on channel 2?    
+      // Look for high to low transition on channel 2.   
       {
         const boolean new_state2 = rx2_pin::isHigh();
         if (state2 && !new_state2) {
@@ -551,13 +561,6 @@ private:
 
   // ----- Read-Data State Implementation -----
 
-  // A 8 bit enum reprsenging possible trasnfer on recieved bits.
-  namespace rx_bit_transfer_functions {
-    static const uint8 COPY_BIT = 0;
-    static const uint8 FORCE_1_BIT = 1;
-    static const uint8 FORCE_0_BIT = 2;
-  }
-
   uint8 StateReadData::bytes_read_;
   uint8 StateReadData::bits_read_in_byte_;
   boolean StateReadData::rx_from_lin1_;
@@ -574,7 +577,7 @@ private:
     
     // True = reading from master, sending to slave.
     rx_from_lin1_ = true;
-    rx_bit_transfer_function_ = rx_bit_transfer_functions::COPY_BIT;
+    rx_bit_transfer_function_ = injector_actions::COPY_BIT;
 
     // TODO: handle post break timeout errors.
     // TODO: set a reasonable time limit.
@@ -592,15 +595,14 @@ private:
   // and if invalid (e.g. due to electrical noise), corrupt the checksum of 
   // the modify frame. Otherwise we may laundering bad bits when recaclulating
   // the checksum for the transformed frame.
-  //
-  // NOTE: this function is optimized for runtime efficiency over code size.
-  inline boolean StateReadData::readRxBit() {
+  inline boolean StateReadData::proxyRxBit() {
+    // Represent proxied bit (after transformation).
     boolean is_rx_high = true;    
 
     if (rx_from_lin1_) {
       // Master interface to slave interface transfer.
       switch (rx_bit_transfer_function_) {
-        case rx_bit_transfer_functions::COPY_BIT:
+        case injector_actions::COPY_BIT:
           is_rx_high = rx1_pin::isHigh();
           if (is_rx_high) {
             tx2_pin::setHigh();
@@ -609,12 +611,12 @@ private:
           }
           break;
 
-        case rx_bit_transfer_functions::FORCE_1_BIT:
+        case injector_actions::FORCE_BIT_1:
           is_rx_high = true;
           tx2_pin::setHigh();
           break;
   
-        case rx_bit_transfer_functions::FORCE_0_BIT:
+        case injector_actions::FORCE_BIT_0:
           is_rx_high = false;
           tx2_pin::setLow();
           break;
@@ -628,7 +630,7 @@ private:
     } else {
       // Slave interface to master interface transfer.
       switch (rx_bit_transfer_function_) {
-        case rx_bit_transfer_functions::COPY_BIT:
+        case injector_actions::COPY_BIT:
           is_rx_high = rx2_pin::isHigh();
           if (is_rx_high) {
             tx1_pin::setHigh();
@@ -637,12 +639,12 @@ private:
           }
           break;
 
-        case rx_bit_transfer_functions::FORCE_1_BIT:
+        case injector_actions::FORCE_BIT_1:
           is_rx_high = true;
           tx1_pin::setHigh();
           break;
   
-        case rx_bit_transfer_functions::FORCE_0_BIT:
+        case injector_actions::FORCE_BIT_0:
           is_rx_high = false;
           tx1_pin::setLow();
           break;
@@ -659,11 +661,22 @@ private:
     return is_rx_high;
   }
 
+  // Returns the transfer function of the next bit.
+  inline uint8 StateReadData::nextBitFunction() {
+    if (bytes_read_ < 2 || bits_read_in_byte_ <= 1 || bits_read_in_byte_ >= 9) {
+      return injector_actions::COPY_BIT;
+    }
+    
+    // First data bit is <0, 0>
+    // Ignore the sync and id bytes and all the start bits.
+    return car_module_injector::onIsrNextBitAction(bytes_read_ - 2, bits_read_in_byte_ - 1);  
+  }
+  
   inline void StateReadData::handleIsr() {
     // Sample and propogated the data bit ASAP to avoid jitter.
     // Since we sample at the middle of the input bit, the output
     // channel is delayed by 1/2 bit.
-    const boolean is_rx_high = readRxBit(); 
+    const boolean is_rx_high = proxyRxBit(); 
     
     // Handle byte's start bit.
     if (bits_read_in_byte_ == 0) {
@@ -672,17 +685,20 @@ private:
         // If in sync byte, report as a sync error.
         setErrorFlags(bytes_read_ == 0 ? errors::SYNC_BYTE : errors::START_BIT);
         StateDetectBreak::enter();
+        // No need to set next bit action, we exit the data reading state.
         return;
       }  
-      // Start bit ok.
+      
+      // Here when start bit is ok.
       bits_read_in_byte_++;
       // Prepare buffer and mask for data bit collection.
       byte_buffer_ = 0;
       byte_buffer_bit_mask_ = (1 << 0);
+      rx_bit_transfer_function_ = nextBitFunction();
       return;
     }
 
-    // Handle next data bit, 1 out of total of 8. 
+    // If this is one of the 8 data bits handle it. This does not handle the stop bit.
     // Collect the current bit into byte_buffer_, lsb first.
     if (bits_read_in_byte_ <= 8) {
       if (is_rx_high) {
@@ -690,10 +706,11 @@ private:
       }
       byte_buffer_bit_mask_ = byte_buffer_bit_mask_ << 1;
       bits_read_in_byte_++;
+      rx_bit_transfer_function_ = nextBitFunction();
       return;
     }
     
-    // Here when in a stop bit. 
+    // Here when in a stop bit.
     bytes_read_++;
     bits_read_in_byte_ = 0;
 
@@ -702,34 +719,47 @@ private:
       // If in sync byte, report as sync error.
       setErrorFlags(bytes_read_ == 0 ? errors::SYNC_BYTE : errors::STOP_BIT);
       StateDetectBreak::enter();
+      // No need to set bit function, we exit the data reading state.
       return;
     }  
     
-    // If we just read the LIN sync byte, verify that it has
-    // the expected value.
+    // Here when we just finished reading a byte.
+    
+    // If this is the sync byte, verify that it has the expected value.
     if (bytes_read_ == 1) {
       // Should be exactly 0x55. We don't append this byte to the buffer.
       if (byte_buffer_ != 0x55) {
         setErrorFlags(errors::SYNC_BYTE);
         StateDetectBreak::enter();
+        // No need to set the next bit function, we exit the data reading state.
         return;
-      }
-    }  else {   
-     // Handle non sync byte. We append it to the buffer.
-      // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
-      // will not cause a buffer overlow.
-      rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);
-      
-      // TODO: @@@ temp for debugging. Remove. Trigger for a specific ID.
-      // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      if (bytes_read_ == 2 && byte_buffer_ == 0x8e) {
-        gp_pin::setHigh();
-        gp_pin::setLow();  
       }
     }
     
+    // If this is the id, data or checksum bytes, append it to the frame buffer.
+    // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
+    // will not cause a buffer overlow.
+    if (bytes_read_ != 1) {
+      rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);
+      
+      //@@@@@@@@@@ TODO: call this after the 8th data bit, before the stop bit, this way we will have
+      // a full bit slot to comptue the checksum rather than half a bit, until the high to low
+      // transition of the next start bit.
+      car_module_injector::onIsrByteSent(bytes_read_ - 1, byte_buffer_);
+    }
+        
     boolean has_more_bytes = false;
     if (bytes_read_ == 2) {
+            
+      // TODO: @@@ temp for debugging. Remove. Trigger for a specific ID.
+      // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      if (byte_buffer_ == 0x8e) {
+        gp_pin::setHigh();
+        gp_pin::setLow();  
+      }
+      
+      car_module_injector::onIsrFrameIdRecieved(byte_buffer_);
+            
       // Master sent sync and ID bytes and now we need to wait for the response. It can 
       // come from the master (1) or the slave (2), or 0 for timeout.
       // TODO: user longer timeout than for normal bytes.
@@ -747,6 +777,7 @@ private:
       if (bytes_read_ < LinFrame::kMinBytes) {
         setErrorFlags(errors::FRAME_TOO_SHORT);
         StateDetectBreak::enter();
+        // No need to set the next bit function, we exit the data reading state.
         return;
       }
 
@@ -755,12 +786,13 @@ private:
       // NOTE: verification of sync byte, id, checksum, etc is done latter by the main code, not the ISR.
       incrementHeadFrameBuffer();
       if (tail_frame_buffer == head_frame_buffer) {
-        // Frame buffer overrun.        
+        // Frame buffer overrun. We drop the oldest frame and continue with this one.       
         setErrorFlags(errors::BUFFER_OVERRUN);
         incrementTailFrameBuffer();
       }
 
       StateDetectBreak::enter();
+      // No need to set the next bit function, we exit the data reading state.
       return;
     }
 
@@ -769,14 +801,17 @@ private:
     if (rx_frame_buffers[head_frame_buffer].num_bytes() >= LinFrame::kMaxBytes) {
       setErrorFlags(errors::FRAME_TOO_LONG);
       StateDetectBreak::enter();
+      // No need to set the next bit function, we exit the data reading state.
       return;  
     }
 
     // Everything is ready for the next byte. Have a tick in the middle of its
-    // start bit.
+    // start bit, alsywas with a copy function.
     //
+    //    
     // TODO: move this to above the num_bytes check above for more accurate 
-    // timing of mid bit tick?    
+    // timing of mid bit tick? 
+    rx_bit_transfer_function_ = injector_actions::COPY_BIT;
     setTimerToHalfTick();
   }
 
