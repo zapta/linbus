@@ -106,8 +106,8 @@
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
 <libraries>
-<library name="proxy">
-<description>Generated from &lt;b&gt;proxy.sch&lt;/b&gt;&lt;p&gt;
+<library name="injector">
+<description>Generated from &lt;b&gt;injector.sch&lt;/b&gt;&lt;p&gt;
 by exp-lbrs-filter.ulp</description>
 <packages>
 <package name="SO-08">
@@ -1082,78 +1082,78 @@ by exp-lbrs-filter.ulp</description>
 </class>
 </classes>
 <parts>
-<part name="R2" library="proxy" deviceset="R-US_" device="R0805" value="3.3K"/>
-<part name="R3" library="proxy" deviceset="R-US_" device="R0805" value="3.3K"/>
-<part name="C1" library="proxy" deviceset="C-US" device="C0805" value="0.1uF 40V"/>
-<part name="C2" library="proxy" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF 40V"/>
-<part name="JP1" library="proxy" deviceset="PINHD-1X3" device=""/>
-<part name="D6" library="proxy" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
-<part name="GND3" library="proxy" deviceset="GND" device=""/>
-<part name="GND7" library="proxy" deviceset="GND" device=""/>
-<part name="GND8" library="proxy" deviceset="GND" device=""/>
-<part name="GND9" library="proxy" deviceset="GND" device=""/>
-<part name="C4" library="proxy" deviceset="C-US" device="C0805" value="0.1uF"/>
-<part name="GND12" library="proxy" deviceset="GND" device=""/>
-<part name="F1" library="proxy" deviceset="FUSE" device="" value="500ma Slow"/>
-<part name="GND2" library="proxy" deviceset="GND" device=""/>
-<part name="JP2" library="proxy" deviceset="PINHD-2X3" device="" value="ICSP"/>
-<part name="GND14" library="proxy" deviceset="GND" device=""/>
-<part name="P+5" library="proxy" deviceset="+5V" device=""/>
-<part name="GND10" library="proxy" deviceset="GND" device=""/>
-<part name="C5" library="proxy" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
-<part name="GND11" library="proxy" deviceset="GND" device=""/>
-<part name="U2" library="proxy" deviceset="ATA6631" device=""/>
-<part name="U3" library="proxy" deviceset="ATA6631" device=""/>
-<part name="JP3" library="proxy" deviceset="PINHD-1X3" device=""/>
-<part name="GND15" library="proxy" deviceset="GND" device=""/>
-<part name="GND19" library="proxy" deviceset="GND" device=""/>
-<part name="P+2" library="proxy" deviceset="+12V" device=""/>
-<part name="C8" library="proxy" deviceset="C-US" device="C0805" value="0.1uF"/>
-<part name="GND20" library="proxy" deviceset="GND" device=""/>
-<part name="P+6" library="proxy" deviceset="+5V" device=""/>
-<part name="P+9" library="proxy" deviceset="+12V" device=""/>
-<part name="P+10" library="proxy" deviceset="+12V" device=""/>
-<part name="C9" library="proxy" deviceset="C-US" device="C0805" value="220pF"/>
-<part name="C3" library="proxy" deviceset="C-US" device="C0805" value="220pF"/>
-<part name="D9" library="proxy" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
-<part name="R9" library="proxy" deviceset="R-US_" device="R0805" value="1K"/>
-<part name="GND6" library="proxy" deviceset="GND" device=""/>
-<part name="GND17" library="proxy" deviceset="GND" device=""/>
-<part name="U1" library="proxy" deviceset="ATMEGA328" device="" value="ATMEGA328"/>
-<part name="X1" library="proxy" deviceset="RESONATOR" device="SMD" value="16MHz"/>
-<part name="GND4" library="proxy" deviceset="GND" device=""/>
-<part name="R5" library="proxy" deviceset="R-US_" device="R0805" value="10k"/>
-<part name="P+4" library="proxy" deviceset="+5V" device=""/>
-<part name="GND5" library="proxy" deviceset="GND" device=""/>
-<part name="P+7" library="proxy" deviceset="+5V" device=""/>
-<part name="U$1" library="proxy" deviceset="NC" device=""/>
-<part name="U$5" library="proxy" deviceset="NC" device=""/>
-<part name="U$6" library="proxy" deviceset="NC" device=""/>
-<part name="U$7" library="proxy" deviceset="NC" device=""/>
-<part name="U$8" library="proxy" deviceset="NC" device=""/>
-<part name="U$9" library="proxy" deviceset="NC" device=""/>
-<part name="U$10" library="proxy" deviceset="NC" device=""/>
-<part name="U$11" library="proxy" deviceset="NC" device=""/>
-<part name="LED1" library="proxy" deviceset="LED" device=""/>
-<part name="LED2" library="proxy" deviceset="LED" device=""/>
-<part name="U$13" library="proxy" deviceset="DOCFIELD" device=""/>
-<part name="C6" library="proxy" deviceset="C-US" device="C0805" value="0.1uF"/>
-<part name="GND30" library="proxy" deviceset="GND" device=""/>
-<part name="GND13" library="proxy" deviceset="GND" device=""/>
-<part name="C7" library="proxy" deviceset="C-US" device="C0805" value="0.1uF"/>
-<part name="R1" library="proxy" deviceset="R-US_" device="R0805" value="10K"/>
-<part name="R4" library="proxy" deviceset="R-US_" device="R0805" value="10K"/>
-<part name="J3" library="proxy" deviceset="PINHD-1X6" device=""/>
-<part name="D2" library="proxy" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
-<part name="D3" library="proxy" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
-<part name="P+1" library="proxy" deviceset="+5V" device=""/>
-<part name="P+3" library="proxy" deviceset="+12V" device=""/>
-<part name="U$2" library="proxy" deviceset="NC" device=""/>
-<part name="U$3" library="proxy" deviceset="NC" device=""/>
-<part name="U$4" library="proxy" deviceset="NC" device=""/>
-<part name="U$12" library="proxy" deviceset="NC" device=""/>
-<part name="U$14" library="proxy" deviceset="NC" device=""/>
-<part name="U$15" library="proxy" deviceset="NC" device=""/>
+<part name="R2" library="injector" deviceset="R-US_" device="R0805" value="3.3K"/>
+<part name="R3" library="injector" deviceset="R-US_" device="R0805" value="3.3K"/>
+<part name="C1" library="injector" deviceset="C-US" device="C0805" value="0.1uF 40V"/>
+<part name="C2" library="injector" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF 40V"/>
+<part name="JP1" library="injector" deviceset="PINHD-1X3" device=""/>
+<part name="D6" library="injector" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
+<part name="GND3" library="injector" deviceset="GND" device=""/>
+<part name="GND7" library="injector" deviceset="GND" device=""/>
+<part name="GND8" library="injector" deviceset="GND" device=""/>
+<part name="GND9" library="injector" deviceset="GND" device=""/>
+<part name="C4" library="injector" deviceset="C-US" device="C0805" value="0.1uF"/>
+<part name="GND12" library="injector" deviceset="GND" device=""/>
+<part name="F1" library="injector" deviceset="FUSE" device="" value="500ma Slow"/>
+<part name="GND2" library="injector" deviceset="GND" device=""/>
+<part name="JP2" library="injector" deviceset="PINHD-2X3" device="" value="ICSP"/>
+<part name="GND14" library="injector" deviceset="GND" device=""/>
+<part name="P+5" library="injector" deviceset="+5V" device=""/>
+<part name="GND10" library="injector" deviceset="GND" device=""/>
+<part name="C5" library="injector" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
+<part name="GND11" library="injector" deviceset="GND" device=""/>
+<part name="U2" library="injector" deviceset="ATA6631" device=""/>
+<part name="U3" library="injector" deviceset="ATA6631" device=""/>
+<part name="JP3" library="injector" deviceset="PINHD-1X3" device=""/>
+<part name="GND15" library="injector" deviceset="GND" device=""/>
+<part name="GND19" library="injector" deviceset="GND" device=""/>
+<part name="P+2" library="injector" deviceset="+12V" device=""/>
+<part name="C8" library="injector" deviceset="C-US" device="C0805" value="0.1uF"/>
+<part name="GND20" library="injector" deviceset="GND" device=""/>
+<part name="P+6" library="injector" deviceset="+5V" device=""/>
+<part name="P+9" library="injector" deviceset="+12V" device=""/>
+<part name="P+10" library="injector" deviceset="+12V" device=""/>
+<part name="C9" library="injector" deviceset="C-US" device="C0805" value="220pF"/>
+<part name="C3" library="injector" deviceset="C-US" device="C0805" value="220pF"/>
+<part name="D9" library="injector" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
+<part name="R9" library="injector" deviceset="R-US_" device="R0805" value="1K"/>
+<part name="GND6" library="injector" deviceset="GND" device=""/>
+<part name="GND17" library="injector" deviceset="GND" device=""/>
+<part name="U1" library="injector" deviceset="ATMEGA328" device="" value="ATMEGA328"/>
+<part name="X1" library="injector" deviceset="RESONATOR" device="SMD" value="16MHz"/>
+<part name="GND4" library="injector" deviceset="GND" device=""/>
+<part name="R5" library="injector" deviceset="R-US_" device="R0805" value="10k"/>
+<part name="P+4" library="injector" deviceset="+5V" device=""/>
+<part name="GND5" library="injector" deviceset="GND" device=""/>
+<part name="P+7" library="injector" deviceset="+5V" device=""/>
+<part name="U$1" library="injector" deviceset="NC" device=""/>
+<part name="U$5" library="injector" deviceset="NC" device=""/>
+<part name="U$6" library="injector" deviceset="NC" device=""/>
+<part name="U$7" library="injector" deviceset="NC" device=""/>
+<part name="U$8" library="injector" deviceset="NC" device=""/>
+<part name="U$9" library="injector" deviceset="NC" device=""/>
+<part name="U$10" library="injector" deviceset="NC" device=""/>
+<part name="U$11" library="injector" deviceset="NC" device=""/>
+<part name="LED1" library="injector" deviceset="LED" device=""/>
+<part name="LED2" library="injector" deviceset="LED" device=""/>
+<part name="U$13" library="injector" deviceset="DOCFIELD" device=""/>
+<part name="C6" library="injector" deviceset="C-US" device="C0805" value="0.1uF"/>
+<part name="GND30" library="injector" deviceset="GND" device=""/>
+<part name="GND13" library="injector" deviceset="GND" device=""/>
+<part name="C7" library="injector" deviceset="C-US" device="C0805" value="0.1uF"/>
+<part name="R1" library="injector" deviceset="R-US_" device="R0805" value="10K"/>
+<part name="R4" library="injector" deviceset="R-US_" device="R0805" value="10K"/>
+<part name="J3" library="injector" deviceset="PINHD-1X6" device=""/>
+<part name="D2" library="injector" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
+<part name="D3" library="injector" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
+<part name="P+1" library="injector" deviceset="+5V" device=""/>
+<part name="P+3" library="injector" deviceset="+12V" device=""/>
+<part name="U$2" library="injector" deviceset="NC" device=""/>
+<part name="U$3" library="injector" deviceset="NC" device=""/>
+<part name="U$4" library="injector" deviceset="NC" device=""/>
+<part name="U$12" library="injector" deviceset="NC" device=""/>
+<part name="U$14" library="injector" deviceset="NC" device=""/>
+<part name="U$15" library="injector" deviceset="NC" device=""/>
 </parts>
 <sheets>
 <sheet>

@@ -105,7 +105,7 @@
 <layer number="254" name="cooling" color="7" fill="1" visible="yes" active="yes"/>
 </layers>
 <library>
-<description>Generated from &lt;b&gt;proxy.sch&lt;/b&gt;&lt;p&gt;
+<description>Generated from &lt;b&gt;injector.sch&lt;/b&gt;&lt;p&gt;
 by exp-lbrs-filter.ulp</description>
 <packages>
 <package name="2X03">

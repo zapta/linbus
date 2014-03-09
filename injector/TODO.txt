@@ -1,15 +1,13 @@
-TODO list for Linbus Proxy
+TODO list for Linbus Injector
 
 SCHEMATIC
 
 LAYOUT
+* Design layout.
 
 SOFTWARE
 
 MISCELLANEOUS
 * Add BOM document.
 * Add documentation.
-
-
-
 
