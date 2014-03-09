@@ -1253,7 +1253,7 @@
 </classes>
 <parts>
 <part name="R5" library="analyzer" deviceset="R-US_" device="R0805" value="3.3K"/>
-<part name="R6" library="analyzer" deviceset="R-US_" device="R0805" value="3.3k"/>
+<part name="R6" library="analyzer" deviceset="R-US_" device="R0805" value="3.3K"/>
 <part name="C1" library="analyzer" deviceset="C-US" device="C0805" value="220pF"/>
 <part name="J1" library="analyzer" deviceset="PINHD-1X3" device=""/>
 <part name="GND3" library="analyzer" deviceset="GND" device=""/>
@@ -1273,9 +1273,9 @@
 <part name="D6" library="analyzer" deviceset="LED" device="" value="GREEN"/>
 <part name="C4" library="analyzer" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF 40V"/>
 <part name="C8" library="analyzer" deviceset="C-US" device="C0805" value="0.1uF 50V"/>
-<part name="F1" library="analyzer" deviceset="FUSE" device="" value="250ma slow"/>
+<part name="F1" library="analyzer" deviceset="FUSE" device="" value="500ma slow"/>
 <part name="C5" library="analyzer" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
-<part name="R4" library="analyzer" deviceset="R-US_" device="R0805" value="10k"/>
+<part name="R4" library="analyzer" deviceset="R-US_" device="R0805" value="10K"/>
 <part name="P+1" library="analyzer" deviceset="+5V" device=""/>
 <part name="C10" library="analyzer" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="C2" library="analyzer" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
@@ -1348,7 +1348,7 @@
 <text x="104.14" y="127" size="2.54" layer="97">LINBUS INTERFACE</text>
 <text x="213.36" y="73.66" size="2.54" layer="97">ICSP</text>
 <text x="231.14" y="127" size="2.54" layer="97">MCU</text>
-<text x="213.36" y="53.34" size="2.54" layer="97" font="vector">DESIGN NOT VERIFIED YET</text>
+<text x="241.3" y="53.34" size="2.54" layer="97" font="vector">LINBUS ANALYZER</text>
 <text x="266.7" y="73.66" size="2.54" layer="97">DIAGNOSTIC LEDS</text>
 <wire x1="53.34" y1="215.9" x2="309.88" y2="215.9" width="0.1524" layer="94"/>
 <wire x1="309.88" y1="215.9" x2="309.88" y2="25.4" width="0.1524" layer="94"/>

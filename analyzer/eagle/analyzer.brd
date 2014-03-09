@@ -761,7 +761,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="22.733" y="6.7945" size="0.762" layer="25" rot="R90"/>
 <attribute name="VALUE" x="19.304" y="5.08" size="1.27" layer="27"/>
 </element>
-<element name="R6" library="analyzer" package="R0805" value="3.3k" x="15.6845" y="7.62" smashed="yes">
+<element name="R6" library="analyzer" package="R0805" value="3.3K" x="15.6845" y="7.62" smashed="yes">
 <attribute name="NAME" x="13.843" y="8.89" size="0.762" layer="25"/>
 <attribute name="VALUE" x="15.0495" y="5.08" size="1.27" layer="27"/>
 </element>
@@ -813,7 +813,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="15.6845" y="26.67" size="0.762" layer="25" rot="R180"/>
 <attribute name="VALUE" x="17.9705" y="27.4955" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="F1" library="analyzer" package="1206" value="250ma slow" x="10.3505" y="34.6075" smashed="yes" rot="R180">
+<element name="F1" library="analyzer" package="1206" value="500ma slow" x="10.3505" y="34.6075" smashed="yes" rot="R180">
 <attribute name="NAME" x="9.779" y="35.941" size="0.762" layer="25"/>
 <attribute name="VALUE" x="11.6205" y="37.1475" size="1.27" layer="27" rot="R180"/>
 </element>
@@ -821,7 +821,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="25.7335" y="28.4665" size="0.762" layer="25" rot="R90"/>
 <attribute name="VALUE" x="28.995" y="25.355" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="R4" library="analyzer" package="R0805" value="10k" x="28.575" y="23.495" smashed="yes">
+<element name="R4" library="analyzer" package="R0805" value="10K" x="28.575" y="23.495" smashed="yes">
 <attribute name="NAME" x="25.2095" y="23.749" size="0.762" layer="25"/>
 <attribute name="VALUE" x="27.94" y="20.955" size="1.27" layer="27"/>
 </element>
