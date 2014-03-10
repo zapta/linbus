@@ -1,13 +1,22 @@
-TODO list for Linbus Injector
+TODO list for the Linbus Injector.
 
 SCHEMATIC
 
 LAYOUT
-* Design layout.
+* Change header pads to round x 0.07 diameter.
+* Increase the top border by 20mils to match the border of the right andgle header
+* Change the location of the linbus pin names to make them visible with right angle headers.
 
 SOFTWARE
+* Rename car_module_* files to custom_*.
+* Clean '@@@' todos.
+* Add automatic trigger of sport mode when car starts (detect ignition key).
+* Add configuration toggle via the sport mode button.
 
 MISCELLANEOUS
 * Add BOM document.
-* Add documentation.
+* Improve documentation (e.g. how to attache to the car).
+
+
+
 

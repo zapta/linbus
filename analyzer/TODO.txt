@@ -11,6 +11,7 @@ LAYOUT
 * Add 20mils to the top of the board to match border of the right hangle headers.
 
 SOFTWARE
+* Clean '@@@' todos.
 
 MISCELLANEOUS
 * Add BOM document.
