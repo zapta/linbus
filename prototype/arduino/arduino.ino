@@ -13,7 +13,9 @@
 #include "action_led.h"
 #include "avr_util.h"
 #include "car_module.h"
+#include "car_module_injector.h"
 #include "hardware_clock.h"
+#include "io_button.h"
 #include "io_pins.h"
 #include "lin_decoder.h"
 #include "sio.h"
@@ -27,6 +29,9 @@ static ActionLed errors_activity_led(PORTB, 1);
 
 // FRAMES LED - blinks when detecting valid frames.
 static ActionLed frames_activity_led(PORTB, 0);
+
+// Injection trigger push button, 25ms debouncing, active low.
+static IoButton trigger_button(PORTB, 2, 25, false);
 
 // Arduino setup function. Called once during initialization.
 void setup()
@@ -59,6 +64,7 @@ void loop()
     // Periodic updates.
     system_clock::loop();    
     sio::loop();
+    trigger_button.loop();
     frames_activity_led.loop();
     errors_activity_led.loop();  
     car_module::loop();
@@ -96,7 +102,10 @@ void loop()
         pending_lin_errors = 0;
       }
     }
-
+    
+    // Propogate trigger button state to the injector
+    car_module_injector::setInjectionsEnabled(trigger_button.isPressed());
+    
     // Handle recieved LIN frames.
     LinFrame frame;
     if (lin_decoder::readNextFrame(&frame)) {

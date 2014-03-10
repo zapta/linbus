@@ -26,30 +26,25 @@ namespace car_module_injector {
   
   // Private state of the injector. Do not use from other files.
   namespace private_ {
-    static boolean injections_enabled = true;
+    extern boolean injections_enabled;
     
     // True if the current linbus frame is transformed by the injector. Othrwise, the 
     // frame is passed as is.
-    static boolean frame_id_matches;
+    extern boolean frame_id_matches;
     
     // Used to calculate the modified frame checksum.
-    static uint16 sum;
+    extern uint16 sum;
     
     // The modified frame checksum byte. 
-    static uint8 checksum;
+    extern uint8 checksum;
   }
   
   // ====== These functions should be called from main thread only ================
   
-  inline boolean setInjectionsEnabled(boolean enabled) {
+  inline void setInjectionsEnabled(boolean enabled) {
     private_::injections_enabled = enabled;
   }
-  
-  inline boolean areInjectionsEanbled() {
-    return private_::injections_enabled;
-  }
-  
-  
+    
   // ====== These function should be called from lib_decoder ISR only =============
 
   // Called when the id byte is recieved.
