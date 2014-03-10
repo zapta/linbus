@@ -596,9 +596,11 @@ private:
   // the modify frame. Otherwise we may laundering bad bits when recaclulating
   // the checksum for the transformed frame.
   inline boolean StateReadData::proxyRxBit() {
-    // Represent proxied bit (after transformation).
-    boolean is_rx_high = true;    
+    sample_pin::setHigh();
 
+    // Represent proxied bit (after transformation).
+    boolean is_rx_high = true;  
+    
     if (rx_from_lin1_) {
       // Master interface to slave interface transfer.
       switch (rx_bit_transfer_function_) {
@@ -663,7 +665,8 @@ private:
 
   // Returns the transfer function of the next bit.
   inline uint8 StateReadData::nextBitFunction() {
-    if (bytes_read_ < 2 || bits_read_in_byte_ <= 1 || bits_read_in_byte_ >= 9) {
+    // Force copy if sync byte, id byte, any start bit or any stop bit.
+    if (bytes_read_ < 2 || bits_read_in_byte_ == 0 || bits_read_in_byte_ >= 9) {
       return injector_actions::COPY_BIT;
     }
     
