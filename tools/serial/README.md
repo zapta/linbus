@@ -99,6 +99,7 @@ Sample dump in normal mode (filtered for frame id 8e by grepping for '  8e'). Ea
 
 Sample dump in diff mode. Notice how the bit changes when its button is pressed and released:
 ```
+00005.030  8e: | ---- ---- | ---- -0-- | ---- ---- | ---- ---- | ---- ---- | ---- ---- | ---- ---- | ---- ---- |
 00005.608  8e: | ---- ---- | ---- -1-- | ---- ---- | ---- ---- | ---- ---- | ---- ---- | ---- ---- | ---- ---- |
 00005.816  8e: | ---- ---- | ---- -0-- | ---- ---- | ---- ---- | ---- ---- | ---- ---- | ---- ---- | ---- ---- |
 ```
