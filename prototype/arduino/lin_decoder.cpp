@@ -737,18 +737,20 @@ private:
         // No need to set the next bit function, we exit the data reading state.
         return;
       }
+      // We do not append the sync byte to the buffer.
+    } else {
+      // If this is the id, data or checksum bytes, append it to the frame buffer.
+      // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
+      // will not cause a buffer overlow.
+      rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);     
     }
     
-    // If this is the id, data or checksum bytes, append it to the frame buffer.
-    // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
-    // will not cause a buffer overlow.
-    if (bytes_read_ != 1) {
-      rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);
-      
+    // Report data and checksum bytes, skipping the sync and frame id bytes.
+    if (bytes_read_ >= 3) {     
       //@@@@@@@@@@ TODO: call this after the 8th data bit, before the stop bit, this way we will have
       // a full bit slot to comptue the checksum rather than half a bit, until the high to low
       // transition of the next start bit.
-      car_module_injector::onIsrByteSent(bytes_read_ - 1, byte_buffer_);
+      car_module_injector::onIsrByteSent(bytes_read_ - 3, byte_buffer_);
     }
         
     boolean has_more_bytes = false;

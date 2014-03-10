@@ -26,6 +26,12 @@ namespace car_module_injector {
   
   // Private state of the injector. Do not use from other files.
   namespace private_ {
+    // Target injection bit for 981CS Sport Mode button.
+    static const uint8 kTargetedFrameId = 0x8e;
+    static const uint8 kTargetedFrameDataBytes = 8;
+    static const uint8 kTargetedByteIndex = 1;
+    static const uint8 kTargetedBitIndex = 2;
+    
     extern boolean injections_enabled;
     
     // True if the current linbus frame is transformed by the injector. Othrwise, the 
@@ -50,10 +56,11 @@ namespace car_module_injector {
   // Called when the id byte is recieved.
   // Called from lin_decoder's ISR.
   inline void onIsrFrameIdRecieved(uint8 id) {
-    private_::frame_id_matches = private_::injections_enabled && (id == 0x8e);
-    // NOTE(tal): currently we use linbus checksbum V2 which includes also the id byte. 
+    private_::frame_id_matches = 
+        private_::injections_enabled && (id == private_::kTargetedFrameId);
+    // NOTE: currently we use linbus checksbum V2 which includes also the id byte. 
     private_::sum = id;
-    private_::checksum = 0;
+    private_::checksum = 0x00;
   }
 
   // Called when a data or checksum byte is sent (but not the sync or id bytes). 
@@ -69,7 +76,7 @@ namespace car_module_injector {
     private_::sum += b;
     
     // If we just recieved the last data byte, compute the modified frame checksum.
-    if (byte_index == (8 - 1)) {
+    if (byte_index == (private_::kTargetedFrameDataBytes - 1)) {
       // Keep adding the high and low bytes until no carry.
       for (;;) {
         const uint8 highByte = (uint8)(private_::sum >> 8);
@@ -85,7 +92,7 @@ namespace car_module_injector {
 
   // Called before sending a data bit of the the data or checksum bytes to get the 
   // transfer function for it.
-  // byte_index = 0 for first data byte
+  // byte_index = 0 for first data byte, 1 for second data byte, ...
   // bit_index = 0 for LSB, 7 for MSB.
   // Called from lin_decoder's ISR.
   inline byte onIsrNextBitAction(uint8 byte_index, uint8 bit_index) {
@@ -94,8 +101,9 @@ namespace car_module_injector {
     }
 
     // Handle a bit of one of the data bytes.
-    if (byte_index < 8) {
-      const boolean atSportModeButtonBit = ((byte_index == 1) && (bit_index == 2));
+    if (byte_index < private_::kTargetedFrameDataBytes) {
+      const boolean atSportModeButtonBit = 
+          ((byte_index == private_::kTargetedByteIndex) && (bit_index == private_::kTargetedBitIndex));
       return atSportModeButtonBit ? injector_actions::FORCE_BIT_1 : injector_actions::COPY_BIT;
     }
     
