@@ -1,17 +1,16 @@
-SERIAL DUMP UTILITY
-===================
+#SERIAL DUMP UTILITY
 
 The serial dump utility is a python scripts that runs on a computer and help analyze serial data
 recieved from the Linbus Analyzer.
 
-#MAC OSX AND LINUX INSTALLATION
+##MAC OSX AND LINUX INSTALLATION
 
-##1. Install Python
+###1. Install Python
 Go to http://www.python.org/download and install python 2.7.x. Note that 2.7.x is not the latest version
 of python but the download page allows you to install older stable versions. 
 (tested tested with python 2.7.5 on Mac OSX 10.9.2)
 
-##2. Install PIP
+###2. Install PIP
 Pip is the python package manager. We need it to install the pyserial library in the next step. 
 The pip installtion script is provided here for convenience). To install pip run the following command in this directory (the pip 
 
@@ -19,7 +18,7 @@ The pip installtion script is provided here for convenience). To install pip run
 sudo python ./lib/get-pip.py
 ```
 
-##3. Intall the PySerial library
+###3. Intall the PySerial library
 This library is used by the serial dump utility to access the serial ports on this computer. To install the pyserial library run the
 following
 
@@ -27,7 +26,7 @@ following
 sudo pip install pyserial
 ```
 
-*4. Identify The Serial Port On Your Computer*
+###4. Identify The Serial Port On Your Computer
 Plug the linbus analyzer to a USB port of your computer and list the USB serial devices as follows
 
 ```
@@ -36,7 +35,7 @@ ls /dev/*usb*
 
 Look for device with name like /dev/cu.usbserial-A702YSE3. This is your serial port. (you may see also a matching device with 'tty' prefix. Ignore it).
 
-##5. Run the serial utility
+###5. Run the serial utility
 With the Linbus Analyzer attached to your computer, run the follwoing command (replace the port name with the one you identified in a previous step)
 
 ```
