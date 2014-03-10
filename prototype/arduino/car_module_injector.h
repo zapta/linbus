@@ -95,8 +95,8 @@ namespace car_module_injector {
 
     // Handle a bit of one of the data bytes.
     if (byte_index < 8) {
-      const boolean sportModeButton = ((byte_index == 1) && (bit_index == 2));
-      return sportModeButton ? injector_actions::FORCE_BIT_1 : injector_actions::FORCE_BIT_0;
+      const boolean atSportModeButtonBit = ((byte_index == 1) && (bit_index == 2));
+      return atSportModeButtonBit ? injector_actions::FORCE_BIT_1 : injector_actions::COPY_BIT;
     }
     
     // Handle a checksum bit.
