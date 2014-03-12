@@ -1,4 +1,5 @@
-**TODO list for The Arduino Linbus Analyzer**
+TODO list for The Arduino Linbus Analyzer
+-----------------------------------------
 
 **SCHEMATIC**
 
