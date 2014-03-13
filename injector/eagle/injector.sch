@@ -235,10 +235,22 @@ by exp-lbrs-filter.ulp</description>
 <vertex x="0.0635" y="-0.889"/>
 </polygon>
 <polygon width="0.127" layer="21">
-<vertex x="0.0635" y="0.889"/>
+<vertex x="0.0635" y="1.0922"/>
 <vertex x="0.254" y="0.889"/>
 <vertex x="0.254" y="-0.889"/>
-<vertex x="0.0635" y="-0.889"/>
+<vertex x="0.0635" y="-1.0922"/>
+</polygon>
+<polygon width="0.127" layer="21">
+<vertex x="0.8128" y="1.0922"/>
+<vertex x="0.0635" y="1.0922"/>
+<vertex x="0.0635" y="0.9652"/>
+<vertex x="0.8128" y="0.9652"/>
+</polygon>
+<polygon width="0.127" layer="21">
+<vertex x="0.8382" y="-0.9906"/>
+<vertex x="0.0762" y="-0.9906"/>
+<vertex x="0.0762" y="-1.1176"/>
+<vertex x="0.8382" y="-1.1176"/>
 </polygon>
 </package>
 <package name="UD-6,3X5,8_NICHICON">
@@ -1881,22 +1893,24 @@ SLAVE</text>
 <errors>
 <approved hash="102,1,266.7,190.5,+5V,SECONDARY_5V,,,,"/>
 <approved hash="201,1,266.7,190.5,+5V,+5V\, SECONDARY_5V,,,,"/>
-<approved hash="104,1,160.02,198.12,U2,VS,+12V,,,"/>
+<approved hash="104,1,160.02,198.12,U1,VS,+12V,,,"/>
 <approved hash="104,1,251.46,198.12,U3,VS,+12V,,,"/>
-<approved hash="104,1,157.48,83.82,U1,AGND,GND,,,"/>
-<approved hash="104,1,157.48,137.16,U1,AVCC,+5V,,,"/>
-<approved hash="104,1,157.48,134.62,U1,VCC,+5V,,,"/>
-<approved hash="104,1,157.48,132.08,U1,VCC,+5V,,,"/>
-<approved hash="117,1,157.48,127,AREF,,,,,"/>
-<approved hash="106,1,205.74,99.06,GP_DEBUG,,,,,"/>
-<approved hash="106,1,205.74,137.16,LIN_BREAK,,,,,"/>
-<approved hash="106,1,205.74,129.54,LIN_ISR,,,,,"/>
-<approved hash="106,1,205.74,106.68,LIN_TICK,,,,,"/>
-<approved hash="113,1,50.5629,186.821,JP1,,,,,"/>
-<approved hash="113,1,50.5629,171.581,JP3,,,,,"/>
-<approved hash="113,1,272.102,97.79,LED1,,,,,"/>
-<approved hash="113,1,282.262,97.79,LED2,,,,,"/>
-<approved hash="113,1,55.6429,104.271,J3,,,,,"/>
+<approved hash="104,1,142.24,76.2,U2,AGND,GND,,,"/>
+<approved hash="104,1,142.24,129.54,U2,AVCC,+5V,,,"/>
+<approved hash="104,1,142.24,127,U2,VCC,+5V,,,"/>
+<approved hash="104,1,142.24,124.46,U2,VCC,+5V,,,"/>
+<approved hash="117,1,142.24,119.38,AREF,,,,,"/>
+<approved hash="106,1,190.5,91.44,GP_DEBUG,,,,,"/>
+<approved hash="106,1,190.5,129.54,LIN_BREAK,,,,,"/>
+<approved hash="106,1,190.5,121.92,LIN_ISR,,,,,"/>
+<approved hash="106,1,190.5,99.06,LIN_TICK,,,,,"/>
+<approved hash="113,1,50.5629,186.821,J1,,,,,"/>
+<approved hash="113,1,50.5629,171.581,J2,,,,,"/>
+<approved hash="113,1,254.322,95.25,D5,,,,,"/>
+<approved hash="113,1,264.482,95.25,D6,,,,,"/>
+<approved hash="113,1,53.1029,99.1912,J3,,,,,"/>
+<approved hash="113,1,274.642,95.25,D7,,,,,"/>
+<approved hash="113,1,284.802,95.25,D8,,,,,"/>
 </errors>
 </schematic>
 </drawing>
