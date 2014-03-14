@@ -3,8 +3,6 @@ TODO list for the Linbus Injector.
 SCHEMATIC
 
 LAYOUT
-* Increase the top border by 20mils to match the border of the right andgle header
-* Change the location of the linbus pin names to make them visible with right angle headers.
 
 SOFTWARE
 * Rename car_module_* files to custom_*.
