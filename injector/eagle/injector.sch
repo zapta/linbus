@@ -236,21 +236,21 @@ by exp-lbrs-filter.ulp</description>
 </polygon>
 <polygon width="0.127" layer="21">
 <vertex x="0.0635" y="1.0922"/>
-<vertex x="0.254" y="0.889"/>
-<vertex x="0.254" y="-0.889"/>
+<vertex x="0.254" y="1.0922"/>
+<vertex x="0.254" y="-1.0922"/>
 <vertex x="0.0635" y="-1.0922"/>
 </polygon>
 <polygon width="0.127" layer="21">
-<vertex x="0.8128" y="1.0922"/>
+<vertex x="-1.016" y="1.0922"/>
 <vertex x="0.0635" y="1.0922"/>
 <vertex x="0.0635" y="0.9652"/>
-<vertex x="0.8128" y="0.9652"/>
+<vertex x="-1.016" y="0.9652"/>
 </polygon>
 <polygon width="0.127" layer="21">
-<vertex x="0.8382" y="-0.9906"/>
-<vertex x="0.0762" y="-0.9906"/>
-<vertex x="0.0762" y="-1.1176"/>
-<vertex x="0.8382" y="-1.1176"/>
+<vertex x="-1.016" y="-0.9652"/>
+<vertex x="0.0762" y="-0.9652"/>
+<vertex x="0.0762" y="-1.0922"/>
+<vertex x="-1.016" y="-1.0922"/>
 </polygon>
 </package>
 <package name="UD-6,3X5,8_NICHICON">
