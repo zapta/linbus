@@ -1096,7 +1096,7 @@ by exp-lbrs-filter.ulp</description>
 <parts>
 <part name="R5" library="injector" deviceset="R-US_" device="R0805" value="3.3K"/>
 <part name="R6" library="injector" deviceset="R-US_" device="R0805" value="3.3K"/>
-<part name="C3" library="injector" deviceset="C-US" device="C0805" value="0.1uF 40V"/>
+<part name="C3" library="injector" deviceset="C-US" device="C0805" value="0.1uF 50V"/>
 <part name="C2" library="injector" deviceset="CPOL-US" device="UD-6,3X5,8" value="22uF 40V"/>
 <part name="J1" library="injector" deviceset="PINHD-1X3" device=""/>
 <part name="D3" library="injector" deviceset="SMF5.0AT1" device="" value="MBR0540"/>
@@ -1146,8 +1146,8 @@ by exp-lbrs-filter.ulp</description>
 <part name="U$9" library="injector" deviceset="NC" device=""/>
 <part name="U$10" library="injector" deviceset="NC" device=""/>
 <part name="U$11" library="injector" deviceset="NC" device=""/>
-<part name="D5" library="injector" deviceset="LED" device=""/>
-<part name="D6" library="injector" deviceset="LED" device=""/>
+<part name="D5" library="injector" deviceset="LED" device="" value="RED"/>
+<part name="D6" library="injector" deviceset="LED" device="" value="GREEN"/>
 <part name="U$13" library="injector" deviceset="DOCFIELD" device=""/>
 <part name="C4" library="injector" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="GND30" library="injector" deviceset="GND" device=""/>
@@ -1165,8 +1165,8 @@ by exp-lbrs-filter.ulp</description>
 <part name="U$4" library="injector" deviceset="NC" device=""/>
 <part name="U$12" library="injector" deviceset="NC" device=""/>
 <part name="U$14" library="injector" deviceset="NC" device=""/>
-<part name="D7" library="injector" deviceset="LED" device=""/>
-<part name="D8" library="injector" deviceset="LED" device=""/>
+<part name="D7" library="injector" deviceset="LED" device="" value="GREEN"/>
+<part name="D8" library="injector" deviceset="LED" device="" value="BLUE"/>
 <part name="GND1" library="injector" deviceset="GND" device=""/>
 <part name="GND16" library="injector" deviceset="GND" device=""/>
 <part name="R8" library="injector" deviceset="R-US_" device="R0805" value="3.3K"/>
@@ -1180,11 +1180,11 @@ by exp-lbrs-filter.ulp</description>
 <wire x1="309.88" y1="213.36" x2="33.02" y2="213.36" width="0.1524" layer="94"/>
 <wire x1="33.02" y1="25.4" x2="309.88" y2="25.4" width="0.1524" layer="94"/>
 <text x="78.74" y="162.56" size="2.54" layer="97">LIN BUS</text>
-<text x="252.476" y="80.264" size="2.54" layer="97">DIAGNOSTICS LEDS</text>
+<text x="247.396" y="77.724" size="2.54" layer="97">DIAGNOSTICS LEDS</text>
 <text x="99.06" y="35.56" size="2.54" layer="97">ICSP</text>
 <text x="144.78" y="152.4" size="2.54" layer="97">LIN 1 RX/TX + LDO</text>
 <text x="238.76" y="152.4" size="2.54" layer="97">LIN 2 RX/TX</text>
-<text x="165.1" y="60.96" size="2.54" layer="97">MCU</text>
+<text x="162.56" y="60.96" size="2.54" layer="97">MCU</text>
 <text x="55.88" y="81.28" size="2.54" layer="97">SERIAL I/O (Optional)</text>
 <wire x1="33.02" y1="25.4" x2="33.02" y2="213.36" width="0.1524" layer="94"/>
 <text x="213.868" y="53.086" size="2.54" layer="97">DESIGN NOT YET VERIFIED</text>
@@ -1194,10 +1194,15 @@ MODE</text>
 MASTER</text>
 <text x="38.608" y="169.926" size="1.27" layer="97">TO
 SLAVE</text>
+<text x="249.936" y="95.504" size="1.524" layer="97">ER</text>
+<text x="260.096" y="95.504" size="1.524" layer="97">FR</text>
+<text x="270.256" y="95.504" size="1.524" layer="97">ST</text>
+<text x="138.938" y="188.468" size="1.27" layer="97">SLAVE
+MODE</text>
 </plain>
 <instances>
-<instance part="R5" gate="G$1" x="254" y="106.68" rot="R90"/>
-<instance part="R6" gate="G$1" x="264.16" y="106.68" rot="R90"/>
+<instance part="R5" gate="G$1" x="248.92" y="104.14" rot="R90"/>
+<instance part="R6" gate="G$1" x="259.08" y="104.14" rot="R90"/>
 <instance part="C3" gate="G$1" x="109.22" y="187.96"/>
 <instance part="C2" gate="G$1" x="99.06" y="187.96" rot="MR0"/>
 <instance part="J1" gate="A" x="48.26" y="185.42" rot="MR0"/>
@@ -1205,7 +1210,7 @@ SLAVE</text>
 <attribute name="NAME" x="87.122" y="191.389" size="1.778" layer="95"/>
 <attribute name="VALUE" x="86.614" y="197.231" size="1.778" layer="96"/>
 </instance>
-<instance part="GND3" gate="1" x="254" y="88.9"/>
+<instance part="GND3" gate="1" x="248.92" y="86.36"/>
 <instance part="GND7" gate="1" x="60.96" y="180.34"/>
 <instance part="GND8" gate="1" x="109.22" y="177.8"/>
 <instance part="GND9" gate="1" x="99.06" y="177.8"/>
@@ -1215,7 +1220,7 @@ SLAVE</text>
 <attribute name="NAME" x="68.58" y="198.12" size="1.778" layer="95"/>
 <attribute name="VALUE" x="66.294" y="190.5" size="1.778" layer="96"/>
 </instance>
-<instance part="GND2" gate="1" x="264.16" y="88.9"/>
+<instance part="GND2" gate="1" x="259.08" y="86.36"/>
 <instance part="J4" gate="A" x="101.6" y="48.26" smashed="yes">
 <attribute name="NAME" x="95.25" y="53.975" size="1.778" layer="95"/>
 <attribute name="VALUE" x="105.156" y="53.848" size="1.778" layer="96"/>
@@ -1279,8 +1284,14 @@ SLAVE</text>
 <instance part="U$9" gate="G$1" x="149.86" y="185.42"/>
 <instance part="U$10" gate="G$1" x="142.24" y="119.38"/>
 <instance part="U$11" gate="G$1" x="190.5" y="78.74" rot="R180"/>
-<instance part="D5" gate="G$1" x="254" y="96.52"/>
-<instance part="D6" gate="G$1" x="264.16" y="96.52"/>
+<instance part="D5" gate="G$1" x="248.92" y="93.98" smashed="yes">
+<attribute name="NAME" x="252.476" y="89.408" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="254.635" y="89.408" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="D6" gate="G$1" x="259.08" y="93.98" smashed="yes">
+<attribute name="NAME" x="262.636" y="89.408" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="264.795" y="89.408" size="1.778" layer="96" rot="R90"/>
+</instance>
 <instance part="U$13" gate="G$1" x="208.28" y="25.4"/>
 <instance part="C4" gate="G$1" x="132.08" y="127" smashed="yes" rot="R270">
 <attribute name="NAME" x="133.223" y="128.016" size="1.778" layer="95"/>
@@ -1320,14 +1331,20 @@ SLAVE</text>
 <instance part="U$4" gate="G$1" x="208.28" y="99.06" rot="R180"/>
 <instance part="U$12" gate="G$1" x="190.5" y="93.98" rot="R180"/>
 <instance part="U$14" gate="G$1" x="208.28" y="91.44" rot="R180"/>
-<instance part="D7" gate="G$1" x="274.32" y="96.52"/>
-<instance part="D8" gate="G$1" x="284.48" y="96.52"/>
-<instance part="GND1" gate="1" x="274.32" y="88.9"/>
-<instance part="GND16" gate="1" x="284.48" y="88.9"/>
-<instance part="R8" gate="G$1" x="284.48" y="106.68" rot="R90"/>
-<instance part="R7" gate="G$1" x="274.32" y="106.68" rot="R90"/>
-<instance part="P+8" gate="1" x="284.48" y="119.38" smashed="yes">
-<attribute name="VALUE" x="282.194" y="117.348" size="1.778" layer="96" rot="R90"/>
+<instance part="D7" gate="G$1" x="269.24" y="93.98" smashed="yes">
+<attribute name="NAME" x="272.796" y="89.408" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="274.955" y="89.408" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="D8" gate="G$1" x="287.02" y="93.98" smashed="yes">
+<attribute name="NAME" x="290.576" y="89.408" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="292.735" y="89.408" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="GND1" gate="1" x="269.24" y="86.36"/>
+<instance part="GND16" gate="1" x="287.02" y="86.36"/>
+<instance part="R8" gate="G$1" x="287.02" y="104.14" rot="R90"/>
+<instance part="R7" gate="G$1" x="269.24" y="104.14" rot="R90"/>
+<instance part="P+8" gate="1" x="287.02" y="116.84" smashed="yes">
+<attribute name="VALUE" x="284.734" y="114.808" size="1.778" layer="96" rot="R90"/>
 </instance>
 </instances>
 <busses>
@@ -1445,14 +1462,14 @@ SLAVE</text>
 <net name="N$3" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="1"/>
-<wire x1="264.16" y1="99.06" x2="264.16" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="259.08" y1="96.52" x2="259.08" y2="99.06" width="0.1524" layer="91"/>
 <pinref part="D6" gate="G$1" pin="A"/>
 </segment>
 </net>
 <net name="N$4" class="0">
 <segment>
 <pinref part="R5" gate="G$1" pin="1"/>
-<wire x1="254" y1="101.6" x2="254" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="248.92" y1="99.06" x2="248.92" y2="96.52" width="0.1524" layer="91"/>
 <pinref part="D5" gate="G$1" pin="A"/>
 </segment>
 </net>
@@ -1561,7 +1578,7 @@ SLAVE</text>
 <segment>
 <pinref part="P+8" gate="1" pin="+5V"/>
 <pinref part="R8" gate="G$1" pin="2"/>
-<wire x1="284.48" y1="116.84" x2="284.48" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="287.02" y1="114.3" x2="287.02" y2="109.22" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="VBAT" class="0">
@@ -1576,8 +1593,8 @@ SLAVE</text>
 <net name="ERROR_LED" class="0">
 <segment>
 <pinref part="R5" gate="G$1" pin="2"/>
-<wire x1="238.76" y1="111.76" x2="254" y2="111.76" width="0.1524" layer="91"/>
-<label x="238.76" y="111.76" size="1.778" layer="95"/>
+<wire x1="233.68" y1="109.22" x2="248.92" y2="109.22" width="0.1524" layer="91"/>
+<label x="233.68" y="109.22" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="U2" gate="G$1" pin="PB1(OC1A)"/>
@@ -1588,9 +1605,9 @@ SLAVE</text>
 <net name="FRAME_LED" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
-<wire x1="238.76" y1="116.84" x2="264.16" y2="116.84" width="0.1524" layer="91"/>
-<wire x1="264.16" y1="116.84" x2="264.16" y2="111.76" width="0.1524" layer="91"/>
-<label x="238.76" y="116.84" size="1.778" layer="95"/>
+<wire x1="233.68" y1="114.3" x2="259.08" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="259.08" y1="114.3" x2="259.08" y2="109.22" width="0.1524" layer="91"/>
+<label x="233.68" y="114.3" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="U2" gate="G$1" pin="PB0(ICP)"/>
@@ -1864,14 +1881,14 @@ SLAVE</text>
 <segment>
 <pinref part="R7" gate="G$1" pin="1"/>
 <pinref part="D7" gate="G$1" pin="A"/>
-<wire x1="274.32" y1="101.6" x2="274.32" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="269.24" y1="99.06" x2="269.24" y2="96.52" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$2" class="0">
 <segment>
 <pinref part="R8" gate="G$1" pin="1"/>
 <pinref part="D8" gate="G$1" pin="A"/>
-<wire x1="284.48" y1="101.6" x2="284.48" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="287.02" y1="99.06" x2="287.02" y2="96.52" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="STATUS_LED" class="0">
@@ -1882,9 +1899,9 @@ SLAVE</text>
 </segment>
 <segment>
 <pinref part="R7" gate="G$1" pin="2"/>
-<wire x1="274.32" y1="111.76" x2="274.32" y2="121.92" width="0.1524" layer="91"/>
-<wire x1="274.32" y1="121.92" x2="238.76" y2="121.92" width="0.1524" layer="91"/>
-<label x="238.76" y="121.92" size="1.778" layer="95"/>
+<wire x1="269.24" y1="109.22" x2="269.24" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="269.24" y1="119.38" x2="233.68" y2="119.38" width="0.1524" layer="91"/>
+<label x="233.68" y="119.38" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
