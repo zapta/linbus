@@ -11,6 +11,9 @@ SOFTWARE
 * Change the beep pattern, more aggressive sound brief sound when the reverse gear is engaged.
 * Rename car_module_* files to custom_*.
 * Clean '@@@' todos.
+* Reduce the solder paste amount on the resonator's pads.
+* Rename lin_decoder to lin_processor (similar to Injector)
+* Modify lin_decoder/OutputPin to accept initial value (see Injector)
 
 MISCELLANEOUS
 * Add BOM document.

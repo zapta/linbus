@@ -9,6 +9,7 @@ SOFTWARE
 * Clean '@@@' todos.
 * Add automatic trigger of sport mode when car starts (detect ignition key).
 * Add configuration toggle via the sport mode button.
+* Reduce the solder paste amount on the resonator's pads.
 
 MISCELLANEOUS
 * Add BOM document.
