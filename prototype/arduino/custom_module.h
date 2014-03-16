@@ -10,14 +10,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CAR_MODULE_H
-#define CAR_MODULE_H
+#ifndef CUSTOM_MODULE_H
+#define CUSTOM_MODULE_H
 
 #include "avr_util.h"
 #include "lin_frame.h"
 
-// Implement a car model specific functionality.
-namespace car_module {
+// Implement the application specific functionality.
+//
+// Like all the other custom_* files, thsi file should be adapted to the specific application. 
+// The example provided is for a Sport Mode button press injector for 981/Cayman.
+namespace custom_module {
   // Called once during initialization.
   extern void setup();
 
@@ -27,7 +30,7 @@ namespace car_module {
   // Called once when a new valid frame was recieved.
   extern void frameArrived(const LinFrame& frame);
   
-}  // namespace car_module
+}  // namespace custom_module
 
 #endif
 

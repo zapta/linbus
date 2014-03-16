@@ -10,19 +10,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CAR_MODULE_INJECTOR_H
-#define CAR_MODULE_INJECTOR_H
+#ifndef CUSTOM_INJECTOR_H
+#define CUSTOM_INJECTOR_H
 
 #include "avr_util.h"
+#include "custom_defs.h"
 #include "lin_frame.h"
 #include "injector_actions.h"
 
-// Control injected signals into linbus framed passed between the master and the
+// Controls signals injected into linbus framed passed between the master and the
 // slave (set/reset selected data bits and adjust the checksum byte). 
 //
-// The logic is provided as example (it simulates pressing the Sport Mode button
-// in my car) and should be modified for each application.
-namespace car_module_injector {
+// Like all the other custom_* files, thsi file should be adapted to the specific application. 
+// The example provided is for a Sport Mode button press injector for 981/Cayman.
+namespace custom_injector {
   
   // Private state of the injector. Do not use from other files.
   namespace private_ {
@@ -51,21 +52,21 @@ namespace car_module_injector {
     private_::injections_enabled = enabled;
   }
     
-  // ====== These function should be called from lib_decoder ISR only =============
+  // ====== These function should be called from lib_processor ISR only =============
 
   // Called when the id byte is recieved.
-  // Called from lin_decoder's ISR.
+  // Called from lin_processor's ISR.
   inline void onIsrFrameIdRecieved(uint8 id) {
     private_::frame_id_matches = 
         private_::injections_enabled && (id == private_::kTargetedFrameId);
-    // NOTE: currently we use linbus checksbum V2 which includes also the id byte. 
-    private_::sum = id;
+    // Linbus checksum V2 includes also the ID byte. 
+    private_::sum = custom_defs::kUseLinChecksumVersion2 ? id : 0;
     private_::checksum = 0x00;
   }
 
   // Called when a data or checksum byte is sent (but not the sync or id bytes). 
   // The injector uses it to compute the modified frame checksum.
-  // Called from lin_decoder's ISR.
+  // Called from lin_processor's ISR.
   inline void onIsrByteSent(uint8 byte_index, uint8 b) {
     // If this is not a frame we modify then do nothing.
     if (!private_::frame_id_matches) {
@@ -94,7 +95,7 @@ namespace car_module_injector {
   // transfer function for it.
   // byte_index = 0 for first data byte, 1 for second data byte, ...
   // bit_index = 0 for LSB, 7 for MSB.
-  // Called from lin_decoder's ISR.
+  // Called from lin_processor's ISR.
   inline byte onIsrNextBitAction(uint8 byte_index, uint8 bit_index) {
     if (!private_::frame_id_matches) {
       return injector_actions::COPY_BIT;
@@ -114,7 +115,7 @@ namespace car_module_injector {
     // TODO: handle the unexpected case of more than 6 + 1 bytes in the frame. For
     // now we will repeat the checksum byte blindly.
   }  
-}  // namepsace car_module_injector
+}  // namepsace custom_injector
 
 #endif
 

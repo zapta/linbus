@@ -12,18 +12,20 @@
 
 #include "lin_frame.h"
 
+#include "custom_defs.h"
+
 // Compute the checksum of the frame. For now using LIN checksum V2 only.
 uint8 LinFrame::computeChecksum() const {
-  // LIN V2 checksum includes the ID byte.
-  const uint8 startByte = 0;
-  const uint8* p = &bytes_[startByte];
+  // LIN V2 checksum includes the ID byte, V1 does not.
+  const uint8 startByteIndex = custom_defs::kUseLinChecksumVersion2 ? 0 : 1;
+  const uint8* p = &bytes_[startByteIndex];
   
   // Exclude the checksum byte at the end of the frame.
-  uint8 nBytes = num_bytes_ - (startByte + 1);
+  uint8 numBytesToChecksum = num_bytes_ - startByteIndex - 1;
 
   // Sum bytes. We should not have 16 bit overflow here since the frame has a limited size.
   uint16 sum = 0;
-  while (nBytes-- > 0) {
+  while (numBytesToChecksum-- > 0) {
     sum += *(p++);
   }
 

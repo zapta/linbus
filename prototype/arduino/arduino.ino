@@ -12,17 +12,15 @@
 
 #include "action_led.h"
 #include "avr_util.h"
-#include "car_module.h"
-#include "car_module_injector.h"
+#include "custom_defs.h"
+#include "custom_module.h"
+#include "custom_injector.h"
 #include "hardware_clock.h"
 #include "io_button.h"
 #include "io_pins.h"
-#include "lin_decoder.h"
+#include "lin_processor.h"
 #include "sio.h"
 #include "system_clock.h"
-
-// Config for P981/Cayman.
-static const uint16 kLinSpeed = 19200;
 
 // ERRORS LED - blinks when detecting errors.
 static ActionLed errors_activity_led(PORTB, 1);
@@ -44,12 +42,12 @@ void setup()
   hardware_clock::setup();
 
   // Uses Timer2 with interrupts, and a few i/o pins. See source code for details.
-  lin_decoder::setup(kLinSpeed);
+  lin_processor::setup();
   
-  car_module::setup();
+  custom_module::setup();
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
-  // the lin decoder to reduce ISR jitter.
+  // the lin processor to reduce ISR jitter.
   sei(); 
 }
 
@@ -67,7 +65,7 @@ void loop()
     trigger_button.loop();
     frames_activity_led.loop();
     errors_activity_led.loop();  
-    car_module::loop();
+    custom_module::loop();
 
     // Print a periodic text messages if no activiy.
     static PassiveTimer idle_timer;
@@ -78,15 +76,16 @@ void loop()
       idle_timer.restart();
     }
 
-    // Handle LIN decoder error flags.
+    // Handle LIN processor error flags.
     {
       // Used to trigger periodic error printing.
       static PassiveTimer lin_errors_timeout;
       // Accomulates error flags until next printing.
       static uint8 pending_lin_errors = 0;
       
-      const uint8 new_lin_errors = lin_decoder::getAndClearErrorFlags();
+      const uint8 new_lin_errors = lin_processor::getAndClearErrorFlags();
       if (new_lin_errors) {
+        //sio::printf(F("X: %02x\n"), new_lin_errors);
         // Make the ERRORS led blinking.
         errors_activity_led.action();
         idle_timer.restart();
@@ -96,7 +95,7 @@ void loop()
       pending_lin_errors |= new_lin_errors;
       if (pending_lin_errors && lin_errors_timeout.timeMillis() > 1000) {
         sio::print(F("LIN errors: "));
-        lin_decoder::printErrorFlags(pending_lin_errors);
+        lin_processor::printErrorFlags(pending_lin_errors);
         sio::println();
         lin_errors_timeout.restart();
         pending_lin_errors = 0;
@@ -104,11 +103,11 @@ void loop()
     }
     
     // Propogate trigger button state to the injector
-    car_module_injector::setInjectionsEnabled(trigger_button.isPressed());
+    custom_injector::setInjectionsEnabled(trigger_button.isPressed());
     
     // Handle recieved LIN frames.
     LinFrame frame;
-    if (lin_decoder::readNextFrame(&frame)) {
+    if (lin_processor::readNextFrame(&frame)) {
       const boolean frameOk = frame.isValid();
       if (frameOk) {
         // Make the FRAMES led blinking.
@@ -126,15 +125,21 @@ void loop()
         }
         sio::printhex2(frame.get_byte(i));  
       }
+      if (frame.hasInjectedBits()) {
+        sio::print(F(" *"));
+      }
       if (!frameOk) {
         sio::print(F(" ERR"));
       }
       sio::println();  
       idle_timer.restart(); 
 
-      // Inform the car module about the incoming frame.
+      // Inform the custom module about the incoming frame in case it
+      // needs to intercept signals. This call by itself does not do signal
+      // injection since the frame was already transfered. However, the custom
+      // module can use it to influence injection of future frames.
       if (frameOk) {
-        car_module::frameArrived(frame);
+        custom_module::frameArrived(frame);
       }
     }
   }

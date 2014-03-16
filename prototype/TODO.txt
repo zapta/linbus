@@ -8,7 +8,6 @@ LAYOUT
 * Change the location of the linbus pin names to make them visible with right angle headers.
 
 SOFTWARE
-* Rename car_module_* files to custom_*.
 * Clean '@@@' todos.
 * Add automatic trigger of sport mode when car starts (detect ignition key).
 * Add configuration toggle via the sport mode button.

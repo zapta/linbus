@@ -41,6 +41,11 @@ public:
 
   inline void reset() {
     num_bytes_ = 0;
+    has_injected_bits_ = false;
+  }
+  
+  inline boolean hasInjectedBits() {
+    return has_injected_bits_;
   }
 
   inline uint8 num_bytes() const {
@@ -53,8 +58,9 @@ public:
   }
   
   // Caller should check that num_bytes < kMaxBytes;
-  inline void append_byte(uint8 value) {
+  inline void append_byte(uint8 value, boolean byte_has_injected_bits) {
     bytes_[num_bytes_++] = value;
+    has_injected_bits_ |= byte_has_injected_bits;
   }
   
   // TODO: make this stuff private without sacrifying performance.
@@ -66,6 +72,11 @@ private:
   // Recieved frame bytes. Includes id, data and checksum. Does not 
   // include the 0x55 sync byte.
   uint8 bytes_[kMaxBytes];
+  
+  // For recieved frames, this is true if the frame had signal injection. That is, the
+  // injector forced a 0 or 1 bit, regardless if the original value of the bit was
+  // the same or not.
+  boolean has_injected_bits_;
 };
 
 #endif  

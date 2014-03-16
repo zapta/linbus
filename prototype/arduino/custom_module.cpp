@@ -10,10 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "car_module.h"
+#include "custom_module.h"
 #include "io_pins.h"
 
-namespace car_module {
+// Like all the other custom_* files, thsi file should be adapted to the specific application. 
+// The example provided is for a Sport Mode button press injector for 981/Cayman.
+namespace custom_module {
   
 // STATUS LED - indicates when button is pressed (including injected presses).
 static io_pins::OutputPin status_led(PORTD, 7);
@@ -43,6 +45,6 @@ void frameArrived(const LinFrame& frame) {
   status_led.set(button_pressed);
 }
 
-}  // namespace car_module
+}  // namespace custom_module
 
 

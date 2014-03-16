@@ -12,11 +12,11 @@
 
 // TODO: file is too long. Refactor.
 
-#include "lin_decoder.h"
+#include "lin_processor.h"
 
 #include "avr_util.h"
 #include "hardware_clock.h"
-#include "car_module_injector.h"
+#include "custom_injector.h"
 
 // TODO: for debugging. Remove.
 #include "sio.h"
@@ -51,23 +51,23 @@ static const uint8 kMaxSpaceBits = 6;
  
 // Define an output pin with fast access. Using the macro does
 // not increase the pin access time compared to direct bit manipulation.
-#define DEFINE_OUTPUT_PIN(name, port_letter, bit_index) \
+#define DEFINE_OUTPUT_PIN(name, port_letter, bit_index, initial_value) \
   namespace name { \
     static const uint8 kPinMask  = H(bit_index); \
-    static inline void setup() { \
-      DDR ## port_letter |= kPinMask;  \
-      PORT ## port_letter &= ~kPinMask; \
-    } \
     static inline void setHigh() { \
       PORT ## port_letter |= kPinMask; \
     } \
     static inline void setLow() { \
       PORT ## port_letter &= ~kPinMask; \
     } \
+    static inline void setup() { \
+      DDR ## port_letter |= kPinMask;  \
+      (initial_value) ? setHigh() : setLow(); \
+    } \
   }  
   
 
-namespace lin_decoder {
+namespace lin_processor {
 
   class Config {
 public:
@@ -75,10 +75,11 @@ public:
 #error "The existing code assumes 16Mhz CPU clk."
 #endif
     // Initialized to given baud rate. 
-    void set(uint16 baud) {
-      // If out of range use default speed.
+    void setup() {
+      // If baud rate out of range use default speed.
+      uint16 baud = custom_defs::kLinSpeed; 
       if (baud < 1000 || baud > 20000) {
-        sio::println(F("ERROR: requested out of range baud"));
+        sio::println(F("ERROR: kLinSpeed out of range"));
         baud = kDefaultBaud;
       }
       baud_ = baud; 
@@ -138,18 +139,18 @@ private:
     
   // Master LIN interface.
   DEFINE_INPUT_PIN(rx1_pin, D, 2);
-  DEFINE_OUTPUT_PIN(tx1_pin, C, 2);
+  DEFINE_OUTPUT_PIN(tx1_pin, C, 2, 1);
   
   // Slave LIN interface.  
   DEFINE_INPUT_PIN(rx2_pin, C, 1);
-  DEFINE_OUTPUT_PIN(tx2_pin, D, 4);
+  DEFINE_OUTPUT_PIN(tx2_pin, D, 4, 1);
   
   // Debugging signals.
-  DEFINE_OUTPUT_PIN(break_pin, C, 0);
-  DEFINE_OUTPUT_PIN(sample_pin, B, 4);
-  DEFINE_OUTPUT_PIN(error_pin, B, 3);
-  DEFINE_OUTPUT_PIN(isr_pin, C, 3);
-  DEFINE_OUTPUT_PIN(gp_pin, D, 6);
+  DEFINE_OUTPUT_PIN(break_pin, C, 0, 0);
+  DEFINE_OUTPUT_PIN(sample_pin, B, 4, 0);
+  DEFINE_OUTPUT_PIN(error_pin, B, 3, 0);
+  DEFINE_OUTPUT_PIN(isr_pin, C, 3, 0);
+  DEFINE_OUTPUT_PIN(gp_pin, D, 6, 0);
 
   // Called one during initialization.
   static inline void setupPins() {
@@ -283,8 +284,10 @@ private:
     // recude ISR computation.
     static uint8 byte_buffer_bit_mask_;
     
-    //static Injector injector_;
-    
+    // When true, the byte buffer has at least one injected bit. That is, a bit that 
+    // was forced to 1 or 0 by the injector, regardless of the original bit value.
+    static boolean byte_buffer_has_injected_bits_;
+        
     static inline boolean proxyRxBit();
     static inline uint8 nextBitFunction();
   };
@@ -320,13 +323,13 @@ private:
   };
 
   static const  BitName kErrorBitNames[] PROGMEM = {
-    { lin_decoder::errors::FRAME_TOO_SHORT, "SHRT" },
-    { lin_decoder::errors::FRAME_TOO_LONG, "LONG" },
-    { lin_decoder::errors::START_BIT, "STRT" },
-    { lin_decoder::errors::STOP_BIT, "STOP" },
-    { lin_decoder::errors::SYNC_BYTE, "SYNC" },
-    { lin_decoder::errors::BUFFER_OVERRUN, "OVRN" },
-    { lin_decoder::errors::OTHER, "OTHR" },
+    { errors::FRAME_TOO_SHORT, "SHRT" },
+    { errors::FRAME_TOO_LONG, "LONG" },
+    { errors::START_BIT, "STRT" },
+    { errors::STOP_BIT, "STOP" },
+    { errors::SYNC_BYTE, "SYNC" },
+    { errors::BUFFER_OVERRUN, "OVRN" },
+    { errors::OTHER, "OTHR" },
   };
 
   // Given a byte with lin decoder error bitset, print the list
@@ -373,10 +376,9 @@ private:
   }
 
   // Call once from main at the begining of the program.
-  // If baud is out of range, using default speed..
-  void setup(uint16 baud) {
+  void setup() {
     // Should be done first since some of the steps below depends on it.
-    config.set(baud);
+    config.setup();
 
     setupPins();
     setupBuffers();
@@ -386,14 +388,15 @@ private:
 
     sio::waitUntilFlushed();
     // TODO: move this to config class.
-    sio::printf(F("LIN: %u, %u, %u, %u, %u, %u, %u\n"), 
-    config.baud(), 
-    config.prescaler_x64(),
-    config.counts_per_bit(), 
-    config.counts_per_half_bit(), 
-    config.clock_ticks_per_bit(),  
-    config.clock_ticks_per_half_bit(),  
-    config.clock_ticks_per_until_start_bit());
+    sio::printf(F("LIN: %u, %u, %u, %u, %u, %u, %u, %u\n"), 
+        config.baud(), 
+        custom_defs::kUseLinChecksumVersion2,
+        config.prescaler_x64(),
+        config.counts_per_bit(), 
+        config.counts_per_half_bit(), 
+        config.clock_ticks_per_bit(),  
+        config.clock_ticks_per_half_bit(),  
+        config.clock_ticks_per_until_start_bit());
   }
 
   // ----- ISR Utility Functions -----
@@ -533,6 +536,9 @@ private:
       low_bits_counter_ = 0;
       return;
     } 
+    
+    ///setErrorFlags(errors::OTHER);  ///@@@@@@@
+
 
     // Here RX is low (active)  
     // TODO: since the slave is delayed by 1 bit, will be nice to delay also
@@ -567,6 +573,7 @@ private:
   byte StateReadData::rx_bit_transfer_function_;
   uint8 StateReadData::byte_buffer_;
   uint8 StateReadData::byte_buffer_bit_mask_;
+  boolean StateReadData::byte_buffer_has_injected_bits_;
 
   // Called after half a bit after the low to high transition at the end of the break.
   inline void StateReadData::enter() {
@@ -672,7 +679,7 @@ private:
     
     // First data bit is <0, 0>
     // Ignore the sync and id bytes and all the start bits.
-    return car_module_injector::onIsrNextBitAction(bytes_read_ - 2, bits_read_in_byte_ - 1);  
+    return custom_injector::onIsrNextBitAction(bytes_read_ - 2, bits_read_in_byte_ - 1);  
   }
   
   inline void StateReadData::handleIsr() {
@@ -697,6 +704,7 @@ private:
       // Prepare buffer and mask for data bit collection.
       byte_buffer_ = 0;
       byte_buffer_bit_mask_ = (1 << 0);
+      byte_buffer_has_injected_bits_ = false;
       rx_bit_transfer_function_ = nextBitFunction();
       return;
     }
@@ -709,6 +717,11 @@ private:
       }
       byte_buffer_bit_mask_ = byte_buffer_bit_mask_ << 1;
       bits_read_in_byte_++;
+      // If that bit value was forced by the injector, mark this byte as having injected bits.
+      if (rx_bit_transfer_function_ != injector_actions::COPY_BIT) {
+        byte_buffer_has_injected_bits_ = true;
+      }
+      // Set the transfer function for the next rx bit.
       rx_bit_transfer_function_ = nextBitFunction();
       return;
     }
@@ -726,7 +739,8 @@ private:
       return;
     }  
     
-    // Here when we just finished reading a byte.
+    // Here when we just finished reading a byte. 
+    // bytes_read is already incremented for this byte.
     
     // If this is the sync byte, verify that it has the expected value.
     if (bytes_read_ == 1) {
@@ -742,7 +756,7 @@ private:
       // If this is the id, data or checksum bytes, append it to the frame buffer.
       // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
       // will not cause a buffer overlow.
-      rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);     
+      rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_, byte_buffer_has_injected_bits_);    
     }
     
     // Report data and checksum bytes, skipping the sync and frame id bytes.
@@ -750,7 +764,7 @@ private:
       //@@@@@@@@@@ TODO: call this after the 8th data bit, before the stop bit, this way we will have
       // a full bit slot to comptue the checksum rather than half a bit, until the high to low
       // transition of the next start bit.
-      car_module_injector::onIsrByteSent(bytes_read_ - 3, byte_buffer_);
+      custom_injector::onIsrByteSent(bytes_read_ - 3, byte_buffer_);
     }
         
     boolean has_more_bytes = false;
@@ -763,7 +777,7 @@ private:
         gp_pin::setLow();  
       }
       
-      car_module_injector::onIsrFrameIdRecieved(byte_buffer_);
+      custom_injector::onIsrFrameIdRecieved(byte_buffer_);
             
       // Master sent sync and ID bytes and now we need to wait for the response. It can 
       // come from the master (1) or the slave (2), or 0 for timeout.
@@ -846,7 +860,7 @@ private:
     
     isr_pin::setLow();
   }
-}  // namespace lin_decoder
+}  // namespace lin_processor
 
 
 
