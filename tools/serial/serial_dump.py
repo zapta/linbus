@@ -23,7 +23,7 @@ FLAGS = None
 
 # Pattern to parse a frame line.
 # NOTE: excluding frames with ERR suffix.
-kFrameRegex = re.compile('^([0-9a-f]{2})((?: [0-9a-f]{2})+) ([0-9a-f]{2})$')
+kFrameRegex = re.compile('^([0-9a-f]{2})((?: [0-9a-f]{2})+) ([0-9a-f]{2})(?: [*])?$')
 
 # Represents a parsed LIN frame
 class LinFrame:
@@ -52,6 +52,7 @@ def hexListToBitList(hex_list):
 def parseLine(line):
   m = kFrameRegex.match(line)
   if not m:
+    print "Ignoring: [%s]" % line
     return None
   return LinFrame(m.group(1), m.group(2).split(), m.group(3))
 
@@ -61,7 +62,7 @@ def parseArgs(argv):
   parser = optparse.OptionParser()
   parser.add_option(
       "-p", "--port", dest="port",
-      default="/dev/cu.usbserial-A702YSE3",
+      default="/dev/cu.usbserial-AM01VGNC",
       help="serial port to read", metavar="PORT")
   parser.add_option(
       "-d", "--diff", dest="diff",
@@ -121,7 +122,7 @@ def openPort():
     print '-'*60
     traceback.print_exc(file=sys.stdout)
     print '-'*60
-    Print ("Failed to open port %s, aborting" % FLAGS.port)
+    print ("Failed to open port %s, aborting" % FLAGS.port)
     sys.exit(1)
   return serial_port
 
