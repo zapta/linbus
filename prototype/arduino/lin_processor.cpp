@@ -525,6 +525,8 @@ private:
   inline void StateDetectBreak::enter() {
     state = states::DETECT_BREAK;
     low_bits_counter_ = 0;
+    // Make sure we don't assert a break on the lin1 bus.
+    tx1_pin::setHigh();
     // Make slave TX output passive.
     tx2_pin::setHigh();
   }
@@ -577,6 +579,7 @@ private:
 
   // Called after half a bit after the low to high transition at the end of the break.
   inline void StateReadData::enter() {
+//    setErrorFlags(errors::OTHER);  ///@@@@@@@
     state = states::READ_DATA;
     bytes_read_ = 0;
     bits_read_in_byte_ = 0;
