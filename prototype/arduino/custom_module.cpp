@@ -74,6 +74,7 @@ static inline void loadEepromConfig() {
   const uint16 eeprom_code = eeprom_read_word(0);
   // If the code is unknown we default to enabled.
   is_enabled = eeprom_code != eeprom_uint16_code::DISABLED;
+  sio::printf(F("X config: %d\n"), is_enabled);
 }
 
 // Toggle the current configuration, with eeprom persistnce.
@@ -91,7 +92,7 @@ static inline void toggleConfig() {
 
 static inline void changeToState(uint8 new_state) {
   state = new_state;
-  // sio::printf(F("X state: %d\n"), state);
+  sio::printf(F("X state: %d\n"), state);
   // We assume this is a new state and always reset the time in state.
   time_in_state.restart();
   // Make sure we do not inject outside of INJECTING state.
@@ -129,19 +130,13 @@ static inline void updateState() {
       break;
       
     case states::IGNITION_ON:
-      if (sport_mode_button_signal_tracker.isOn()) {
-        changeToState(states::BUTTON_IS_PRESSED);  
-      }    
-      changeToState(states::MAYBE_INJECT);
-      break;
-      
-    // TODO: long pressing the Sport Mode button while turning the ignition on is filtered
-    // out as a stuck button. Find an alternative pattern to enable/disable the 
-    // injection. This one does not work.    
+      changeToState(isButtonOn() ? states::BUTTON_IS_PRESSED : states::MAYBE_INJECT);  
+      return;
+    
     case states::BUTTON_IS_PRESSED:
-      if (!sport_mode_button_signal_tracker.isOn()) {
+      if (!isButtonOn()) {
         changeToState(states::MAYBE_INJECT);
-        return;
+        break;
       }
       if (time_in_state.timeMillis() >= 5000) {
         changeToState(states::TOGGLE_CONFIG);
@@ -210,7 +205,7 @@ void frameArrived(const LinFrame& frame) {
   
   if (id == 0x0d) {
     if (frame.num_bytes() == (1 + 8 + 1)) {
-      const boolean is_ignition_bit_on = frame.get_byte(4) & H(4);
+      const boolean is_ignition_bit_on = frame.get_byte(6) & H(7);
       ignition_on_signal_tracker.reportSignal(is_ignition_bit_on);
     }
     return;
