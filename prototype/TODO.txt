@@ -11,6 +11,7 @@ SOFTWARE
 * Clean '@@@' todos.
 * Add automatic trigger of sport mode when car starts (detect ignition key).
 * Add configuration toggle via the sport mode button.
+* Review compilation warnings.
 
 MISCELLANEOUS
 * Add BOM document.

@@ -108,7 +108,7 @@ namespace sio {
   }
 
   void print(const __FlashStringHelper *str) {
-    const char PROGMEM *p = (const char PROGMEM *)str;
+    const char* PROGMEM p = (const char PROGMEM *)str;
     for(;;) {
       const unsigned char c = pgm_read_byte(p++);
       if (!c) {

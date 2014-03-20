@@ -44,7 +44,7 @@ public:
     has_injected_bits_ = false;
   }
   
-  inline boolean hasInjectedBits() {
+  inline boolean hasInjectedBits() const {
     return has_injected_bits_;
   }
 

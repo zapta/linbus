@@ -13,6 +13,7 @@ TODO list for The Arduino Linbus Analyzer
 **SOFTWARE**
 * Rename lin_decoder to lin_processor (similar to Injector)
 * Modify lin_decoder/OutputPin to accept initial value (see Injector)
+* Review compilation warnings.
 
 **MISCELLANEOUS**
 * Add BOM document.

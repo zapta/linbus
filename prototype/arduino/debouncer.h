@@ -21,7 +21,7 @@ class Debouncer {
 private:
 
 public:
-  Debouncer(int debounce_time_millis) 
+  Debouncer(uint16 debounce_time_millis) 
    :  
    debounce_time_millis_(debounce_time_millis),
    latest_value_(false),
@@ -66,7 +66,7 @@ public:
   }
 
 private:
-  const int debounce_time_millis_;
+  const uint16 debounce_time_millis_;
 
   // Tracks pre debouncing button stte.
   boolean latest_value_;

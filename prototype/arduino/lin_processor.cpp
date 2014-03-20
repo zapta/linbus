@@ -319,7 +319,7 @@ private:
 
   struct BitName {
     uint8 mask;
-    char *name;  
+    const char *name;  
   };
 
   static const  BitName kErrorBitNames[] PROGMEM = {
