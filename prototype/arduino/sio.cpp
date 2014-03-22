@@ -16,7 +16,9 @@
 
 namespace sio {
   // Size of output bytes queue. Shuold be <= 128 to avoid overflow.
-  static const uint8 kQueueSize = 80;
+  // TODO: reduce buffer size? Do we have enough RAM?
+  // TODO: increase index size to 16 bit and increase buffer size to 200?
+  static const uint8 kQueueSize = 120;
   static uint8 buffer[kQueueSize];
   // Index of the oldest entry in buffer.
   static uint8 start;
@@ -24,7 +26,7 @@ namespace sio {
   static uint8 count;
 
   // Caller need to verify that count < kQueueSize before calling this.
-  static void enqueue(byte b) {
+  static void unsafe_enqueue(byte b) {
     // kQueueSize is small enough that this will not overflow.
     uint8 next = start + count;
     if (next >= kQueueSize) {
@@ -35,7 +37,7 @@ namespace sio {
   }
 
   // Caller need to verify that count > 1 before calling this.
-  static byte dequeue() {
+  static byte unsafe_dequeue() {
     const uint8 b = buffer[start];
     if (++start >= kQueueSize) {
       start = 0;
@@ -68,12 +70,12 @@ namespace sio {
     if (count >= kQueueSize) {
       return;
     }
-    enqueue(c);
+    unsafe_enqueue(c);
   }
 
   void loop() {
     if (count && (UCSR0A & H(UDRE0))) {
-      UDR0 = dequeue();
+      UDR0 = unsafe_dequeue();
     }
   }
 
@@ -142,7 +144,8 @@ namespace sio {
 
   void printf(const __FlashStringHelper *format, ...)
   {
-    char buf[80];
+    // Assuming a single thread.
+    static char buf[80];
     va_list ap;
     va_start(ap, format);
     vsnprintf_P(buf, sizeof(buf), (const char *)format, ap); // progmem for AVR
