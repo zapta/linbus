@@ -14,7 +14,7 @@
 
 #include "custom_config.h"
 #include "custom_injector.h"
-#include "io_button.h"
+#include "custom_signals.h"
 #include "io_pins.h"
 #include "signal_tracker.h"
 #include "sio.h"
@@ -25,10 +25,10 @@ namespace custom_module {
   
 // A single byte enum representing the states.
 namespace states {
-  static const uint8 INITIAL = 0;
-  static const uint8 IGNITION_ON = 1;
-  static const uint8 INJECT = 2;
-  static const uint8 STABLE = 3;
+  static const uint8 IGNITION_OFF_IDLE = 0;
+  static const uint8 IGNITION_ON_MAYBE_INJECT = 1;
+  static const uint8 IGNITION_ON_INJECT = 2;
+  static const uint8 IGNITION_ON_IDLE = 3;
 }
 
 // The current state. One of states:: values. 
@@ -40,9 +40,6 @@ static PassiveTimer time_in_state;
 // STATUS LED - indicates when button is pressed (including injected presses).
 static io_pins::OutputPin status_led(PORTD, 7);
 
-// Tracks the ingition-on signal of the car.
-static SignalTracker ignition_on_signal_tracker(3, 1000, 2000);
-
 static inline void changeToState(uint8 new_state) {
   state = new_state;
   sio::printf(F("injection state: %d\n"), state);
@@ -51,46 +48,51 @@ static inline void changeToState(uint8 new_state) {
 }
 
 void setup() {
+  custom_signals::setup();
   custom_config::setup();
-  changeToState(states::INITIAL);
+  changeToState(states::IGNITION_OFF_IDLE);
 }
   
 // Called periodically from loop() to update the state machine.
 static inline void updateState() {
-  // Enforce safety rule. Injecting only in INJECT state.
-  const boolean injecting = state == states::INJECT;
-  custom_injector::setInjectionsEnabled(injecting);
-  status_led.set(injecting);
+  // Meta rule: inject IFF in INJECT state.
+  {
+    const boolean injecting = (state == states::IGNITION_ON_INJECT);
+    custom_injector::setInjectionsEnabled(injecting);
+    status_led.set(injecting);
+  }
    
-  // General rule: if ignition is known to be off, reset to INITIAL state.
-  if (ignition_on_signal_tracker.isOff()) {
-    if (state != states::INITIAL) {
-      changeToState(states::INITIAL);
+  // Meta rule: if ignition is known to be off, reset to IGNITION_OFF_IDLE state.
+  if (custom_signals::ignition_state().isOff()) {
+    if (state != states::IGNITION_OFF_IDLE) {
+      changeToState(states::IGNITION_OFF_IDLE);
     }  
     return;
   }
     
   // Handle the state transitions.
   switch (state) {
-    case states::INITIAL:
-      if (ignition_on_signal_tracker.isOnForAtLeastMillis(1000)) {
-        changeToState(states::IGNITION_ON);  
+    case states::IGNITION_OFF_IDLE:
+      if (custom_signals::ignition_state().isOnForAtLeastMillis(1000)) {
+        changeToState(states::IGNITION_ON_MAYBE_INJECT);  
       }
       break;
       
-    case states::IGNITION_ON:
-      changeToState(custom_config::is_enabled() ? states::INJECT : states::STABLE);  
+    case states::IGNITION_ON_MAYBE_INJECT:
+      changeToState(custom_config::is_enabled() 
+          ? states::IGNITION_ON_INJECT 
+          : states::IGNITION_ON_IDLE);  
       return;
     
-    case states::INJECT:
+    case states::IGNITION_ON_INJECT:
       // NOTE: the meta rule at the begining of this method enables injection
       // as long as state is INJECT. We don't need to control injection here.
       if (time_in_state.timeMillis() > 500) {
-        changeToState(states::STABLE);
+        changeToState(states::IGNITION_ON_IDLE);
       }
       break;
     
-    case states::STABLE:
+    case states::IGNITION_ON_IDLE:
       // Nothing to do here. Stay in this state until ignition is
       // turned off.
       break;
@@ -98,36 +100,23 @@ static inline void updateState() {
     // Unknown state, set to initial.
     default:
       sio::printf(F("injection state: unknown (%d)"), state);
-      changeToState(states::INITIAL);
+      changeToState(states::IGNITION_OFF_IDLE);
       break;
   } 
 }
   
 void loop() {
   // Update dependents.
+  custom_signals::loop();
   custom_config::loop();
-  ignition_on_signal_tracker.loop();
   
   // Update the state machine
   updateState();
 }
 
-
-// Handling of frame from sport mode button unit.
-// Test frame  8e 00 04 00 00 00 00 00 00 <checksum>.
 void frameArrived(const LinFrame& frame) {
-  // Let the config manager tracks the frames it cares about.
-  custom_config::frameArrived(frame);
-  
-  // Track the frames we care about in this file.
-  const uint8 id = frame.get_byte(0);
-  if (id == 0x0d) {
-    if (frame.num_bytes() == (1 + 8 + 1)) {
-      const boolean is_ignition_bit_on = frame.get_byte(6) & H(7);
-      ignition_on_signal_tracker.reportSignal(is_ignition_bit_on);
-    }
-    return;
-  }
+  // Track the signals in this frame.
+  custom_signals::frameArrived(frame);
 }
 
 }  // namespace custom_module

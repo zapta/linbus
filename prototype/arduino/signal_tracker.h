@@ -109,34 +109,34 @@ public:
   }
 
   // Retrieves the current state. Returns one of States values. Does not change state.
-  inline uint8 state() {
+  inline uint8 state() const {
     return state_;
   }
   
   // Convinience method.
-  inline boolean isOn() {
+  inline boolean isOn() const {
     return state_ == States::ON;
   }
   
   // Convinience method.
-  inline boolean isOff() {
+  inline boolean isOff() const {
     return state_ == States::OFF;
   }
   
   // Convinience method.
-  inline boolean isOnForAtLeastMillis(uint32 min_time_in_state) {
+  inline boolean isOnForAtLeastMillis(uint32 min_time_in_state) const {
     return isOn() &&  (timeInStateMillis() >= min_time_in_state);
   }
   
   // Convinience method.
-  inline boolean isKnown() {
+  inline boolean isKnown() const {
     return state_ != States::UNKNOWN;
   }
 
   // Returns time in millis in current state. Since getState() does not change state, calling it
   // after getState() will return the time for the state returns by getState().  (that is, no race
   // condition.). 
-  inline uint32 timeInStateMillis() {
+  inline uint32 timeInStateMillis() const {
     return time_in_state_.timeMillis();
   }
 

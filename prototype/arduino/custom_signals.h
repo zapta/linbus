@@ -10,26 +10,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CUSTOM_CONFIG_H
-#define CUSTOM_CONFIG_H
+#ifndef CUSTOM_SIGNALS_H
+#define CUSTOM_SIGNALS_H
 
 #include "avr_util.h"
 #include "lin_frame.h"
+#include "signal_tracker.h"
 
-// Implements the application specific configuration control. It exports a single 'enable'
-// bit that is persisted in eeprom and can be toggled by pressing the button in a specific
-// sequence:
-// 1. Turn ignition on.
-// 2. Click the Sport Mode button 5 times at a rate of about one click per second.
-// 3. Turn ignition off.
-// The entire sequence must be completed within 20 seconds, otherwise it is ignored.
+// Tracks signals on the linbus that we use for this custom application.
 //
 // Like all the other custom_* files, thsi file should be adapted to the specific application. 
 // The example provided is for a Sport Mode button press injector for 981/Cayman.
-namespace custom_config {
+namespace custom_signals {
   namespace private_ {
-    // True when sport mode injection is enabled.
-    extern boolean is_enabled;
+    // Tracks the ingition-on status.
+    extern SignalTracker ignition_on_signal_tracker;
+    
+    // Tracks the state of the config button.
+    // This button is mapped to the P981/CS Sport Mode button.
+    extern SignalTracker button_signal_tracker;
   }
 
   // Called once during initialization.
@@ -37,12 +36,20 @@ namespace custom_config {
 
   // Called once on each iteration of the Arduino main loop().
   extern void loop();
-  
-  inline boolean is_enabled() {
-    return private_::is_enabled;
+
+  // Called once when a new valid frame was recieved. Used to intercept
+  // signals of buttons that affects the config.
+  extern void frameArrived(const LinFrame& frame);
+
+  inline const SignalTracker& ignition_state() {
+    return private_::ignition_on_signal_tracker;
   }
 
-}  // namespace custom_config
+  inline const SignalTracker& config_button() {
+    return private_::button_signal_tracker;
+  }
+  
+}  // namespace custom_signals
 
 #endif
 
