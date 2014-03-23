@@ -52,6 +52,10 @@ public:
     return num_bytes_;
   }
   
+  // Get a the frame byte of given inde.
+  // Byte index 0 is the frame id byte, followed by 1-8 data bytes
+  // followed by 1 checksum byte.
+  //
   // Caller should verify that index < num_bytes.
   inline uint8 get_byte(uint8 index) const {
     return bytes_[index];
