@@ -5,11 +5,7 @@ SCHEMATIC
 LAYOUT
 
 SOFTWARE
-* Rename car_module_* files to custom_*.
 * Clean '@@@' todos.
-* Add automatic trigger of sport mode when car starts (detect ignition key).
-* Add configuration toggle via the sport mode button.
-* Reduce the solder paste amount on the resonator's pads.
 
 MISCELLANEOUS
 * Add BOM document.

@@ -369,11 +369,14 @@ by exp-lbrs-filter.ulp</description>
 <wire x1="1.6" y1="0.65" x2="1.6" y2="-0.65" width="0.127" layer="51"/>
 <wire x1="1.6" y1="-0.65" x2="-1.6" y2="-0.65" width="0.127" layer="51"/>
 <wire x1="-1.6" y1="-0.65" x2="-1.6" y2="0.65" width="0.127" layer="51"/>
-<smd name="1" x="-1.2" y="0" dx="0.7" dy="2.5" layer="1"/>
-<smd name="2" x="0" y="0" dx="0.7" dy="2.5" layer="1"/>
-<smd name="3" x="1.2" y="0" dx="0.7" dy="2.5" layer="1"/>
+<smd name="1" x="-1.2" y="0" dx="0.7" dy="2.5" layer="1" cream="no"/>
+<smd name="2" x="0" y="0" dx="0.7" dy="2.5" layer="1" cream="no"/>
+<smd name="3" x="1.2" y="0" dx="0.7" dy="2.5" layer="1" cream="no"/>
 <text x="-0.889" y="1.27" size="0.4064" layer="25">&gt;Name</text>
 <text x="-0.889" y="-1.524" size="0.4064" layer="27">&gt;Value</text>
+<rectangle x1="-0.35" y1="-0.75" x2="0.35" y2="0.75" layer="31"/>
+<rectangle x1="-1.55" y1="-0.75" x2="-0.85" y2="0.75" layer="31"/>
+<rectangle x1="0.85" y1="-0.75" x2="1.55" y2="0.75" layer="31"/>
 </package>
 <package name="2X03">
 <wire x1="-3.81" y1="-1.905" x2="-3.175" y2="-2.54" width="0.1524" layer="21"/>
