@@ -1211,7 +1211,7 @@ MODE</text>
 <attribute name="VALUE" x="86.614" y="197.231" size="1.778" layer="96"/>
 </instance>
 <instance part="GND3" gate="1" x="248.92" y="86.36"/>
-<instance part="GND7" gate="1" x="60.96" y="180.34"/>
+<instance part="GND7" gate="1" x="60.96" y="177.8"/>
 <instance part="GND8" gate="1" x="109.22" y="177.8"/>
 <instance part="GND9" gate="1" x="99.06" y="177.8"/>
 <instance part="C7" gate="G$1" x="193.04" y="185.42"/>
@@ -1242,7 +1242,7 @@ MODE</text>
 </instance>
 <instance part="J2" gate="A" x="48.26" y="170.18" rot="MR0"/>
 <instance part="GND15" gate="1" x="251.46" y="160.02"/>
-<instance part="GND19" gate="1" x="60.96" y="165.1"/>
+<instance part="GND19" gate="1" x="60.96" y="162.56"/>
 <instance part="P+2" gate="1" x="116.84" y="195.58" rot="R270"/>
 <instance part="C9" gate="G$1" x="274.32" y="185.42"/>
 <instance part="GND20" gate="1" x="274.32" y="177.8"/>
@@ -1352,11 +1352,6 @@ MODE</text>
 <nets>
 <net name="GND" class="0">
 <segment>
-<pinref part="J1" gate="A" pin="3"/>
-<wire x1="50.8" y1="182.88" x2="60.96" y2="182.88" width="0.1524" layer="91"/>
-<pinref part="GND7" gate="1" pin="GND"/>
-</segment>
-<segment>
 <pinref part="C3" gate="G$1" pin="2"/>
 <pinref part="GND8" gate="1" pin="GND"/>
 <wire x1="109.22" y1="182.88" x2="109.22" y2="180.34" width="0.1524" layer="91"/>
@@ -1382,11 +1377,6 @@ MODE</text>
 <segment>
 <pinref part="U1" gate="G$1" pin="GND"/>
 <pinref part="GND10" gate="1" pin="GND"/>
-</segment>
-<segment>
-<pinref part="J2" gate="A" pin="3"/>
-<wire x1="50.8" y1="167.64" x2="60.96" y2="167.64" width="0.1524" layer="91"/>
-<pinref part="GND19" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="GND15" gate="1" pin="GND"/>
@@ -1458,6 +1448,18 @@ MODE</text>
 <pinref part="D8" gate="G$1" pin="C"/>
 <pinref part="GND16" gate="1" pin="GND"/>
 </segment>
+<segment>
+<pinref part="J1" gate="A" pin="2"/>
+<pinref part="GND7" gate="1" pin="GND"/>
+<wire x1="50.8" y1="185.42" x2="60.96" y2="185.42" width="0.1524" layer="91"/>
+<wire x1="60.96" y1="185.42" x2="60.96" y2="180.34" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="J2" gate="A" pin="2"/>
+<wire x1="50.8" y1="170.18" x2="60.96" y2="170.18" width="0.1524" layer="91"/>
+<pinref part="GND19" gate="1" pin="GND"/>
+<wire x1="60.96" y1="170.18" x2="60.96" y2="165.1" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="N$3" class="0">
 <segment>
@@ -1475,11 +1477,6 @@ MODE</text>
 </net>
 <net name="LIN1" class="0">
 <segment>
-<pinref part="J1" gate="A" pin="2"/>
-<label x="66.04" y="185.42" size="1.778" layer="95"/>
-<wire x1="50.8" y1="185.42" x2="71.12" y2="185.42" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="U1" gate="G$1" pin="LIN"/>
 <wire x1="149.86" y1="180.34" x2="144.78" y2="180.34" width="0.1524" layer="91"/>
 <pinref part="C5" gate="G$1" pin="1"/>
@@ -1487,6 +1484,11 @@ MODE</text>
 <wire x1="144.78" y1="172.72" x2="144.78" y2="180.34" width="0.1524" layer="91"/>
 <junction x="144.78" y="180.34"/>
 <label x="137.16" y="180.34" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="J1" gate="A" pin="3"/>
+<wire x1="50.8" y1="182.88" x2="71.12" y2="182.88" width="0.1524" layer="91"/>
+<label x="66.04" y="182.88" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="+12V" class="0">
@@ -1617,11 +1619,6 @@ MODE</text>
 </net>
 <net name="LIN2" class="0">
 <segment>
-<pinref part="J2" gate="A" pin="2"/>
-<wire x1="50.8" y1="170.18" x2="71.12" y2="170.18" width="0.1524" layer="91"/>
-<label x="66.04" y="170.18" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="R4" gate="G$1" pin="2"/>
 <pinref part="C8" gate="G$1" pin="1"/>
 <wire x1="231.14" y1="185.42" x2="231.14" y2="180.34" width="0.1524" layer="91"/>
@@ -1631,6 +1628,11 @@ MODE</text>
 <wire x1="231.14" y1="180.34" x2="223.52" y2="180.34" width="0.1524" layer="91"/>
 <junction x="231.14" y="180.34"/>
 <label x="223.52" y="180.34" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="J2" gate="A" pin="3"/>
+<wire x1="50.8" y1="167.64" x2="71.12" y2="167.64" width="0.1524" layer="91"/>
+<label x="66.04" y="167.64" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$6" class="0">
