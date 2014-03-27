@@ -1190,7 +1190,7 @@ by exp-lbrs-filter.ulp</description>
 <text x="162.56" y="60.96" size="2.54" layer="97">MCU</text>
 <text x="55.88" y="81.28" size="2.54" layer="97">SERIAL I/O (Optional)</text>
 <wire x1="33.02" y1="25.4" x2="33.02" y2="213.36" width="0.1524" layer="94"/>
-<text x="213.868" y="53.086" size="2.54" layer="97">DESIGN NOT YET VERIFIED</text>
+<text x="213.868" y="53.086" size="2.54" layer="97">ARDUINO LIN BUS SIGNAL INJECTOR</text>
 <text x="220.218" y="188.468" size="1.27" layer="97">MASTER
 MODE</text>
 <text x="37.846" y="184.15" size="1.27" layer="97">TO
@@ -1202,6 +1202,7 @@ SLAVE</text>
 <text x="270.256" y="95.504" size="1.524" layer="97">ST</text>
 <text x="138.938" y="188.468" size="1.27" layer="97">SLAVE
 MODE</text>
+<text x="300.228" y="32.766" size="2.54" layer="97">B</text>
 </plain>
 <instances>
 <instance part="R5" gate="G$1" x="248.92" y="104.14" rot="R90"/>
