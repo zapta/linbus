@@ -1,5 +1,5 @@
-Arduino LINBUS Analyzer
-=======================
+Arduino LINBUS Signal Injector
+==============================
 
 The Arduino Linbus injector is a small Arduino based board that connects on a LIN bus between the master and a slave
 and can observe and manipulate the data flowing on the bus. It also has a 115kbs serial interface  programming and for logging bus activity on a standard computer (a serial to FTDI USB adapter such as Sparkfun FTDI Basic is required).
@@ -10,7 +10,7 @@ with the prefix custom_ that implement an application specific logic (simulating
 car whenever the ignition is turned) and should be modified to match the target logic and behavior.
 
 
-![](doc/injector_001_.jpg)
+![](doc/injector_001.jpg)
 
 The USB/Serial port is also compatible with the Arduino IDE (emulating an Arduino Mini Pro 16Mhz 5V with Atmega328p) which can be used to edit/compile/download software updates. 
 
