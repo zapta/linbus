@@ -14,7 +14,7 @@ car whenever the ignition is turned) and should be modified to match the target 
 
 The USB/Serial port is also compatible with the Arduino IDE (emulating an Arduino Mini Pro 16Mhz 5V with Atmega328p) which can be used to edit/compile/download software updates. 
 
-The serial output of the injector can be viewed directly with a terminal emulation software or using the provided script that adds timestamp and bit by bit diff capabilities (see [the serial tool](../tools/serial).
+The serial output of the injector can be viewed directly with a terminal emulation software or using the provided script that adds timestamp and bit by bit diff capabilities (see the [serial tool](../tools/serial)).
 
 The injector provided sample application is configured for 19,200bps linbus that uses LIN V2 checksum but be configured 
 for busses with different speeds and checksum formula.
