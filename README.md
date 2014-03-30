@@ -27,13 +27,15 @@ Unless specified otherwise, the PCBs can be used with standard Aruduino IDE, beh
 |----|----|----|----|
 | Max LIN speed | 20kps | 20kps | 20kps |
 | Min LIN speed | 1kps | 1kps | 1kps |
+| Operating voltage | 12V | 12V | 12V |
+| Max voltage | 40V | 40V | 40V |
 | LIN frame dump/log | Yes | Yes | Yes |
-| Supported LIN checksums | V1/V2 | V1/V2 | V1/V2 |
+| LIN checksums | V1/V2 | V1/V2 | V1/V2 |
 | Computer serial interface | FTDI/USB | Serial 5V | Serial 5V |
 | Computer serial speed | 115,200 | 115,200 | 115,200 |
 | Audible output | No | Yes | No |
 | LIN signal interception | Yes | Yes | Yes |
-| LIN signal injection | No j No | Yes |
+| LIN signal injection | No | No | Yes |
 | Arduino IDE compatible | Yes | Yes | Yes |
 | Programming language | C/C++ | C/C++ | C/C++ |
 | MCU | ATMEGA328P | ATMEGA328P  | ATMEGA328P |
@@ -41,6 +43,8 @@ Unless specified otherwise, the PCBs can be used with standard Aruduino IDE, beh
 | Schematic/Layout software | Cadsoft Eagle | Cadsoft Eagle | Cadsoft Eagle |
 | PCB Size (inches) | 1.3 x 1.5 | 1.15 x 1.6 | 1.31 x 1.44 |
 | PCB layers | 2 | 2 | 2 |
+| Component mounting | SMD | SMD | SMD |
+| Min component size | 0805 | 0805 | 0805 |
 | OSHPark compatible | Yes | Yes | Yes |
 
 
