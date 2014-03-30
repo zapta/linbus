@@ -26,19 +26,21 @@ Unless specified otherwise, the PCBs can be used with standard Aruduino IDE, beh
 | Feature | Analyzer | Beeper | Injector |
 |----|----|----|----|
 | Max LIN speed | 20kps | 20kps | 20kps |
+| Min LIN speed | 1kps | 1kps | 1kps |
 | LIN frame dump/log | Yes | Yes | Yes |
+| Supported LIN checksums | V1/V2 | V1/V2 | V1/V2 |
 | Computer serial interface | FTDI/USB | Serial 5V | Serial 5V |
-| Computer serial speed | 115,200 | 115,200 | 115,200S |
+| Computer serial speed | 115,200 | 115,200 | 115,200 |
 | Audible output | No | Yes | No |
-| LIN signal monitoring | Yes | Yes | Yes |
+| LIN signal interception | Yes | Yes | Yes |
 | LIN signal injection | No j No | Yes |
 | Arduino IDE compatible | Yes | Yes | Yes |
 | Programming language | C/C++ | C/C++ | C/C++ |
 | MCU | ATMEGA328P | ATMEGA328P  | ATMEGA328P |
 | MCU speed | 16Mhz | 16Mhz  | 16Mhz |
-| Eagle Cadsoft compatible | Yes | Yes | Yes |
+| Schematic/Layout software | Cadsoft Eagle | Cadsoft Eagle | Cadsoft Eagle |
 | PCB Size (inches) | 1.3 x 1.5 | 1.15 x 1.6 | 1.31 x 1.44 |
 | PCB layers | 2 | 2 | 2 |
-| OSHPark design rules | Yes | Yes | Yes |
+| OSHPark compatible | Yes | Yes | Yes |
 
 
