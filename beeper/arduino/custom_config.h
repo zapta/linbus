@@ -20,15 +20,15 @@
 // bit that is persisted in eeprom and can be toggled by pressing the button in a specific
 // sequence:
 // 1. Turn ignition on.
-// 2. Click the Sport Mode button 6 times at a rate of about one click per second.
+// 2. Click the Home Link on/off button 6 times at a rate of about one click per second.
 // 3. Turn ignition off.
 // The entire sequence must be completed within 20 seconds, otherwise it is ignored.
 //
-// Like all the other custom_* files, this file should be adapted to the specific application. 
-// The example provided is for a Sport Mode button press injector for 981/Cayman.
+// Like all the other custom_* files, this file should be adapted to the specific application.
+// The example provided is for a Reverse Gear beeper for the 981/Cayman.
 namespace custom_config {
   namespace private_ {
-    // True when sport mode injection is enabled.
+    // True when beeper feature is enabled.
     extern boolean is_enabled;
   }
 

@@ -14,8 +14,8 @@
 
 #include "signal_tracker.h"
 
-// Like all the other custom_* files, this file should be adapted to the specific application. 
-// The example provided is for a Sport Mode button press injector for 981/Cayman.
+// Like all the other custom_* files, this file should be adapted to the specific application.
+// The example provided is for a Reverse Gear beeper for the 981/Cayman.
 namespace custom_signals {
 
 // Variables used in .h file.
@@ -39,27 +39,22 @@ void loop() {
 
 // Handling of frame from sport mode button unit.
 void frameArrived(const LinFrame& frame) {
-  // We ignore injected frames, not to be influence by own injections.
-  if (frame.hasInjectedBits()) {
-    return;
-  }
-
   // Get frame id.
   const uint8 id = frame.get_byte(0);
   
   // Handle the frame with config button status bit.
-  if (id == 0x8e) {
-    if (frame.num_bytes() == (1 + 8 + 1)) {
-      const boolean button_is_pressed = frame.get_byte(2) & H(2);
+  if (id == 0x97) {
+    if (frame.num_bytes() == (1 + 5 + 1)) {
+      const boolean button_is_pressed = frame.get_byte(4) & H(7);
       private_::button_signal_tracker.reportSignal(button_is_pressed);
     }
     return;
   }
 
   // Handle the frame with ignition state status bit.
-  if (id == 0x0d) {
+  if (id == 0x50) {
     if (frame.num_bytes() == (1 + 8 + 1)) {
-      const boolean is_ignition_bit_on = frame.get_byte(6) & H(7);
+      const boolean is_ignition_bit_on = frame.get_byte(1) & H(0);
       private_::ignition_on_signal_tracker.reportSignal(is_ignition_bit_on);
     }
     return;

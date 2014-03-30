@@ -10,24 +10,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CAR_MODULE_H
-#define CAR_MODULE_H
-
 #include "avr_util.h"
-#include "lin_frame.h"
 
-// Implement a car model specific functionality.
-namespace car_module {
-  // Called once during initialization.
-  extern void setup();
+namespace avr_util_private {
 
-  // Called once on each iteration of the Arduino main loop().
-  extern void loop();
+// Using lookup to avoid individual bit shifting. This is faster
+// than (1 << n) or a switch/case statement.
+const byte kBitMaskArray[] = {
+  H(0),
+  H(1),
+  H(2),
+  H(3),
+  H(4),
+  H(5),
+  H(6),
+  H(7),
+};
 
-  // Called once when a new valid frame was recieved.
-  extern void frameArrived(const LinFrame& frame);
-  
-}  // namespace car_module
-
-#endif
+}  // namespace avr_util_private
 

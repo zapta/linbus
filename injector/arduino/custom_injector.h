@@ -21,7 +21,7 @@
 // Controls signals injected into linbus framed passed between the master and the
 // slave (set/reset selected data bits and adjust the checksum byte). 
 //
-// Like all the other custom_* files, thsi file should be adapted to the specific application. 
+// Like all the other custom_* files, this file should be adapted to the specific application. 
 // The example provided is for a Sport Mode button press injector for 981/Cayman.
 namespace custom_injector {
   

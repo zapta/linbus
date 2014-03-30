@@ -70,7 +70,7 @@ static const uint8 kMaxSpaceBits = 6;
 namespace lin_processor {
 
   class Config {
-public:
+   public:
 #if F_CPU != 16000000
 #error "The existing code assumes 16Mhz CPU clk."
 #endif
@@ -116,7 +116,7 @@ public:
     inline uint8 clock_ticks_per_until_start_bit() const { 
       return clock_ticks_per_until_start_bit_; 
     }
-private:
+   private:
     uint16 baud_;
     // False -> x8, true -> x64.
     // TODO: timer2 also have x32 scalingl Could use it for better 
@@ -237,7 +237,7 @@ private:
 
   // ----- State Machine Declaration -----
 
-  // Like enum by 8 bits only.
+  // Like enum but 8 bits only.
   namespace states {
     static const uint8 DETECT_BREAK = 1;
     static const uint8 READ_DATA = 2;
@@ -318,8 +318,8 @@ private:
   }
 
   struct BitName {
-    uint8 mask;
-    const char *name;  
+    const uint8 mask;
+    const char* const name;  
   };
 
   static const  BitName kErrorBitNames[] PROGMEM = {
@@ -332,7 +332,7 @@ private:
     { errors::OTHER, "OTHR" },
   };
 
-  // Given a byte with lin decoder error bitset, print the list
+  // Given a byte with lin processor error bitset, print the list
   // of set errors.
   void printErrorFlags(uint8 lin_errors) {
     const uint8 n = ARRAY_SIZE(kErrorBitNames); 
@@ -416,7 +416,6 @@ private:
     // bit.
     TCNT2 = config.counts_per_half_bit();
   }
-  
   
   // Perform a tight busy loop for a given number of clock ticks.
   // Keeps the lin tick timer reset.
@@ -538,12 +537,9 @@ private:
       low_bits_counter_ = 0;
       return;
     } 
-    
-    ///setErrorFlags(errors::OTHER);  ///@@@@@@@
-
 
     // Here RX is low (active)  
-    // TODO: since the slave is delayed by 1 bit, will be nice to delay also
+    // TODO: since the slave is delayed by 1/2 bit, will be nice to delay also
     // the begining of the break.
     tx2_pin::setLow();
 
@@ -579,7 +575,6 @@ private:
 
   // Called after half a bit after the low to high transition at the end of the break.
   inline void StateReadData::enter() {
-//    setErrorFlags(errors::OTHER);  ///@@@@@@@
     state = states::READ_DATA;
     bytes_read_ = 0;
     bits_read_in_byte_ = 0;
@@ -764,22 +759,14 @@ private:
     
     // Report data and checksum bytes, skipping the sync and frame id bytes.
     if (bytes_read_ >= 3) {     
-      //@@@@@@@@@@ TODO: call this after the 8th data bit, before the stop bit, this way we will have
+      // TODO: call this after the 8th data bit, before the stop bit, this way we will have
       // a full bit slot to comptue the checksum rather than half a bit, until the high to low
       // transition of the next start bit.
       custom_injector::onIsrByteSent(bytes_read_ - 3, byte_buffer_);
     }
         
     boolean has_more_bytes = false;
-    if (bytes_read_ == 2) {
-            
-      // TODO: @@@ temp for debugging. Remove. Trigger for a specific ID.
-      // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      if (byte_buffer_ == 0x8e) {
-        gp_pin::setHigh();
-        gp_pin::setLow();  
-      }
-      
+    if (bytes_read_ == 2) {                
       custom_injector::onIsrFrameIdRecieved(byte_buffer_);
             
       // Master sent sync and ID bytes and now we need to wait for the response. It can 

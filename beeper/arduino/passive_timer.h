@@ -23,7 +23,7 @@ public:
     restart();
   }
 
-  void restart() {
+  inline void restart() {
     start_time_millis_ = system_clock::timeMillis();
   }
 
@@ -31,7 +31,7 @@ public:
     start_time_millis_ = other.start_time_millis_;
   }
 
-  uint32 timeMillis() const {
+  inline uint32 timeMillis() const {
     return system_clock::timeMillis() - start_time_millis_;
   }
 

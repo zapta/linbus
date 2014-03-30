@@ -14,12 +14,11 @@
 
 #include <avr/eeprom.h>
 
-#include "custom_signals.h""
-#include "passive_timer.h"
+#include "custom_signals.h"
 #include "sio.h"
 
-// Like all the other custom_* files, this file should be adapted to the specific application. 
-// The example provided is for a Sport Mode button press injector for 981/Cayman.
+// Like all the other custom_* files, this file should be adapted to the specific application.
+// The example provided is for a Reverse Gear beeper for the 981/Cayman.
 namespace custom_config {
 
   // The entire config toggle suquence from ignition on to ignition off must be completed within
@@ -127,7 +126,7 @@ namespace custom_config {
           if ((button_last_state == SignalTracker::States::OFF) && (button_new_state == SignalTracker::States::ON)) {
             // This cannot overflow because we exist this state if exceeding kExpectedButtonClicks. 
             button_click_count++;
-            sio::printf(F("config state: ->%d\n"), button_click_count);
+            sio::printf(F("config state: %d.%d\n"), states::IGNITION_ON_COUNTING, button_click_count);
           }
           button_last_state = button_new_state;
         }
@@ -160,4 +159,6 @@ namespace custom_config {
   }
 
 }  // namespace custom_module
+
+
 

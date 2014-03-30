@@ -20,11 +20,11 @@
 #include "sio.h"
 #include "system_clock.h"
 
-// ERRORS LED - blinks when detecting errors.
-static ActionLed errors_activity_led(PORTB, 1);
-
 // FRAMES LED - blinks when detecting valid frames.
 static ActionLed frames_activity_led(PORTB, 0);
+
+// ERRORS LED - blinks when detecting errors.
+static ActionLed errors_activity_led(PORTB, 1);
 
 // Arduino setup function. Called once during initialization.
 void setup()
@@ -82,13 +82,12 @@ void loop()
       
       const uint8 new_lin_errors = lin_processor::getAndClearErrorFlags();
       if (new_lin_errors) {
-        //sio::printf(F("X: %02x\n"), new_lin_errors);
         // Make the ERRORS led blinking.
         errors_activity_led.action();
         idle_timer.restart();
       }
 
-      // If pending errors and time to print then print and clear.
+      // If pending errors and time to print errors then print and clear.
       pending_lin_errors |= new_lin_errors;
       if (pending_lin_errors && lin_errors_timeout.timeMillis() > 1000) {
         sio::print(F("LIN errors: "));
@@ -126,6 +125,7 @@ void loop()
         sio::print(F(" ERR"));
       }
       sio::println();  
+      // Supress the 'waiting' messages.
       idle_timer.restart(); 
 
       // Inform the custom module about the incoming frame in case it

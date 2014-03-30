@@ -10,13 +10,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "car_module.h"
-#include "car_module_config.h"
+#include "custom_module.h"
+
+#include "custom_config.h"
+#include "custom_signals.h"
 #include "action_buzzer.h"
 #include "action_led.h"
 #include "sio.h"
 
-namespace car_module {
+namespace custom_module {
   
 // FRAMES LED - blinks when detecting valid frames.
 static ActionLed frame_activity_led(PORTB, 0);
@@ -26,6 +28,8 @@ static ActionLed frame_activity_led(PORTB, 0);
 static PassiveTimer idle_timer;
 
 void setup() {
+  custom_signals::setup();
+  custom_config::setup();
   action_buzzer::setup();
   
   // Force a startup single blink. 
@@ -33,6 +37,8 @@ void setup() {
 }
   
 void loop() {
+  custom_signals::loop();
+  custom_config::loop();
   action_buzzer::loop();
   frame_activity_led.loop();
   
@@ -44,8 +50,9 @@ void loop() {
   
 void frameArrived(const LinFrame& frame) {
   frame_activity_led.action();
+  custom_signals::frameArrived(frame);
 
-  // We handle only framed of id 39.
+  // We handle here only framed of id 39 with the reverse signal.
   const uint8 id = frame.get_byte(0);
   if (id != 0x39) {
     return;
@@ -60,16 +67,10 @@ void frameArrived(const LinFrame& frame) {
   // buzzer when rear gear is engaged.
   // Test frame: 39 04 00 00 00 00 00.
   const boolean reverse_gear = frame.get_byte(1) & H(2);
-  const boolean feature_enabled = car_module_config::isEnabled();
+  const boolean feature_enabled = custom_config::is_enabled();
   action_buzzer::action(reverse_gear && feature_enabled); 
- 
-  // Tell the config module if to allow config changes via long
-  // presses. We allow this only when in reverse gear to allow
-  // better feedback via the buzzer and to eliminate the chance of
-  // unintended config changes.:w
-  car_module_config::allowConfigChanges(reverse_gear); 
 }
 
-}  // namespace car_module
+}  // namespace custom_module
 
 

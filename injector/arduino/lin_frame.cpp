@@ -83,6 +83,8 @@ boolean LinFrame::isValid() const {
   // One ID byte with optional 1-8 data bytes and 1 checksum byte.
   // TODO: should we enforce only 1, 2, 4, or 8 data bytes?  (total size 
   // 1, 3, 4, 6, or 10)
+  //
+  // TODO: should we pass through frames with ID only (n == 1, no response from slave).
   if (n != 1 && (n < 3 || n > 10)) {
     return false;
   }

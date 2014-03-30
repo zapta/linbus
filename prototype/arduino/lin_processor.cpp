@@ -70,7 +70,7 @@ static const uint8 kMaxSpaceBits = 6;
 namespace lin_processor {
 
   class Config {
-public:
+   public:
 #if F_CPU != 16000000
 #error "The existing code assumes 16Mhz CPU clk."
 #endif
@@ -116,7 +116,7 @@ public:
     inline uint8 clock_ticks_per_until_start_bit() const { 
       return clock_ticks_per_until_start_bit_; 
     }
-private:
+   private:
     uint16 baud_;
     // False -> x8, true -> x64.
     // TODO: timer2 also have x32 scalingl Could use it for better 
@@ -318,8 +318,8 @@ private:
   }
 
   struct BitName {
-    uint8 mask;
-    const char *name;  
+    const uint8 mask;
+    const char* const name;  
   };
 
   static const  BitName kErrorBitNames[] PROGMEM = {

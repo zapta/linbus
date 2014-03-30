@@ -4,8 +4,9 @@
 "6","C3, C6, C7, C8, C9, C10","Capacitor 0.1uF ceramic, 50V","0805","Digikey 399-1179-1-ND",
 "1","C4","Aluminum capacitor 22uF 20% 40V","4mm x 5.8mm","Digikey 493-2300-1-ND",
 "4","D1, D2, D3, D4","MBR0540","SOD-123","Digikey MBR0540TPMSCT-ND",
-"2","D5, D7","Red LED","1206","Sparkfun PRT-12619","High brightness, operate at ~1ma."
+"1","D5","Red LED","1206","Sparkfun PRT-12619","High brightness, operate at ~1ma."
 "1","D6","Green LED","1206","Sparkfun PRT-12622","High brightness, operate at ~1ma."
+"1","D7","Red Blue","1206","Sparkfun PRT-12620","High brightness, operate at ~1ma."
 "1","F1","Fuse, 500ma Slow","1206","Digikey SF-1206S050-2CT-ND","Must be slow, otherwise will blow on startup."
 "2","J1, J2","0.1"" 1x3 right angle header.",,"Digikey WM50026-03-ND",
 "1","J3","USB Min B SMD connector",,"Digikey 609-4701-1-ND","With two guide pins."

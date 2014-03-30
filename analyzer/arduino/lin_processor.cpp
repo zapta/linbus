@@ -12,9 +12,10 @@
 
 // TODO: file is too long. Refactor.
 
-#include "lin_decoder.h"
+#include "lin_processor.h"
 
 #include "avr_util.h"
+#include "custom_defs.h"
 #include "hardware_clock.h"
 
 // TODO: for debugging. Remove.
@@ -27,7 +28,11 @@ static const uint16 kDefaultBaud = 9600;
 
 // Wait at most N bits from the end of the stop bit of previous byte
 // to the start bit of next byte.
-static const uint8 kMaxSpaceBits = 4;
+//
+// TODO: seperate values for pre response space (longer, e.g. 8) and pre
+// regular byte space (shorter, e.g. 4).
+//
+static const uint8 kMaxSpaceBits = 6;
 
 // Define an input pin with fast access. Using the macro does
 // not increase the pin access time compared to direct bit manipulation.
@@ -46,34 +51,35 @@ static const uint8 kMaxSpaceBits = 4;
  
 // Define an output pin with fast access. Using the macro does
 // not increase the pin access time compared to direct bit manipulation.
-#define DEFINE_OUTPUT_PIN(name, port_letter, bit_index) \
+#define DEFINE_OUTPUT_PIN(name, port_letter, bit_index, initial_value) \
   namespace name { \
     static const uint8 kPinMask  = H(bit_index); \
-    static inline void setup() { \
-      DDR ## port_letter |= kPinMask;  \
-      PORT ## port_letter &= ~kPinMask; \
-    } \
     static inline void setHigh() { \
       PORT ## port_letter |= kPinMask; \
     } \
     static inline void setLow() { \
       PORT ## port_letter &= ~kPinMask; \
     } \
+    static inline void setup() { \
+      DDR ## port_letter |= kPinMask;  \
+      (initial_value) ? setHigh() : setLow(); \
+    } \
   }  
   
 
-namespace lin_decoder {
+namespace lin_processor {
 
   class Config {
-public:
+   public:
 #if F_CPU != 16000000
 #error "The existing code assumes 16Mhz CPU clk."
 #endif
     // Initialized to given baud rate. 
-    void set(uint16 baud) {
-      // If out of range use default speed.
+    void setup() {
+      // If baud rate out of range use default speed.
+      uint16 baud = custom_defs::kLinSpeed; 
       if (baud < 1000 || baud > 20000) {
-        sio::println(F("ERROR: requested out of range baud"));
+        sio::println(F("ERROR: kLinSpeed out of range"));
         baud = kDefaultBaud;
       }
       baud_ = baud; 
@@ -83,6 +89,7 @@ public:
       // Adding two counts to compensate for software delay.
       counts_per_half_bit_ = (counts_per_bit_ / 2) + 2;
       clock_ticks_per_bit_ = (hardware_clock::kTicksPerMilli * 1000) / baud;
+      clock_ticks_per_half_bit_ = clock_ticks_per_bit_ / 2;
       clock_ticks_per_until_start_bit_ = clock_ticks_per_bit_ * kMaxSpaceBits;
     }
 
@@ -103,10 +110,13 @@ public:
     inline uint8 clock_ticks_per_bit() const { 
       return clock_ticks_per_bit_; 
     }
+    inline uint8 clock_ticks_per_half_bit() const { 
+      return clock_ticks_per_half_bit_; 
+    }
     inline uint8 clock_ticks_per_until_start_bit() const { 
       return clock_ticks_per_until_start_bit_; 
     }
-private:
+   private:
     uint16 baud_;
     // False -> x8, true -> x64.
     // TODO: timer2 also have x32 scalingl Could use it for better 
@@ -115,6 +125,7 @@ private:
     uint8 counts_per_bit_;
     uint8 counts_per_half_bit_;
     uint8 clock_ticks_per_bit_;
+    uint8 clock_ticks_per_half_bit_;
     uint8 clock_ticks_per_until_start_bit_;
   };
 
@@ -128,12 +139,15 @@ private:
     
   // LIN interface.
   DEFINE_INPUT_PIN(rx_pin, D, 2);
+  // TODO: Not use, as of Apr 2014.
+  DEFINE_OUTPUT_PIN(tx1_pin, C, 2, 1);
   
   // Debugging signals.
-  DEFINE_OUTPUT_PIN(break_pin, C, 0);
-  DEFINE_OUTPUT_PIN(sample_pin, B, 4);
-  DEFINE_OUTPUT_PIN(error_pin, B, 3);
-  DEFINE_OUTPUT_PIN(isr_pin, C, 3);
+  DEFINE_OUTPUT_PIN(break_pin, C, 0, 0);
+  DEFINE_OUTPUT_PIN(sample_pin, B, 4, 0);
+  DEFINE_OUTPUT_PIN(error_pin, B, 3, 0);
+  DEFINE_OUTPUT_PIN(isr_pin, C, 3, 0);
+  DEFINE_OUTPUT_PIN(gp_pin, D, 6, 0);
 
   // Called one during initialization.
   static inline void setupPins() {
@@ -142,6 +156,7 @@ private:
     sample_pin::setup();
     error_pin::setup();
     isr_pin::setup();
+    gp_pin::setup();
   }
 
   // ----- ISR RX Ring Buffers -----
@@ -216,7 +231,7 @@ private:
 
   // ----- State Machine Declaration -----
 
-  // Like enum by 8 bits only.
+  // Like enum but 8 bits only.
   namespace states {
     static const uint8 DETECT_BREAK = 1;
     static const uint8 READ_DATA = 2;
@@ -224,27 +239,32 @@ private:
   static uint8 state;
 
   class StateDetectBreak {
-public:
+   public:
     static inline void enter() ;
-    static inline void handle_isr();
-private:
+    static inline void handleIsr();
+    
+   private:
     static uint8 low_bits_counter_;
   };
 
   class StateReadData {
-public:
+   public:
     // Should be called after the break stop bit was detected.
     static inline void enter();
-    static inline void handle_isr();
-private:
+    static inline void handleIsr();
+    
+   private:
     // Number of complete bytes read so far. Includes all bytes, even
     // sync, id and checksum.
     static uint8 bytes_read_;
+    
     // Number of bits read so far in the current byte. Includes start bit, 
     // 8 data bits and one stop bits.
     static uint8 bits_read_in_byte_;
+
     // Buffer for the current byte we collect.
     static uint8 byte_buffer_;
+   
     // When collecting the data bits, this goes (1 << 0) to (1 << 7). Could
     // be computed as (1 << (bits_read_in_byte_ - 1)). We use this cached value
     // recude ISR computation.
@@ -277,21 +297,21 @@ private:
   }
 
   struct BitName {
-    uint8 mask;
-    char *name;  
+    const uint8 mask;
+    const char* const name;  
   };
 
-  static const  BitName kErrorBitNames[] PROGMEM = {
-    { lin_decoder::errors::FRAME_TOO_SHORT, "SHRT" },
-    { lin_decoder::errors::FRAME_TOO_LONG, "LONG" },
-    { lin_decoder::errors::START_BIT, "STRT" },
-    { lin_decoder::errors::STOP_BIT, "STOP" },
-    { lin_decoder::errors::SYNC_BYTE, "SYNC" },
-    { lin_decoder::errors::BUFFER_OVERRUN, "OVRN" },
-    { lin_decoder::errors::OTHER, "OTHR" },
+  static const BitName kErrorBitNames[] PROGMEM = {
+    { errors::FRAME_TOO_SHORT, "SHRT" },
+    { errors::FRAME_TOO_LONG, "LONG" },
+    { errors::START_BIT, "STRT" },
+    { errors::STOP_BIT, "STOP" },
+    { errors::SYNC_BYTE, "SYNC" },
+    { errors::BUFFER_OVERRUN, "OVRN" },
+    { errors::OTHER, "OTHR" },
   };
 
-  // Given a byte with lin decoder error bitset, print the list
+  // Given a byte with lin processor error bitset, print the list
   // of set errors.
   void printErrorFlags(uint8 lin_errors) {
     const uint8 n = ARRAY_SIZE(kErrorBitNames); 
@@ -335,10 +355,9 @@ private:
   }
 
   // Call once from main at the begining of the program.
-  // If baud is out of range, using default speed..
-  void setup(uint16 baud) {
+  void setup() {
     // Should be done first since some of the steps below depends on it.
-    config.set(baud);
+    config.setup();
 
     setupPins();
     setupBuffers();
@@ -348,13 +367,15 @@ private:
 
     sio::waitUntilFlushed();
     // TODO: move this to config class.
-    sio::printf(F("LIN: %u, %u, %u, %u, %u, %u\n"), 
-    config.baud(), 
-    config.prescaler_x64(),
-    config.counts_per_bit(), 
-    config.counts_per_half_bit(), 
-    config.clock_ticks_per_bit(),  
-    config.clock_ticks_per_until_start_bit());
+    sio::printf(F("LIN: %u, %u, %u, %u, %u, %u, %u, %u\n"), 
+        config.baud(), 
+        custom_defs::kUseLinChecksumVersion2,
+        config.prescaler_x64(),
+        config.counts_per_bit(), 
+        config.counts_per_half_bit(), 
+        config.clock_ticks_per_bit(),  
+        config.clock_ticks_per_half_bit(),  
+        config.clock_ticks_per_until_start_bit());
   }
 
   // ----- ISR Utility Functions -----
@@ -427,7 +448,7 @@ private:
   }
 
   // Return true if enough time to service rx request.
-  inline void StateDetectBreak::handle_isr() {
+  inline void StateDetectBreak::handleIsr() {
     if (rx_pin::isHigh()) {
       low_bits_counter_ = 0;
       return;
@@ -470,7 +491,7 @@ private:
     setTimerToHalfTick();   
   }
 
-  inline void StateReadData::handle_isr() {
+  inline void StateReadData::handleIsr() {
     // Sample data bit ASAP to avoid jitter.
     sample_pin::setHigh();
     const uint8 is_rx_high = rx_pin::isHigh();
@@ -516,8 +537,10 @@ private:
       return;
     }  
     
-    // If we just read the LIN sync byte, verify that it has
-    // the expected value.
+    // Here when we just finished reading a byte. 
+    // bytes_read is already incremented for this byte.
+    
+    // If this is the sync byte, verify that it has the expected value.
     if (bytes_read_ == 1) {
       // Should be exactly 0x55. We don't append this byte to the buffer.
       if (byte_buffer_ != 0x55) {
@@ -525,8 +548,8 @@ private:
         StateDetectBreak::enter();
         return;
       }
-    }  else {   
-      // Handle non sync byte. We append it to the buffer.
+    } else {
+      // If this is the id, data or checksum bytes, append it to the frame buffer.
       // NOTE: the byte limit count is enforeced somewhere else so we can assume safely here that this 
       // will not cause a buffer overlow.
       rx_frame_buffers[head_frame_buffer].append_byte(byte_buffer_);
@@ -549,7 +572,7 @@ private:
       // NOTE: verification of sync byte, id, checksum, etc is done latter by the main code, not the ISR.
       incrementHeadFrameBuffer();
       if (tail_frame_buffer == head_frame_buffer) {
-        // Frame buffer overrun.        
+        // Frame buffer overrun. We drop the oldest frame and continue with this one.       
         setErrorFlags(errors::BUFFER_OVERRUN);
         incrementTailFrameBuffer();
       }
@@ -570,7 +593,7 @@ private:
     // start bit.
     //
     // TODO: move this to above the num_bytes check above for more accurate 
-    // timing of mid bit tick?    
+    // timing of mid bit tick?
     setTimerToHalfTick();
   }
 
@@ -583,10 +606,10 @@ private:
     // TODO: make this state a boolean instead of enum? (efficency).
     switch (state) {
     case states::DETECT_BREAK:
-      StateDetectBreak::handle_isr();
+      StateDetectBreak::handleIsr();
       break;
     case states::READ_DATA:
-      StateReadData::handle_isr();
+      StateReadData::handleIsr();
       break;
     default:
       setErrorFlags(errors::OTHER);
@@ -600,7 +623,7 @@ private:
     
     isr_pin::setLow();
   }
-}  // namespace lin_decoder
+}  // namespace lin_processor
 
 
 

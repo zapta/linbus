@@ -12,16 +12,12 @@
 
 #include "action_led.h"
 #include "avr_util.h"
-#include "car_module.h"
-#include "car_module_config.h"
+#include "custom_module.h"
 #include "hardware_clock.h"
 #include "io_pins.h"
-#include "lin_decoder.h"
+#include "lin_processor.h"
 #include "sio.h"
 #include "system_clock.h"
-
-// Config for P981/Cayman.
-static const uint16 kLinSpeed = 19200;
 
 // ERRORS LED - blinks when detecting errors.
 static ActionLed errors_activity_led(PORTB, 1);
@@ -37,10 +33,9 @@ void setup()
   hardware_clock::setup();
 
   // Uses Timer2 with interrupts, and a few i/o pins. See source code for details.
-  lin_decoder::setup(kLinSpeed);
+  lin_processor::setup();
   
-  car_module_config::setup();
-  car_module::setup();
+  custom_module::setup();
 
   // Enable global interrupts. We expect to have only timer1 interrupts by
   // the lin decoder to reduce ISR jitter.
@@ -59,8 +54,7 @@ void loop()
     system_clock::loop();    
     sio::loop();
     errors_activity_led.loop();  
-    car_module_config::loop();
-    car_module::loop();
+    custom_module::loop();
 
     // Print a periodic text messages if no activiy.
     static PassiveTimer idle_timer;
@@ -76,7 +70,7 @@ void loop()
       // Accomulates error flags until next printing.
       static uint8 pending_lin_errors = 0;
       
-      const uint8 new_lin_errors = lin_decoder::getAndClearErrorFlags();
+      const uint8 new_lin_errors = lin_processor::getAndClearErrorFlags();
       if (new_lin_errors) {
         // Make the ERRORS led blinking.
         errors_activity_led.action();
@@ -87,7 +81,7 @@ void loop()
       pending_lin_errors |= new_lin_errors;
       if (pending_lin_errors && lin_errors_timeout.timeMillis() > 1000) {
         sio::print(F("LIN errors: "));
-        lin_decoder::printErrorFlags(pending_lin_errors);
+        lin_processor::printErrorFlags(pending_lin_errors);
         sio::println();
         lin_errors_timeout.restart();
         pending_lin_errors = 0;
@@ -96,32 +90,31 @@ void loop()
 
     // Handle recieved LIN frames.
     LinFrame frame;
-    if (lin_decoder::readNextFrame(&frame)) {
+    if (lin_processor::readNextFrame(&frame)) {
       const boolean frameOk = frame.isValid();
       
-      // Print frame to serial port.
-      {
-        for (int i = 0; i < frame.num_bytes(); i++) {
-          if (i > 0) {
-            sio::printchar(' ');  
-          }
-          sio::printhex2(frame.get_byte(i));  
-        }
-        if (!frameOk) {
-          sio::print(F(" ERR"));
-        }
-        sio::println();  
-        // Supress the 'waiting' messages.
-        idle_timer.restart(); 
-      }
-
       if (!frameOk) {
         // Make the ERRORS frame blinking.
         errors_activity_led.action();
-      } else {
-        // Inform the car specific logic about the incoming frame.
-        car_module_config::frameArrived(frame);
-        car_module::frameArrived(frame);
+      }
+      
+      // Print frame to serial port.
+      for (int i = 0; i < frame.num_bytes(); i++) {
+        if (i > 0) {
+          sio::printchar(' ');  
+        }
+        sio::printhex2(frame.get_byte(i));  
+      }
+      if (!frameOk) {
+        sio::print(F(" ERR"));
+      }
+      sio::println();  
+      // Supress the 'waiting' messages.
+      idle_timer.restart(); 
+    
+      if (frameOk) {
+        // Inform the custom logic about the incoming frame.
+        custom_module::frameArrived(frame);
       }
     }
   }

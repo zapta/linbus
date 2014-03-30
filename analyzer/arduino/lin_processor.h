@@ -10,8 +10,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LIN_DECODER_H
-#define LIN_DECODER_H
+#ifndef LIN_PROCESSOR_H
+#define LIN_PROCESSOR_H
 
 #include "avr_util.h"
 #include "lin_frame.h"
@@ -22,10 +22,9 @@
 //   to not using this pin.
 // * PD2 - LIN RX input.
 // * PC0, PC1, PC2, PC3 - debugging outputs. See .cpp file for details.
-namespace lin_decoder {
-  // Call once in program setup. Supported baud range is 1000 to 20000. If
-  // out of range, using silently default baud of 9600.
-  extern void setup(uint16 baud);
+namespace lin_processor {
+  // Call once in program setup. 
+  extern void setup();
 
   // Try to read next available rx frame. If available, return true and set
   // given buffer. Otherwise, return false and leave *buffer unmodified. 
@@ -35,13 +34,13 @@ namespace lin_decoder {
 
   // Errors byte masks for the individual error bits.
   namespace errors {
-  static const uint8 FRAME_TOO_SHORT = (1 << 0);
-  static const uint8 FRAME_TOO_LONG = (1 << 1);
-  static const uint8 START_BIT = (1 << 2);
-  static const uint8 STOP_BIT = (1 << 3);
-  static const uint8 SYNC_BYTE = (1 << 4);
-  static const uint8 BUFFER_OVERRUN = (1 << 5);
-  static const uint8 OTHER = (1 << 6);
+    static const uint8 FRAME_TOO_SHORT = (1 << 0);
+    static const uint8 FRAME_TOO_LONG = (1 << 1);
+    static const uint8 START_BIT = (1 << 2);
+    static const uint8 STOP_BIT = (1 << 3);
+    static const uint8 SYNC_BYTE = (1 << 4);
+    static const uint8 BUFFER_OVERRUN = (1 << 5);
+    static const uint8 OTHER = (1 << 6);
   }
 
   // Get current error flag and clear it. 

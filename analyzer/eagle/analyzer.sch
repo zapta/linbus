@@ -1280,7 +1280,7 @@
 <part name="C10" library="analyzer" deviceset="C-US" device="C0805" value="0.1uF"/>
 <part name="C2" library="analyzer" deviceset="CPOL-US" device="A/3216-18R" value="10uF"/>
 <part name="GND1" library="analyzer" deviceset="GND" device=""/>
-<part name="D7" library="analyzer" deviceset="LED" device="" value="RED"/>
+<part name="D7" library="analyzer" deviceset="LED" device="" value="BLUE"/>
 <part name="R7" library="analyzer" deviceset="R-US_" device="R0805" value="10K"/>
 <part name="P+4" library="analyzer" deviceset="+5V" device=""/>
 <part name="C6" library="analyzer" deviceset="C-US" device="C0805" value="0.1uF"/>

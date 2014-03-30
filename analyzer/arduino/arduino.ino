@@ -12,17 +12,15 @@
 
 #include "action_led.h"
 #include "avr_util.h"
+#include "custom_defs.h"
 #include "hardware_clock.h"
 #include "io_pins.h"
-#include "lin_decoder.h"
+#include "lin_processor.h"
 #include "sio.h"
 #include "system_clock.h"
 
-// Config for P981/Cayman. Change as needed.
-static const uint16 kLinSpeed = 19200;
-
 // FRAMES LED - blinks when detecting valid frames.
-static ActionLed frame_activity_led(PORTB, 0);
+static ActionLed frames_activity_led(PORTB, 0);
 
 // ERRORS LED - blinks when detecting errors.
 static ActionLed errors_activity_led(PORTB, 1);
@@ -38,14 +36,14 @@ void setup()
   hardware_clock::setup();
 
   // Uses Timer2 with interrupts, and a few i/o pins. See source code for details.
-  lin_decoder::setup(kLinSpeed);
+  lin_processor::setup();
   
-  // Force a startup single blink.
-  frame_activity_led.action();
-
   // Enable global interrupts. We expect to have only timer1 interrupts by
-  // the lin decoder to reduce ISR jitter.
+  // the lin processor to reduce ISR jitter.
   sei(); 
+  
+  // Have an early 'waiting' led bling to indicate normal operation.
+  frames_activity_led.action(); 
 }
 
 // Arduino loop() method. Called after setup(). Never returns.
@@ -59,26 +57,26 @@ void loop()
     // Periodic updates.
     system_clock::loop();    
     sio::loop();
-    frame_activity_led.loop();
+    frames_activity_led.loop();
     errors_activity_led.loop();  
 
     // Print a periodic text messages if no activiy.
     static PassiveTimer idle_timer;
     if (idle_timer.timeMillis() >= 3000) {
+      // Slow blinking indicates waiting.
+      frames_activity_led.action(); 
       sio::println(F("waiting..."));
-      // This causes a slow blink on the FRAME led, to show that we are alive.
-      frame_activity_led.action();
       idle_timer.restart();
     }
 
-    // Handle LIN decoder error flags.
+    // Handle LIN processor error flags.
     {
       // Used to trigger periodic error printing.
       static PassiveTimer lin_errors_timeout;
       // Accomulates error flags until next printing.
       static uint8 pending_lin_errors = 0;
       
-      const uint8 new_lin_errors = lin_decoder::getAndClearErrorFlags();
+      const uint8 new_lin_errors = lin_processor::getAndClearErrorFlags();
       if (new_lin_errors) {
         // Make the ERRORS led blinking.
         errors_activity_led.action();
@@ -89,39 +87,39 @@ void loop()
       pending_lin_errors |= new_lin_errors;
       if (pending_lin_errors && lin_errors_timeout.timeMillis() > 1000) {
         sio::print(F("LIN errors: "));
-        lin_decoder::printErrorFlags(pending_lin_errors);
+        lin_processor::printErrorFlags(pending_lin_errors);
         sio::println();
         lin_errors_timeout.restart();
         pending_lin_errors = 0;
       }
     }
-
+    
     // Handle recieved LIN frames.
     LinFrame frame;
-    if (lin_decoder::readNextFrame(&frame)) {
+    if (lin_processor::readNextFrame(&frame)) {
       const boolean frameOk = frame.isValid();
+      if (frameOk) {
+        // Make the FRAMES led blinking.
+        frames_activity_led.action();
+      } 
+      else {
+        // Make the ERRORS frame blinking.
+        errors_activity_led.action();
+      }
       
       // Print frame to serial port.
-      {
-        for (int i = 0; i < frame.num_bytes(); i++) {
-          if (i > 0) {
-            sio::printchar(' ');  
-          }
-          sio::printhex2(frame.get_byte(i));  
+      for (int i = 0; i < frame.num_bytes(); i++) {
+        if (i > 0) {
+          sio::printchar(' ');  
         }
-        if (!frameOk) {
-          sio::print(F(" ERR"));
-          // Make the ERRORS led blink.
-          errors_activity_led.action();
-        } else {
-          // Make the FRAME led blink.
-          frame_activity_led.action();
-        }
-        
-        sio::println();  
-        // Supress the 'waiting' messages.
-        idle_timer.restart(); 
+        sio::printhex2(frame.get_byte(i));  
       }
+      if (!frameOk) {
+        sio::print(F(" ERR"));
+      }
+      sio::println();  
+      // Supress the 'waiting' messages.
+      idle_timer.restart(); 
     }
   }
 }

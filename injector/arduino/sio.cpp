@@ -15,6 +15,9 @@
 #include <stdarg.h>
 
 namespace sio {
+  // TODO: do we need to set the i/o pins (PD0, PD1)? Do we rely on setting by 
+  // the bootloader?
+  
   // Size of output bytes queue. Shuold be <= 128 to avoid overflow.
   // TODO: reduce buffer size? Do we have enough RAM?
   // TODO: increase index size to 16 bit and increase buffer size to 200?
@@ -144,7 +147,7 @@ namespace sio {
 
   void printf(const __FlashStringHelper *format, ...)
   {
-    // Assuming a single thread.
+    // Assuming single thread, using static buffer.
     static char buf[80];
     va_list ap;
     va_start(ap, format);

@@ -31,5 +31,16 @@ typedef int32_t int32;
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
+// Private data. Do not use from other modules.
+namespace avr_util_private {
+  extern const byte kBitMaskArray[];
+}
+
+// Similar to (1 << bit_index) but more efficient for non consts. For
+// const masks use H(n). Undefined result if it_index not in [0, 7].
+inline byte bitMask(byte bit_index) {
+  return *(avr_util_private::kBitMaskArray + bit_index);
+}
+
 #endif
 

@@ -19,8 +19,8 @@
 
 // Tracks signals on the linbus that we use for this custom application.
 //
-// Like all the other custom_* files, this file should be adapted to the specific application. 
-// The example provided is for a Sport Mode button press injector for 981/Cayman.
+// Like all the other custom_* files, this file should be adapted to the specific application.
+// The example provided is for a Reverse Gear beeper for the 981/Cayman.
 namespace custom_signals {
   namespace private_ {
     // Tracks the ingition-on status.

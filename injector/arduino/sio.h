@@ -19,6 +19,9 @@
 // A serial output that uses hardware UART0 and no interrupts (for lower
 // interrupt jitter). Requires periodic calls to update() to send buffered
 // bytes to the uart. 
+//
+// TX Output - TXD (PD1) - pin 31
+// TX Input  - TXD (PD0) - pin 30 (currently not used).
 namespace sio {
   
   // Call from main setup() and loop() respectivly.
