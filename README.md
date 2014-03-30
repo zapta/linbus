@@ -15,6 +15,8 @@ Unless specified otherwise, the PCBs can be used with standard Aruduino IDE, beh
 ![](analyzer/doc/analyzer_001.jpg)
 
 
-**Injector** - a small PCB board with two linbus interfaces that connects in series between a linbus master and a linbus slave and can inject signals by modifying selected frames bits on the fly (and recomputing the checksum of the modified frame). This allows to hack linbus system by injecting signals from external sources (e.g. emulating a button press).  As of March 2014 this is still under initial development.
+**Injector** - a small PCB board with two linbus interfaces that connects in series between a linbus master and a linbus slave. The injector looks as a slave to the master and as a master to slave and it transparantly proxying LIN frame between the. At the same time, it can monitor bus signals, apply application spefici logic and can inject signals back to the bus by modifying on the fly LIN frames it proxys between the master and the slave. The Injector was developed to modiy the behavior of existing LIN bus based system (e.g. automatic activation of the Sport mode in my car).
+
+![](injector/doc/injector_001.jpg)
 
 **Tools** - various useful tools and scripts.
