@@ -23,7 +23,8 @@ Unless specified otherwise, the PCBs can be used with standard Aruduino IDE, beh
 <br>
 **Feature Comparison**
 
-|  | Analyzer | Beeper | Injector |
+| Feature | Analyzer | Beeper | Injector |
+|----|----|----|----|
 | Max LIN speed | 20kps | 20kps | 20kps |
 | LIN frame dump/log | Yes | Yes | Yes |
 | Computer serial interface | FTDI/USB | Serial 5V | Serial 5V |
@@ -39,4 +40,5 @@ Unless specified otherwise, the PCBs can be used with standard Aruduino IDE, beh
 | PCB Size (inches) | 1.3 x 1.5 | 1.15 x 1.6 | 1.31 x 1.44 |
 | PCB layers | 2 | 2 | 2 |
 | OSHPark design rules | Yes | Yes | Yes |
+
 
