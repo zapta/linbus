@@ -127,7 +127,7 @@ namespace custom_config {
           if ((button_last_state == SignalTracker::States::OFF) && (button_new_state == SignalTracker::States::ON)) {
             // This cannot overflow because we exist this state if exceeding kExpectedButtonClicks. 
             button_click_count++;
-            sio::printf(F("config state: ->%d\n"), button_click_count);
+            sio::printf(F("config state: %d.%d\n"), states::IGNITION_ON_COUNTING, button_click_count);
           }
           button_last_state = button_new_state;
         }
