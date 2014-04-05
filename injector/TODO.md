@@ -5,7 +5,6 @@ SCHEMATIC
 LAYOUT
 
 SOFTWARE
-* Clean '@@@' todos.
 
 MISCELLANEOUS
 * Add BOM document.

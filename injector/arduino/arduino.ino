@@ -10,21 +10,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "action_led.h"
 #include "avr_util.h"
 #include "custom_defs.h"
 #include "custom_module.h"
 #include "hardware_clock.h"
 #include "io_pins.h"
+#include "leds.h"
 #include "lin_processor.h"
 #include "sio.h"
 #include "system_clock.h"
-
-// FRAMES LED - blinks when detecting valid frames.
-static ActionLed frames_activity_led(PORTB, 0);
-
-// ERRORS LED - blinks when detecting errors.
-static ActionLed errors_activity_led(PORTB, 1);
 
 // Arduino setup function. Called once during initialization.
 void setup()
@@ -46,7 +40,7 @@ void setup()
   sei(); 
   
   // Have an early 'waiting' led bling to indicate normal operation.
-  frames_activity_led.action(); 
+  leds::frames.action(); 
 }
 
 // Arduino loop() method. Called after setup(). Never returns.
@@ -60,15 +54,14 @@ void loop()
     // Periodic updates.
     system_clock::loop();    
     sio::loop();
-    frames_activity_led.loop();
-    errors_activity_led.loop();  
+    leds::loop(); 
     custom_module::loop();
 
     // Print a periodic text messages if no activiy.
     static PassiveTimer idle_timer;
     if (idle_timer.timeMillis() >= 3000) {
       // Slow blinking indicates waiting.
-      frames_activity_led.action(); 
+      leds::frames.action(); 
       sio::println(F("waiting..."));
       idle_timer.restart();
     }
@@ -83,7 +76,7 @@ void loop()
       const uint8 new_lin_errors = lin_processor::getAndClearErrorFlags();
       if (new_lin_errors) {
         // Make the ERRORS led blinking.
-        errors_activity_led.action();
+        leds::errors.action();
         idle_timer.restart();
       }
 
@@ -104,11 +97,11 @@ void loop()
       const boolean frameOk = frame.isValid();
       if (frameOk) {
         // Make the FRAMES led blinking.
-        frames_activity_led.action();
+        leds::frames.action();
       } 
       else {
         // Make the ERRORS frame blinking.
-        errors_activity_led.action();
+        leds::errors.action();
       }
       
       // Print frame to serial port.

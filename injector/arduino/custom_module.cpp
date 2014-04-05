@@ -16,6 +16,7 @@
 #include "custom_injector.h"
 #include "custom_signals.h"
 #include "io_pins.h"
+#include "leds.h"
 #include "signal_tracker.h"
 #include "sio.h"
 
@@ -37,9 +38,6 @@ static uint8 state;
 // Tracks since change to current state.
 static PassiveTimer time_in_state;
   
-// STATUS LED - indicates when button is pressed (including injected presses).
-static io_pins::OutputPin status_led(PORTD, 7);
-
 static inline void changeToState(uint8 new_state) {
   state = new_state;
   sio::printf(F("injection state: %d\n"), state);
@@ -59,7 +57,7 @@ static inline void updateState() {
   {
     const boolean injecting = (state == states::IGNITION_ON_INJECT);
     custom_injector::setInjectionsEnabled(injecting);
-    status_led.set(injecting);
+    leds::status.set(injecting);
   }
    
   // Meta rule: if ignition is known to be off, reset to IGNITION_OFF_IDLE state.
@@ -117,6 +115,15 @@ void loop() {
 void frameArrived(const LinFrame& frame) {
   // Track the signals in this frame.
   custom_signals::frameArrived(frame);
+  
+  // Report an error if the Sport Mode assembly does not respond as expected
+  // to its frame.
+  if (frame.get_byte(0) == 0x8e) {
+    if (frame.num_bytes() != (1 + 8 + 1)) {
+      leds::errors.action();
+      sio::println(F("slave error")); 
+    }
+  }
 }
 
 }  // namespace custom_module

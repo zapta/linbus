@@ -267,8 +267,8 @@ namespace lin_processor {
     // values.
     static byte rx_bit_transfer_function_;
     
-    // Number of complete bytes read so far. Includes all bytes, even
-    // sync, id and checksum.
+    // Number of complete bytes read so far. Includes all bytes: sync, id,
+    // data and checksum.
     static uint8 bytes_read_;
     
     // Number of bits read so far in the current byte. Includes start bit, 
@@ -765,8 +765,11 @@ namespace lin_processor {
       custom_injector::onIsrByteSent(bytes_read_ - 3, byte_buffer_);
     }
         
+    // Determine if there are more bytes.
     boolean has_more_bytes = false;
-    if (bytes_read_ == 2) {                
+    if (bytes_read_ == 2) {  
+      // This is the case where we just read the id byte from the master.
+      // Inform the injector.      
       custom_injector::onIsrFrameIdRecieved(byte_buffer_);
             
       // Master sent sync and ID bytes and now we need to wait for the response. It can 
@@ -776,6 +779,9 @@ namespace lin_processor {
       has_more_bytes = lin_channel_;
       rx_from_lin1_ = (lin_channel_ != 2);
     } else {
+      // This is the case where we don't need to check where the next byte is comming 
+      // from.
+      //
       // Wait for the high to low transition of start bit of next byte. Using existing channel.
       has_more_bytes =  waitForRxLow(config.clock_ticks_per_until_start_bit(), rx_from_lin1_);
     }
@@ -851,9 +857,4 @@ namespace lin_processor {
     isr_pin::setLow();
   }
 }  // namespace lin_processor
-
-
-
-
-
 
