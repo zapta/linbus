@@ -12,8 +12,12 @@ LAYOUT
 
 SOFTWARE
 * Reduce the solder paste amount on the resonator's pads (copy from injector)
+* Propogate io_pins.h cle/sei wrapper from the Injector.
+* Generate an updated .hex file with the latest firmware (currently does
+  not reflect io_pin.h race condition fix).
 
 MISCELLANEOUS
+* Rename this file to TODO.md (see Injector).
 
 
 
