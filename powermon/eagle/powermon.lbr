@@ -2419,6 +2419,58 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <text x="-1.905" y="-3.4925" size="1.27" layer="27">&gt;VALUE</text>
 <rectangle x1="0.55" y1="0.6" x2="1.55" y2="0.85" layer="21"/>
 </package>
+<package name="DFN8-3X3">
+<description>&lt;b&gt;DD Package 8-Lead Plastic DFN (3mm × 3mm)&lt;/b&gt;&lt;p&gt;
+Source: http://cds.linear.com/docs/Datasheet/623012fb.pdf</description>
+<wire x1="-1.4" y1="-1.4" x2="-1.4" y2="1.4" width="0.2032" layer="21"/>
+<wire x1="-1.4" y1="1.4" x2="1.4" y2="1.4" width="0.2032" layer="51"/>
+<wire x1="1.4" y1="1.4" x2="1.4" y2="-1.4" width="0.2032" layer="21"/>
+<wire x1="1.4" y1="-1.4" x2="-1.4" y2="-1.4" width="0.2032" layer="51"/>
+<wire x1="-2.25" y1="1.5" x2="2" y2="1.5" width="0" layer="18"/>
+<wire x1="1.75" y1="-1.5" x2="-2" y2="-1.5" width="0" layer="18"/>
+<wire x1="-2.25" y1="1.1" x2="2" y2="1.1" width="0" layer="18"/>
+<wire x1="1.75" y1="-1.1" x2="-2" y2="-1.1" width="0" layer="18"/>
+<circle x="-0.75" y="-0.775" radius="0.275" width="0" layer="51"/>
+<smd name="EXP" x="0" y="0" dx="2.38" dy="1.65" layer="1" stop="no" cream="no"/>
+<smd name="1" x="-0.75" y="-1.35" dx="0.25" dy="0.45" layer="1" roundness="25" stop="no" cream="no"/>
+<smd name="2" x="-0.25" y="-1.35" dx="0.25" dy="0.45" layer="1" roundness="25" stop="no" cream="no"/>
+<smd name="3" x="0.25" y="-1.35" dx="0.25" dy="0.45" layer="1" roundness="25" stop="no" cream="no"/>
+<smd name="4" x="0.75" y="-1.35" dx="0.25" dy="0.45" layer="1" roundness="25" stop="no" cream="no"/>
+<smd name="5" x="0.75" y="1.35" dx="0.25" dy="0.45" layer="1" roundness="25" rot="R180" stop="no" cream="no"/>
+<smd name="6" x="0.25" y="1.35" dx="0.25" dy="0.45" layer="1" roundness="25" stop="no" cream="no"/>
+<smd name="7" x="-0.25" y="1.35" dx="0.25" dy="0.45" layer="1" roundness="25" stop="no" cream="no"/>
+<smd name="8" x="-0.75" y="1.35" dx="0.25" dy="0.45" layer="1" roundness="25" stop="no" cream="no"/>
+<text x="-1.905" y="1.905" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.905" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-0.9" y1="1.1" x2="-0.6" y2="1.6" layer="29"/>
+<rectangle x1="-0.4" y1="1.1" x2="-0.1" y2="1.6" layer="29"/>
+<rectangle x1="0.1" y1="1.1" x2="0.4" y2="1.6" layer="29"/>
+<rectangle x1="0.6" y1="1.1" x2="0.9" y2="1.6" layer="29"/>
+<rectangle x1="-0.9" y1="-1.6" x2="-0.6" y2="-1.1" layer="29"/>
+<rectangle x1="-0.4" y1="-1.6" x2="-0.1" y2="-1.1" layer="29"/>
+<rectangle x1="0.1" y1="-1.6" x2="0.4" y2="-1.1" layer="29"/>
+<rectangle x1="0.6" y1="-1.6" x2="0.9" y2="-1.1" layer="29"/>
+<rectangle x1="-0.85" y1="1.15" x2="-0.65" y2="1.55" layer="31"/>
+<rectangle x1="-0.35" y1="1.15" x2="-0.15" y2="1.55" layer="31"/>
+<rectangle x1="0.15" y1="1.15" x2="0.35" y2="1.55" layer="31"/>
+<rectangle x1="0.65" y1="1.15" x2="0.85" y2="1.55" layer="31"/>
+<rectangle x1="-0.85" y1="-1.55" x2="-0.65" y2="-1.15" layer="31"/>
+<rectangle x1="-0.35" y1="-1.55" x2="-0.15" y2="-1.15" layer="31"/>
+<rectangle x1="0.15" y1="-1.55" x2="0.35" y2="-1.15" layer="31"/>
+<rectangle x1="0.65" y1="-1.55" x2="0.85" y2="-1.15" layer="31"/>
+<rectangle x1="-1.1" y1="-0.75" x2="1.125" y2="0.75" layer="31"/>
+<polygon width="0.2032" layer="29">
+<vertex x="-1.15" y="0.775"/>
+<vertex x="-1.15" y="-0.615"/>
+<vertex x="-0.965" y="-0.775"/>
+<vertex x="1.125" y="-0.775"/>
+<vertex x="1.125" y="0.775"/>
+</polygon>
+</package>
+<package name="DUMMY-2">
+<pad name="P$1" x="-2.54" y="-1.27" drill="0.8" shape="square"/>
+<pad name="P$2" x="0" y="-1.27" drill="0.8" shape="square"/>
+</package>
 </packages>
 <symbols>
 <symbol name="C-US">
@@ -2828,6 +2880,36 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <pin name="A" x="0" y="-7.62" visible="off" length="short" direction="pas" rot="R90"/>
 <pin name="E" x="0" y="7.62" visible="off" length="short" direction="pas" rot="R270"/>
 <pin name="S" x="5.08" y="0" visible="off" length="short" direction="pas" rot="R180"/>
+</symbol>
+<symbol name="LTC2943">
+<pin name="SDA" x="15.24" y="0" length="short" rot="R180"/>
+<pin name="SCL" x="15.24" y="-2.54" length="short" direction="in" rot="R180"/>
+<pin name="SENSE+/VCC" x="-15.24" y="5.08" length="short" direction="pas"/>
+<pin name="SENSE-" x="-15.24" y="2.54" length="short" direction="pas"/>
+<pin name="GND@7" x="-2.54" y="-12.7" length="short" direction="sup" rot="R90"/>
+<wire x1="-12.7" y1="7.62" x2="12.7" y2="7.62" width="0.254" layer="94"/>
+<wire x1="12.7" y1="7.62" x2="12.7" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="12.7" y1="-10.16" x2="-12.7" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="-12.7" y1="-10.16" x2="-12.7" y2="7.62" width="0.254" layer="94"/>
+<text x="7.62" y="-12.7" size="1.778" layer="95">&gt;NAME</text>
+<text x="7.62" y="-15.24" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="ALCC" x="15.24" y="-7.62" length="short" direction="oc" function="dot" rot="R180"/>
+<pin name="GND@9" x="0" y="-12.7" length="short" direction="sup" rot="R90"/>
+<pin name="GND@3" x="-5.08" y="-12.7" length="short" direction="sup" rot="R90"/>
+<pin name="GND@2" x="-7.62" y="-12.7" length="short" direction="sup" rot="R90"/>
+</symbol>
+<symbol name="PUSH_BUTTON">
+<circle x="0" y="-1.524" radius="0.915809375" width="0.254" layer="94"/>
+<circle x="0" y="1.524" radius="0.915809375" width="0.254" layer="94"/>
+<wire x1="-2.032" y1="2.54" x2="-2.032" y2="1.524" width="0.254" layer="94"/>
+<wire x1="-2.032" y1="1.524" x2="-2.032" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="-2.032" y1="-1.27" x2="-2.032" y2="-2.286" width="0.254" layer="94"/>
+<wire x1="-2.032" y1="1.524" x2="-3.048" y2="1.524" width="0.254" layer="94"/>
+<wire x1="-3.048" y1="1.524" x2="-3.048" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="-3.048" y1="-1.27" x2="-2.032" y2="-1.27" width="0.254" layer="94"/>
+<pin name="P$3" x="0" y="5.08" visible="off" length="short" direction="pas" rot="R270"/>
+<pin name="P$4" x="0" y="-5.08" visible="off" length="short" direction="pas" rot="R90"/>
+<text x="1.524" y="-0.254" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -3799,6 +3881,45 @@ Sourc: www.ctscorp.com</description>
 <connect gate="G$1" pin="A" pad="1"/>
 <connect gate="G$1" pin="E" pad="3"/>
 <connect gate="G$1" pin="S" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="LTC2943" uservalue="yes">
+<gates>
+<gate name="G$1" symbol="LTC2943" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="DFN8-3X3">
+<connects>
+<connect gate="G$1" pin="ALCC" pad="6"/>
+<connect gate="G$1" pin="GND@2" pad="2"/>
+<connect gate="G$1" pin="GND@3" pad="3"/>
+<connect gate="G$1" pin="GND@7" pad="7"/>
+<connect gate="G$1" pin="GND@9" pad="EXP"/>
+<connect gate="G$1" pin="SCL" pad="4"/>
+<connect gate="G$1" pin="SDA" pad="5"/>
+<connect gate="G$1" pin="SENSE+/VCC" pad="1"/>
+<connect gate="G$1" pin="SENSE-" pad="8"/>
+</connects>
+<technologies>
+<technology name="SMD"/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="PUSH_BUTTON">
+<gates>
+<gate name="G$1" symbol="PUSH_BUTTON" x="7.62" y="5.08"/>
+</gates>
+<devices>
+<device name="" package="DUMMY-2">
+<connects>
+<connect gate="G$1" pin="P$3" pad="P$1"/>
+<connect gate="G$1" pin="P$4" pad="P$2"/>
 </connects>
 <technologies>
 <technology name=""/>
