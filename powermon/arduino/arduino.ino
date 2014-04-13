@@ -11,6 +11,7 @@
 // limitations under the License.
 
 #include "avr_util.h"
+#include "config.h"
 #include "hardware_clock.h"
 #include "leds.h"
 #include "ltc2943.h"
@@ -67,12 +68,26 @@ void setup()
   // Hard coded to 115.2k baud. Uses URART0, no interrupts.
   // Initialize this first since some setup methods uses it.
   sio::setup();
-  sio::printf(F("\nStarted\n"));
+  
+  if (config::isDebug()) {
+    sio::printf(F("\nStarted\n"));
+  } else {
+    sio::println();
+  }
 
   // Uses Timer1, no interrupts.
   hardware_clock::setup();
   
+  config::setup();
+  
+  // Let the config value stablizes through the debouncer.
+  while (!config::hasStableValue()) {
+    system_clock::loop();
+    config::loop();
+  }
+  
   // TODO: disabled unused Arduino time interrupts.
+
 
   // Initialize the LTC2943 driver and I2C library.
   // TODO: move this to state machine, check error code.
@@ -91,14 +106,18 @@ void setup()
 
 void StateInit::enter() {
   state = states::INIT;
-  sio::printf(F("# State: INIT\n"));
+  if (config::isDebug()) {
+    sio::printf(F("# State: INIT\n"));
+  }
 }
 
 void StateInit::loop() {
   if (ltc2943::init()) {
     StateReporting::enter();
   } else {
-    sio::printf(F("# device init failed\n"));
+    if (config::isDebug()) {
+      sio::printf(F("# device init failed\n"));
+    }
     StateError::enter();
   }
 }
@@ -106,20 +125,26 @@ void StateInit::loop() {
 void StateReporting::enter() {
   state = states::REPORTING;
   has_last_reading = false;
-  sio::printf(F("# State: REPORTING.0\n"));
+  if (config::isDebug()) {
+    sio::printf(F("# State: REPORTING.0\n"));
+  }
 }
 
 void StateReporting::loop() {
   // Try first reading.
   if (!has_last_reading) {
     if (!ltc2943::readReg16(ltc2943::regs16::kAccumCharge, &last_report_charge_reading)) {
-      sio::printf(F("# First reading failed\n"));
+      if (config::isDebug()) {
+        sio::printf(F("# First reading failed\n"));
+      }
       StateError::enter();
       return;
     }
     last_report_time_millis = system_clock::timeMillis();
     has_last_reading = true;
-    sio::printf(F("# State: REPORTING.1\n"));
+    if (config::isDebug()) {
+      sio::printf(F("# State: REPORTING.1\n"));
+    }
     return;
   }
   
@@ -140,7 +165,9 @@ void StateReporting::loop() {
   // Do the successive reading.
   uint16 current_report_charge_reading;
   if (!ltc2943::readReg16(ltc2943::regs16::kAccumCharge, &current_report_charge_reading)) {
-      sio::printf(F("# successive reading failed\n"));
+      if (config::isDebug()) {
+        sio::printf(F("# successive reading failed\n"));
+      }
       StateError::enter();
       return;
   }
@@ -150,6 +177,7 @@ void StateReporting::loop() {
   last_report_charge_reading = current_report_charge_reading;
     
   // TODO: define as const at the begining of the file.
+  // TODO: refactor to seperate conversion and formatting methods.
   const float kLtc2943ChargeLsb = 0.34E-3;
   const float kShuntResistorOhms = 0.025;
   // TODO: assert that this is acutally what we set.
@@ -163,14 +191,20 @@ void StateReporting::loop() {
   const int16 ma = ua_fraction / 1000;
   const int16 ua = ua_fraction - (ma * 1000);
 
-  sio::printf(F("%04x, %d, %d.%03d %03d\n"), last_report_charge_reading, charge_reading_diff, amps, ma, ua);
+  if (config::isDebug()) {
+    sio::printf(F("%04x, %d, %d.%03d %03d\n"), last_report_charge_reading, charge_reading_diff, amps, ma, ua);
+  } else {
+     sio::printf(F("%d.%03d%03d\n"), amps, ma, ua);  
+  }
   leds::activity.action(); 
+  //sio::printf(F("Config: %02x\n"), config::get());
 }
-
 
 inline void StateError::enter() {
   state = states::ERROR;
-  sio::printf(F("# State: ERROR\n"));
+  if (config::isDebug()) {
+    sio::printf(F("# State: ERROR\n"));
+  }
   time_in_state.restart();  
   leds::errors.action();
 }
@@ -193,10 +227,11 @@ void loop()
   // Having our own loop shaves about 4 usec per iteration. It also eliminate
   // any underlying functionality that we may not want.
   for(;;) {   
-     leds::debug.high();
+     //leds::debug.high();
  
     // Periodic updates.
-    system_clock::loop();    
+    system_clock::loop();  
+    config::loop();  
     sio::loop();
     leds::loop(); 
     
@@ -211,12 +246,14 @@ void loop()
         StateError::loop();
         break;
       default:
-        sio::printf(F("# Unknown state: %d\n"), state);
+        if (config::isDebug()) {
+          sio::printf(F("# Unknown state: %d\n"), state);
+        }
         StateError::enter();
         break;  
     }
     
-   leds::debug.low();
+   //leds::debug.low();
   }
 }
 
