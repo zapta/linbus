@@ -17,18 +17,6 @@
 
 // Linear Technology LTC2942 Fuel Guage IC driver.
 namespace ltc2943 {
-  
-namespace regs8 {
-  const uint8 kStatus = 0x00;
-  const uint8 kControl = 0x01;
-}
-
-namespace regs16 {
-  const uint8 kAccumCharge = 0x02;
-  const uint8 kVoltage = 0x08;
-  const uint8 kCurrent = 0x0e;
-  const uint8 ktemperature = 0x14;
-}
 
 // Called once from main setup(). Also setup I2C.
 extern void setup();
@@ -37,24 +25,11 @@ extern void setup();
 // as needed. Returns true if ok.
 extern bool init();
 
-// TODO: make these read/write functions private and expose high level functions
-// like readChargeRegiater(), readVoltageRegister(), readCurrentRegister();
+// Returns true if ok. Takes about 200us with 400Khz I2C clock.
+extern boolean readAccumCharge(uint16* value);
 
-// Write a value to a LTC2943 8 bit register. Returns true if ok.
-extern bool writeReg8(uint8 reg8,  uint8 value);
-
-// Write a value to a LTC2943 16 bit register. Returns true if ok.
-extern bool writeReg16(uint8 reg16,  uint16 value);
-
-// Read a LTC2943 8 bit register. Returns true if ok.
-extern bool readReg8(uint8 reg8, uint8* value);
-
-// Read a LTC2943 16 bit register. Returns true if ok.
-extern bool readReg16(uint8 reg16, uint16* value); 
-  
 }  // namespace ltc2943
 
 #endif  
-
 
 

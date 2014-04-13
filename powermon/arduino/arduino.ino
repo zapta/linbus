@@ -28,12 +28,14 @@ namespace consts {
   // TODO: define const for 50e-3 (what is it).
   static const float kAvgUaPerChargeTickPerSecond = (( kLtc2943ChargeLsb * kChargePrescaler * 50e-3 * 60 * 60 * 1000000L)/(kShuntResistorOhms * 4096));
   
+  // 10 samples per second.
   namespace fast_mode {
     static const uint16 kReportingPeriodMillis = 100;
     static const float kChargeToAvgUaConversion = kAvgUaPerChargeTickPerSecond * 1000 / kReportingPeriodMillis;
   }
   
 
+  // 1 sample per second.
   namespace slow_mode {
     static const uint16 kReportingPeriodMillis = 1000;
     static const float kChargeToAvgUaConversion = kAvgUaPerChargeTickPerSecond * 1000 / kReportingPeriodMillis;
@@ -187,7 +189,7 @@ void StateReporting::loop() {
   
   // Try first reading.
   if (!has_last_reading) {
-    if (!ltc2943::readReg16(ltc2943::regs16::kAccumCharge, &last_report_charge_reading)) {
+    if (!ltc2943::readAccumCharge(&last_report_charge_reading)) {
       if (config::isDebug()) {
         sio::printf(F("# First reading failed\n"));
       }
@@ -221,7 +223,7 @@ void StateReporting::loop() {
   
   // Do the successive reading.
   uint16 current_report_charge_reading;
-  if (!ltc2943::readReg16(ltc2943::regs16::kAccumCharge, &current_report_charge_reading)) {
+  if (!ltc2943::readAccumCharge(&current_report_charge_reading)) {
       if (config::isDebug()) {
         sio::printf(F("# successive reading failed\n"));
       }
@@ -244,7 +246,7 @@ void StateReporting::loop() {
   const int16 ua = fraction_ppm - (ma * 1000);
 
   if (config::isDebug()) {
-    sio::printf(F("%04x, %d, %d.%03d %03d\n"), last_report_charge_reading, charge_reading_diff, amps, ma, ua);
+    sio::printf(F("%04x, %d, %d.%03d.%03d\n"), last_report_charge_reading, charge_reading_diff, amps, ma, ua);
   } else {
      sio::printf(F("%d.%03d%03d\n"), amps, ma, ua);  
   }

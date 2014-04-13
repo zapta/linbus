@@ -40,7 +40,7 @@ namespace config {
   }
   
   inline uint8 modeIndex() {
-    return (get() & H(2)) ? 1 : 0;
+    return (get() & H(0)) ? 1 : 0;
   }
 
 }  // namepsace config
