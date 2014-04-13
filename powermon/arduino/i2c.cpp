@@ -20,12 +20,15 @@
 
 namespace i2c {
   
-// I2C clock frequency. 
-static const uint32 kSclFrequency = 100000L;
+// I2C clock frequency. LTC2943 can go up to 400KHz.
+static const uint32 kSclFrequency = 400000L;
+
 
 void setup()
 {
   TWSR = 0; 
+  // Should be >= 10 to have stable operation.  For 16Mhz cpu and 400k I2C clock we
+  // get here 12 which is fine.
   TWBR = ((F_CPU / kSclFrequency) - 16) / 2; 
 }
 

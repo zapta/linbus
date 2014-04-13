@@ -38,6 +38,10 @@ namespace config {
   inline bool isDebug() {
     return get() & H(3);  
   }
+  
+  inline uint8 modeIndex() {
+    return (get() & H(2)) ? 1 : 0;
+  }
 
 }  // namepsace config
 

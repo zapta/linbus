@@ -37,6 +37,9 @@ extern void setup();
 // as needed. Returns true if ok.
 extern bool init();
 
+// TODO: make these read/write functions private and expose high level functions
+// like readChargeRegiater(), readVoltageRegister(), readCurrentRegister();
+
 // Write a value to a LTC2943 8 bit register. Returns true if ok.
 extern bool writeReg8(uint8 reg8,  uint8 value);
 
