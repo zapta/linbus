@@ -15,6 +15,10 @@
 #include <stdarg.h>
 
 namespace sio {
+  // When true, will prefix every LF with a CR. Useful for Linux's Screen terminal.
+  // Configured as needed.
+  static const bool kLfToCrLf = true;
+  
   // TODO: do we need to set the i/o pins (PD0, PD1)? Do we rely on setting by 
   // the bootloader?
   
@@ -68,12 +72,22 @@ namespace sio {
   }
 
   void printchar(uint8 c) {
-    // If buffer is full, drop this char.
+    // If buffer is full, we drop the char.
     // TODO: drop last byte to make room for the new byte?
-    if (count >= kQueueSize) {
+    
+    // Handle the conversion of LF to CRLF.
+    if (kLfToCrLf && (c == '\n')) {
+      if (count <= (kQueueSize -2)) {
+        unsafe_enqueue('\r');
+        unsafe_enqueue('\n');
+      }
       return;
     }
-    unsafe_enqueue(c);
+        
+    // Handle the case of a simple char output.
+    if (count < kQueueSize) {
+      unsafe_enqueue(c);
+    }
   }
 
   void loop() {

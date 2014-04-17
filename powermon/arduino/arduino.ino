@@ -11,6 +11,7 @@
 // limitations under the License.
 
 #include "avr_util.h"
+#include "buttons.h"
 #include "config.h"
 #include "hardware_clock.h"
 #include "leds.h"
@@ -105,6 +106,11 @@ PassiveTimer StateError::time_in_state;
 // Arduino setup function. Called once during initialization.
 void setup()
 {
+  // Disable timer 0 interrupts. It is setup by the Arduino runtime for the 
+  // Arduino time services (which we do not use).
+  TCCR0B = 0;
+  TCCR0A = 0;
+
   // Hard coded to 115.2k baud. Uses URART0, no interrupts.
   // Initialize this first since some setup methods uses it.
   sio::setup();
@@ -112,13 +118,15 @@ void setup()
   if (config::isDebug()) {
     sio::printf(F("\nStarted\n"));
   } else {
-    sio::println();
+    sio::printf(F("\n"));
   }
 
   // Uses Timer1, no interrupts.
   hardware_clock::setup();
   
   config::setup();
+  
+  buttons::setup();
   
   // Let the config value stablizes through the debouncer.
   while (!config::hasStableValue()) {
@@ -236,19 +244,15 @@ void StateReporting::loop() {
   last_report_charge_reading = current_report_charge_reading;
   const int32 avg_micro_amps = (int32)(charge_reading_diff * current_mode.charge_ticks_to_avg_ua_conversion);
   
-  // NOTE: the stock Arduino compiler setting does not include printf for floats (bulky).
-  // Instead we do here an ad hoc formatting by splting into three integer fields,
-  // the amps (integer part), ma (digits 1-3 after the decimal point) and ua (digits
-  // 4-6 after the decimal point). 
+  // NOTE: since the stock Arduino printf does not support floats, we break the 
+  // value into two integer values, the integer and the fraction in ppms.
   const int16 amps = avg_micro_amps / 1000000L;
-  const int32 fraction_ppm = avg_micro_amps - (amps * 1000000L);
-  const int16 ma = fraction_ppm / 1000;
-  const int16 ua = fraction_ppm - (ma * 1000);
-
+  const int32 uamps = avg_micro_amps - (amps * 1000000L);
+  
   if (config::isDebug()) {
-    sio::printf(F("%04x, %d, %d.%03d.%03d\n"), last_report_charge_reading, charge_reading_diff, amps, ma, ua);
+    sio::printf(F("%04x, %d, %d.%06ld\n"), last_report_charge_reading, charge_reading_diff, amps, uamps);
   } else {
-     sio::printf(F("%d.%03d%03d\n"), amps, ma, ua);  
+    sio::printf(F("%08lu %d.%06ld\n"), time_now_millis, amps, uamps);  
   }
   leds::activity.action(); 
 }
@@ -285,6 +289,7 @@ void loop()
     // Periodic updates.
     system_clock::loop();  
     config::loop();  
+    buttons::loop();
     sio::loop();
     leds::loop(); 
     
