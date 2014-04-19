@@ -247,6 +247,7 @@ by exp-lbrs-filter.ulp</description>
 <vertex x="4.5654" y="7.6782"/>
 <vertex x="4.5654" y="7.267"/>
 </polygon>
+<circle x="-4.7244" y="-6.4516" radius="0.3592" width="0.1524" layer="21"/>
 </package>
 <package name="SHUNT">
 <description>&lt;b&gt;SMD SHUNT RESISTOR&lt;/b&gt;</description>
@@ -374,13 +375,14 @@ by exp-lbrs-filter.ulp</description>
 <wire x1="0" y1="-3.5" x2="-1" y2="-2.5" width="0.127" layer="21"/>
 <wire x1="0" y1="-3.5" x2="1" y2="-2.5" width="0.127" layer="21"/>
 <wire x1="-1" y1="-2.5" x2="1" y2="-2.5" width="0.127" layer="21"/>
-<pad name="1" x="-1.75" y="0" drill="1.2" diameter="2.5" shape="square"/>
+<pad name="1" x="-1.75" y="0" drill="1.2" diameter="2.5"/>
 <pad name="2" x="1.75" y="0" drill="1.2" diameter="2.5"/>
 <text x="4.75" y="-1.75" size="1.27" layer="21">&gt;NAME</text>
 <text x="4.75" y="-1.75" size="1.27" layer="21">&gt;NAME</text>
 <text x="4.75" y="-3.5" size="1.27" layer="21">&gt;VALUE</text>
+<circle x="-3.1242" y="-2.5908" radius="0.3592" width="0.1524" layer="21"/>
 </package>
-<package name="SM-42/43A">
+<package name="TRIM-POT_SM-42/43A">
 <description>&lt;b&gt;COPAL ELECTRONICS SM-42/43 SURFACE MOUNT TRIMMERS&lt;/b&gt; Side adjustmet&lt;p&gt;
 Source: smt-pots.pdf</description>
 <wire x1="2.175" y1="-2.3" x2="2.175" y2="2.3" width="0.2032" layer="51"/>
@@ -444,10 +446,10 @@ Source: http://cds.linear.com/docs/Datasheet/623012fb.pdf</description>
 </polygon>
 </package>
 <package name="EVQPSL-PUSH-BUTTON">
-<smd name="1.2" x="1.7" y="-2.9" dx="1.4" dy="1.5" layer="1"/>
-<smd name="1.1" x="-1.7" y="-2.9" dx="1.4" dy="1.5" layer="1"/>
-<smd name="2.1" x="-1.7" y="2.9" dx="1.4" dy="1.5" layer="1"/>
-<smd name="2.2" x="1.7" y="2.9" dx="1.4" dy="1.5" layer="1"/>
+<smd name="2A" x="1.7" y="-2.9" dx="1.4" dy="1.5" layer="1"/>
+<smd name="1" x="-1.7" y="-2.9" dx="1.4" dy="1.5" layer="1"/>
+<smd name="1A" x="-1.7" y="2.9" dx="1.4" dy="1.5" layer="1"/>
+<smd name="2" x="1.7" y="2.9" dx="1.4" dy="1.5" layer="1"/>
 <wire x1="3.05" y1="2" x2="3.05" y2="1.2" width="0.127" layer="51"/>
 <wire x1="3.05" y1="1.2" x2="3.05" y2="-1.2" width="0.127" layer="51"/>
 <wire x1="3.05" y1="-1.2" x2="3.05" y2="-2" width="0.127" layer="51"/>
@@ -462,8 +464,10 @@ Source: http://cds.linear.com/docs/Datasheet/623012fb.pdf</description>
 <wire x1="2.35" y1="2" x2="3.05" y2="2" width="0.127" layer="51"/>
 <wire x1="2.35" y1="-2" x2="3.05" y2="-2" width="0.127" layer="51"/>
 <text x="1.27" y="-5.08" size="1.27" layer="25">&gt;NAME</text>
+<wire x1="-1.7506" y1="1.8604" x2="-1.7506" y2="-1.8604" width="0.127" layer="51"/>
+<wire x1="1.7546" y1="1.8604" x2="1.7546" y2="-1.8604" width="0.127" layer="51"/>
 </package>
-<package name="CTS406">
+<package name="CRYSTAL-CTS406">
 <description>&lt;b&gt;Model 406 6.0x3.5mm Low Cost Surface Mount Crystal&lt;/b&gt;&lt;p&gt;
 Source: 008-0260-0_E.pdf</description>
 <circle x="-1.828078125" y="-1.571753125" radius="0.182" width="0" layer="21"/>
@@ -477,6 +481,9 @@ Source: 008-0260-0_E.pdf</description>
 <smd name="4" x="-1.075" y="0.775" dx="0.9" dy="1" layer="1"/>
 <text x="-2.54" y="2.54" size="1.27" layer="25">&gt;NAME</text>
 <text x="-2.54" y="-3.81" size="1.27" layer="27">&gt;VALUE</text>
+<wire x1="-0.233409375" y1="-0.77134375" x2="0.04168125" y2="-0.03335625" width="0.127" layer="21"/>
+<wire x1="0.04168125" y1="-0.03335625" x2="0.329271875" y2="-0.77134375" width="0.127" layer="21"/>
+<wire x1="-0.1417125" y1="-0.521178125" x2="0.229240625" y2="-0.521178125" width="0.127" layer="21"/>
 </package>
 <package name="DP5050_V1">
 <wire x1="4" y1="0" x2="46" y2="0" width="0" layer="20"/>
@@ -1026,11 +1033,12 @@ chip</description>
 <wire x1="2.032" y1="-2.159" x2="2.667" y2="-3.429" width="0.1524" layer="94"/>
 <wire x1="2.667" y1="-3.429" x2="1.397" y2="-3.429" width="0.1524" layer="94"/>
 <wire x1="1.397" y1="-3.429" x2="2.032" y2="-2.159" width="0.1524" layer="94"/>
-<pin name="A" x="0" y="-7.62" visible="off" length="short" direction="pas" rot="R90"/>
-<pin name="E" x="0" y="7.62" visible="off" length="short" direction="pas" rot="R270"/>
-<pin name="S" x="5.08" y="0" visible="off" length="short" direction="pas" rot="R180"/>
+<pin name="1" x="0" y="-7.62" visible="off" length="short" direction="pas" rot="R90"/>
+<pin name="3" x="0" y="7.62" visible="off" length="short" direction="pas" rot="R270"/>
+<pin name="2" x="5.08" y="0" visible="off" length="short" direction="pas" rot="R180"/>
 <text x="-5.08" y="-2.54" size="1.778" layer="95" rot="R90">&gt;NAME</text>
 <text x="-2.54" y="-2.54" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
+<circle x="2.032" y="3.048" radius="0.359209375" width="0.254" layer="94"/>
 </symbol>
 <symbol name="LTC2943">
 <wire x1="-12.7" y1="7.62" x2="12.7" y2="7.62" width="0.254" layer="94"/>
@@ -1423,11 +1431,11 @@ Sourc: www.ctscorp.com</description>
 <gate name="G$1" symbol="POT_US-" x="2.54" y="0"/>
 </gates>
 <devices>
-<device name="SM-42/43A" package="SM-42/43A">
+<device name="SM-42/43A" package="TRIM-POT_SM-42/43A">
 <connects>
-<connect gate="G$1" pin="A" pad="3"/>
-<connect gate="G$1" pin="E" pad="1"/>
-<connect gate="G$1" pin="S" pad="2"/>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -1466,8 +1474,8 @@ Sourc: www.ctscorp.com</description>
 <devices>
 <device name="EVQPSL" package="EVQPSL-PUSH-BUTTON">
 <connects>
-<connect gate="G$1" pin="1" pad="1.1"/>
-<connect gate="G$1" pin="2" pad="2.1"/>
+<connect gate="G$1" pin="1" pad="2"/>
+<connect gate="G$1" pin="2" pad="1"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -1481,7 +1489,7 @@ Sourc: www.ctscorp.com</description>
 <gate name="G$1" symbol="Q" x="0" y="0"/>
 </gates>
 <devices>
-<device name="CTS406" package="CTS406">
+<device name="CTS406" package="CRYSTAL-CTS406">
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
 <connect gate="G$1" pin="2" pad="3"/>
@@ -1741,6 +1749,9 @@ Sourc: www.ctscorp.com</description>
 <part name="U2" library="powermon" deviceset="FT232RL" device=""/>
 <part name="U$4" library="powermon" deviceset="NC" device=""/>
 <part name="U$6" library="powermon" deviceset="NC" device=""/>
+<part name="U$2" library="powermon" deviceset="NC" device=""/>
+<part name="U$7" library="powermon" deviceset="NC" device=""/>
+<part name="U$8" library="powermon" deviceset="NC" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1943,6 +1954,9 @@ DEVICE</text>
 <instance part="U2" gate="1" x="50.8" y="50.8"/>
 <instance part="U$4" gate="G$1" x="68.58" y="53.34" rot="R180"/>
 <instance part="U$6" gate="G$1" x="68.58" y="50.8" rot="R180"/>
+<instance part="U$2" gate="G$1" x="2.54" y="208.28" rot="R180"/>
+<instance part="U$7" gate="G$1" x="2.54" y="205.74" rot="R180"/>
+<instance part="U$8" gate="G$1" x="2.54" y="203.2" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -2443,7 +2457,7 @@ DEVICE</text>
 <wire x1="58.42" y1="177.8" x2="58.42" y2="187.96" width="0.1524" layer="91"/>
 <pinref part="R6" gate="G$1" pin="2"/>
 <wire x1="104.14" y1="200.66" x2="101.6" y2="200.66" width="0.1524" layer="91"/>
-<pinref part="R5" gate="G$1" pin="E"/>
+<pinref part="R5" gate="G$1" pin="3"/>
 <wire x1="101.6" y1="200.66" x2="91.44" y2="200.66" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="198.12" x2="101.6" y2="200.66" width="0.1524" layer="91"/>
 <junction x="101.6" y="200.66"/>
@@ -2539,11 +2553,11 @@ DEVICE</text>
 </net>
 <net name="N$18" class="0">
 <segment>
-<pinref part="R5" gate="G$1" pin="S"/>
+<pinref part="R5" gate="G$1" pin="2"/>
 <wire x1="96.52" y1="190.5" x2="96.52" y2="182.88" width="0.1524" layer="91"/>
 <pinref part="R7" gate="G$1" pin="1"/>
 <wire x1="104.14" y1="182.88" x2="101.6" y2="182.88" width="0.1524" layer="91"/>
-<pinref part="R5" gate="G$1" pin="A"/>
+<pinref part="R5" gate="G$1" pin="1"/>
 <junction x="101.6" y="182.88"/>
 <wire x1="101.6" y1="182.88" x2="96.52" y2="182.88" width="0.1524" layer="91"/>
 </segment>
