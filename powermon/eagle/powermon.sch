@@ -333,7 +333,7 @@ by exp-lbrs-filter.ulp</description>
 <wire x1="-5.715" y1="-6.1849" x2="-5.715" y2="-3.1369" width="0.127" layer="51"/>
 <wire x1="5.715" y1="-6.1849" x2="5.715" y2="-3.1369" width="0.127" layer="51"/>
 </package>
-<package name="ZX62RD-AB-5P8">
+<package name="USB-MICRO-ZX62RD-AB-5P8">
 <description>http://www.hirose.co.jp/cataloge_hp/e24200011.pdf</description>
 <wire x1="3.75" y1="0.6" x2="3.75" y2="5.6" width="0.1" layer="21"/>
 <wire x1="3.75" y1="5.6" x2="-3.75" y2="5.6" width="0.1" layer="21"/>
@@ -359,8 +359,8 @@ by exp-lbrs-filter.ulp</description>
 <smd name="4" x="-0.65" y="5.425" dx="0.4" dy="1.35" layer="1" roundness="25"/>
 <smd name="5" x="-1.3" y="5.425" dx="0.4" dy="1.35" layer="1" roundness="25"/>
 <pad name="A" x="-4.175" y="2.625" drill="0.88" diameter="1.778" shape="square"/>
-<pad name="B" x="-2.225" y="5.75" drill="0.65" diameter="1.016" shape="square"/>
-<pad name="C" x="2.225" y="5.75" drill="0.65" diameter="1.016" shape="square"/>
+<pad name="B" x="-2.225" y="5.75" drill="0.65" diameter="0.9144" shape="square"/>
+<pad name="C" x="2.225" y="5.75" drill="0.65" diameter="0.9144" shape="square"/>
 <pad name="D" x="4.175" y="2.625" drill="0.88" diameter="1.778" shape="square"/>
 <smd name="E" x="0" y="2.625" dx="2.9" dy="1.9" layer="1" roundness="25"/>
 <text x="-12.7" y="5.08" size="1.27" layer="27">&gt;VALUE</text>
@@ -443,7 +443,7 @@ Source: http://cds.linear.com/docs/Datasheet/623012fb.pdf</description>
 <vertex x="1.125" y="0.775"/>
 </polygon>
 </package>
-<package name="EVQPSL">
+<package name="EVQPSL-PUSH-BUTTON">
 <smd name="1.2" x="1.7" y="-2.9" dx="1.4" dy="1.5" layer="1"/>
 <smd name="1.1" x="-1.7" y="-2.9" dx="1.4" dy="1.5" layer="1"/>
 <smd name="2.1" x="-1.7" y="2.9" dx="1.4" dy="1.5" layer="1"/>
@@ -461,6 +461,7 @@ Source: http://cds.linear.com/docs/Datasheet/623012fb.pdf</description>
 <wire x1="4.029846875" y1="1.2" x2="3.05" y2="1.2" width="0.127" layer="51"/>
 <wire x1="2.35" y1="2" x2="3.05" y2="2" width="0.127" layer="51"/>
 <wire x1="2.35" y1="-2" x2="3.05" y2="-2" width="0.127" layer="51"/>
+<text x="1.27" y="-5.08" size="1.27" layer="25">&gt;NAME</text>
 </package>
 <package name="CTS406">
 <description>&lt;b&gt;Model 406 6.0x3.5mm Low Cost Surface Mount Crystal&lt;/b&gt;&lt;p&gt;
@@ -521,7 +522,6 @@ Source: 008-0260-0_E.pdf</description>
 <text x="13.57" y="-3.575" size="2.54" layer="47">D = 3.2mm</text>
 <text x="55.64" y="-1.035" size="2.54" layer="47" rot="R90">4.0mm</text>
 <text x="13.57" y="-7.575" size="2.54" layer="47">R = 4.0mm</text>
-<text x="43" y="1" size="1.27" layer="26" ratio="12" rot="MR0">DP5050_v1</text>
 <hole x="4" y="4" drill="3.2"/>
 <hole x="46" y="4" drill="3.2"/>
 <hole x="46" y="46" drill="3.2"/>
@@ -1305,7 +1305,7 @@ chip</description>
 <gate name="G$1" symbol="USB" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="ZX62RD-AB-5P8">
+<device name="" package="USB-MICRO-ZX62RD-AB-5P8">
 <connects>
 <connect gate="G$1" pin="D+" pad="3"/>
 <connect gate="G$1" pin="D-" pad="2"/>
@@ -1464,7 +1464,7 @@ Sourc: www.ctscorp.com</description>
 <gate name="G$1" symbol="PUSH_BUTTON" x="10.16" y="5.08"/>
 </gates>
 <devices>
-<device name="EVQPSL" package="EVQPSL">
+<device name="EVQPSL" package="EVQPSL-PUSH-BUTTON">
 <connects>
 <connect gate="G$1" pin="1" pad="1.1"/>
 <connect gate="G$1" pin="2" pad="2.1"/>
