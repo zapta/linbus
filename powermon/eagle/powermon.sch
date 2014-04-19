@@ -254,17 +254,15 @@ by exp-lbrs-filter.ulp</description>
 <wire x1="2.6038" y1="7.0836" x2="2.6038" y2="-0.4796" width="0.2032" layer="21"/>
 <wire x1="2.6038" y1="-0.4796" x2="-2.6038" y2="-0.4796" width="0.2032" layer="21"/>
 <wire x1="-2.6038" y1="-0.4796" x2="-2.6038" y2="7.0836" width="0.2032" layer="21"/>
-<smd name="V1" x="-1.6" y="6.25" dx="1.2" dy="0.7" layer="1"/>
-<smd name="V2" x="1.6" y="6.25" dx="1.2" dy="0.7" layer="1"/>
 <smd name="I1" x="-1.6" y="2.7" dx="1.2" dy="5.4" layer="1"/>
 <smd name="I2" x="1.6" y="2.7" dx="1.2" dy="5.4" layer="1"/>
+<smd name="V1" x="-1.6" y="6.25" dx="1.2" dy="0.7" layer="1"/>
+<smd name="V2" x="1.6" y="6.25" dx="1.2" dy="0.7" layer="1"/>
 <text x="0.0908" y="-1.9556" size="1.27" layer="25" rot="R180">&gt;NAME</text>
 <text x="0.5908" y="-3.5252" size="1.27" layer="27" rot="R180">&gt;VALUE</text>
 </package>
 <package name="CTS-219-04">
-<description>&lt;b&gt;Surface Mount DIP Switch Series 219 SMT&lt;/b&gt;&lt;p&gt;
-CTS Electronic Components&lt;br&gt;
-Sourc: www.ctscorp.com</description>
+<description>Dip switch BPA04SB / Digikey CKN6141-ND</description>
 <wire x1="-5.715" y1="3.225" x2="-5.16" y2="3.225" width="0.2032" layer="21"/>
 <wire x1="-5.715" y1="-3.225" x2="-5.715" y2="3.225" width="0.2032" layer="21"/>
 <wire x1="-5.715" y1="-3.225" x2="-4.465" y2="-3.225" width="0.2032" layer="21"/>
@@ -316,14 +314,14 @@ Sourc: www.ctscorp.com</description>
 <rectangle x1="1.02" y1="-4.95" x2="1.52" y2="-4" layer="51"/>
 <rectangle x1="3.56" y1="4" x2="4.06" y2="4.95" layer="51" rot="R180"/>
 <rectangle x1="3.56" y1="-4.95" x2="4.06" y2="-4" layer="51"/>
-<smd name="1" x="-3.81" y="-4.3" dx="1.13" dy="2.44" layer="1"/>
-<smd name="2" x="-1.27" y="-4.3" dx="1.13" dy="2.44" layer="1"/>
-<smd name="3" x="1.27" y="-4.3" dx="1.13" dy="2.44" layer="1"/>
-<smd name="4" x="3.81" y="-4.3" dx="1.13" dy="2.44" layer="1"/>
-<smd name="5" x="3.81" y="4.3" dx="1.13" dy="2.44" layer="1" rot="R180"/>
-<smd name="6" x="1.27" y="4.3" dx="1.13" dy="2.44" layer="1" rot="R180"/>
-<smd name="7" x="-1.27" y="4.3" dx="1.13" dy="2.44" layer="1" rot="R180"/>
-<smd name="8" x="-3.81" y="4.3" dx="1.13" dy="2.44" layer="1" rot="R180"/>
+<smd name="1" x="-3.81" y="-4.1275" dx="1.524" dy="2.159" layer="1"/>
+<smd name="2" x="-1.27" y="-4.1275" dx="1.524" dy="2.159" layer="1"/>
+<smd name="3" x="1.27" y="-4.1275" dx="1.524" dy="2.159" layer="1"/>
+<smd name="4" x="3.81" y="-4.1275" dx="1.524" dy="2.159" layer="1"/>
+<smd name="5" x="3.81" y="4.1275" dx="1.524" dy="2.159" layer="1" rot="R180"/>
+<smd name="6" x="1.27" y="4.1275" dx="1.524" dy="2.159" layer="1" rot="R180"/>
+<smd name="7" x="-1.27" y="4.1275" dx="1.524" dy="2.159" layer="1" rot="R180"/>
+<smd name="8" x="-3.81" y="4.1275" dx="1.524" dy="2.159" layer="1" rot="R180"/>
 <text x="-6.58" y="-2.5" size="1.27" layer="25" rot="R90">&gt;NAME</text>
 <text x="-4.31" y="2.275" size="0.6096" layer="21">ON</text>
 <text x="-4.01" y="-2.85" size="0.6096" layer="21">1</text>
@@ -331,6 +329,9 @@ Sourc: www.ctscorp.com</description>
 <text x="-1.47" y="-2.85" size="0.6096" layer="21">2</text>
 <text x="1.07" y="-2.85" size="0.6096" layer="21">3</text>
 <text x="3.61" y="-2.85" size="0.6096" layer="21">4</text>
+<wire x1="-5.715" y1="-6.1849" x2="5.715" y2="-6.1849" width="0.127" layer="51"/>
+<wire x1="-5.715" y1="-6.1849" x2="-5.715" y2="-3.1369" width="0.127" layer="51"/>
+<wire x1="5.715" y1="-6.1849" x2="5.715" y2="-3.1369" width="0.127" layer="51"/>
 </package>
 <package name="ZX62RD-AB-5P8">
 <description>http://www.hirose.co.jp/cataloge_hp/e24200011.pdf</description>
@@ -442,9 +443,24 @@ Source: http://cds.linear.com/docs/Datasheet/623012fb.pdf</description>
 <vertex x="1.125" y="0.775"/>
 </polygon>
 </package>
-<package name="DUMMY-2">
-<pad name="P$1" x="-2.54" y="-1.27" drill="0.8" shape="square"/>
-<pad name="P$2" x="0" y="-1.27" drill="0.8" shape="square"/>
+<package name="EVQPSL">
+<smd name="1.2" x="1.7" y="-2.9" dx="1.4" dy="1.5" layer="1"/>
+<smd name="1.1" x="-1.7" y="-2.9" dx="1.4" dy="1.5" layer="1"/>
+<smd name="2.1" x="-1.7" y="2.9" dx="1.4" dy="1.5" layer="1"/>
+<smd name="2.2" x="1.7" y="2.9" dx="1.4" dy="1.5" layer="1"/>
+<wire x1="3.05" y1="2" x2="3.05" y2="1.2" width="0.127" layer="51"/>
+<wire x1="3.05" y1="1.2" x2="3.05" y2="-1.2" width="0.127" layer="51"/>
+<wire x1="3.05" y1="-1.2" x2="3.05" y2="-2" width="0.127" layer="51"/>
+<wire x1="-3.05" y1="2" x2="-3.05" y2="-2" width="0.127" layer="21"/>
+<wire x1="-3.05" y1="2" x2="2.35" y2="2" width="0.127" layer="21"/>
+<wire x1="-3.05" y1="-2" x2="2.35" y2="-2" width="0.127" layer="21"/>
+<wire x1="4.35" y1="0.879846875" x2="4.35" y2="-0.879846875" width="0.127" layer="51"/>
+<wire x1="4.35" y1="-0.879846875" x2="4.029846875" y2="-1.2" width="0.127" layer="51" curve="-90"/>
+<wire x1="4.029846875" y1="-1.2" x2="3.05" y2="-1.2" width="0.127" layer="51"/>
+<wire x1="4.35" y1="0.879846875" x2="4.029846875" y2="1.2" width="0.127" layer="51" curve="90"/>
+<wire x1="4.029846875" y1="1.2" x2="3.05" y2="1.2" width="0.127" layer="51"/>
+<wire x1="2.35" y1="2" x2="3.05" y2="2" width="0.127" layer="51"/>
+<wire x1="2.35" y1="-2" x2="3.05" y2="-2" width="0.127" layer="51"/>
 </package>
 <package name="CTS406">
 <description>&lt;b&gt;Model 406 6.0x3.5mm Low Cost Surface Mount Crystal&lt;/b&gt;&lt;p&gt;
@@ -1042,8 +1058,8 @@ chip</description>
 <wire x1="-2.032" y1="1.524" x2="-3.048" y2="1.524" width="0.254" layer="94"/>
 <wire x1="-3.048" y1="1.524" x2="-3.048" y2="-1.27" width="0.254" layer="94"/>
 <wire x1="-3.048" y1="-1.27" x2="-2.032" y2="-1.27" width="0.254" layer="94"/>
-<pin name="P$3" x="0" y="5.08" visible="off" length="short" direction="pas" rot="R270"/>
-<pin name="P$4" x="0" y="-5.08" visible="off" length="short" direction="pas" rot="R90"/>
+<pin name="2" x="0" y="5.08" visible="off" length="short" direction="pas" rot="R270"/>
+<pin name="1" x="0" y="-5.08" visible="off" length="short" direction="pas" rot="R90"/>
 <text x="1.524" y="-0.254" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
 <symbol name="Q">
@@ -1438,20 +1454,20 @@ Sourc: www.ctscorp.com</description>
 </connects>
 <technologies>
 <technology name=""/>
-<technology name="SMD"/>
 </technologies>
 </device>
 </devices>
 </deviceset>
 <deviceset name="PUSH_BUTTON">
+<description>Panasonic EVQ-PSL02K, Digikey P12320CT-ND</description>
 <gates>
-<gate name="G$1" symbol="PUSH_BUTTON" x="7.62" y="5.08"/>
+<gate name="G$1" symbol="PUSH_BUTTON" x="10.16" y="5.08"/>
 </gates>
 <devices>
-<device name="" package="DUMMY-2">
+<device name="EVQPSL" package="EVQPSL">
 <connects>
-<connect gate="G$1" pin="P$3" pad="P$1"/>
-<connect gate="G$1" pin="P$4" pad="P$2"/>
+<connect gate="G$1" pin="1" pad="1.1"/>
+<connect gate="G$1" pin="2" pad="2.1"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -1701,7 +1717,7 @@ Sourc: www.ctscorp.com</description>
 <part name="J1" library="powermon" deviceset="USB" device=""/>
 <part name="J3" library="powermon" deviceset="TERMINAL-2" device=""/>
 <part name="R5" library="powermon" deviceset="TRIM_US-" device="SM-42/43A" value="1K"/>
-<part name="U1" library="powermon" deviceset="LTC2943" device="" technology="SMD" value="LTC2943"/>
+<part name="U1" library="powermon" deviceset="LTC2943" device="" value="LTC2943"/>
 <part name="GND17" library="powermon" deviceset="GND" device=""/>
 <part name="D5" library="powermon" deviceset="LED" device="" value="BLUE"/>
 <part name="R13" library="powermon" deviceset="R-US_" device="R0603" value="3.3K"/>
@@ -1713,7 +1729,7 @@ Sourc: www.ctscorp.com</description>
 <part name="D3" library="powermon" deviceset="LED" device="" value="GREEN"/>
 <part name="GND32" library="powermon" deviceset="GND" device=""/>
 <part name="R11" library="powermon" deviceset="R-US_" device="R0603" value="3.3K"/>
-<part name="S1" library="powermon" deviceset="PUSH_BUTTON" device=""/>
+<part name="S1" library="powermon" deviceset="PUSH_BUTTON" device="EVQPSL"/>
 <part name="GND22" library="powermon" deviceset="GND" device=""/>
 <part name="J2" library="powermon" deviceset="USB" device=""/>
 <part name="Q1" library="powermon" deviceset="CRYSTAL" device="CTS406"/>
@@ -2077,7 +2093,7 @@ DEVICE</text>
 <pinref part="GND32" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="S1" gate="G$1" pin="P$4"/>
+<pinref part="S1" gate="G$1" pin="1"/>
 <pinref part="GND22" gate="1" pin="GND"/>
 </segment>
 <segment>
@@ -2612,7 +2628,7 @@ DEVICE</text>
 <pinref part="U4" gate="G$1" pin="PD2(INT0)"/>
 </segment>
 <segment>
-<pinref part="S1" gate="G$1" pin="P$3"/>
+<pinref part="S1" gate="G$1" pin="2"/>
 <wire x1="157.48" y1="121.92" x2="157.48" y2="134.62" width="0.1524" layer="91"/>
 <label x="157.48" y="124.46" size="1.778" layer="95" rot="R90"/>
 </segment>
