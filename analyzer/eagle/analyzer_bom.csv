@@ -1,7 +1,7 @@
 "QTY","PARTS","VALUE","Package","SAMPLE SOURCE","COMMENTS"
 "1","C1","Ceramic capacitor 220pF 50V","0805","Digikey 311-1123-1-ND",
 "2","C2, C5","Tantalum Capacitor 10uF, 10V","1206","Digikey 399-3684-1-ND",
-"6","C3, C6, C7, C8, C9, C10","Capacitor 0.1uF ceramic, 50V","0805","Digikey 399-1179-1-ND",
+"6","C3, C6, C7, C8, C9, C10","Capacitor 0.1uF ceramic, 50V","0805","Digikey 399-1170-1-ND",
 "1","C4","Aluminum capacitor 22uF 20% 40V","4mm x 5.8mm","Digikey 493-2300-1-ND",
 "4","D1, D2, D3, D4","MBR0540","SOD-123","Digikey MBR0540TPMSCT-ND",
 "1","D5","Red LED","1206","Sparkfun PRT-12619","High brightness, operate at ~1ma."
