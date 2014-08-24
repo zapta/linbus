@@ -2,8 +2,9 @@ LINBUS INJECTOR FORK - PORSCHE 981 - MEMORY
 ===========================================
 
 This directory contains the custom Linbus Injector source code for Porsche 981 that was 
-contributed by <TODO: name>.  It is based on the reference source code in the Arduino directory
-with the following modifications:
+contributed by John Miles (www.ke5fx.com).  
+
+It is based on the reference source code in the src_reference directory with the following modifications:
 
 * Compilation is done using the avr tool chain without dependency on the Arduino IDE and libraries.
 
