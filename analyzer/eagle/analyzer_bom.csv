@@ -15,7 +15,7 @@
 "1","R1","Resistor 1K 1/8W 5%","0805","Dgikey RMCF0805JT1K00CT-ND",
 "4","R2, R3, R4,R7","Resistor 10k 1/8W 5%","0805","Digikey RMCF0805JT10K0CT-ND",
 "2","R5, R6","Resistor 3.3K 1/8W 5%","0805","Digikey RMCF0805JT3K30CT-ND",
-"1","U1","ATA6631 LINBUS + LDO","SO-08","Digikey ATA6663-TAQYCT-ND",
+"1","U1","ATA6631 LINBUS + LDO","SO-08","Digikey ATA6631-TAQYCT-ND",
 "1","U2","FT232RL USB/Serial","SSOP28DB","Digikey 768-1007-1-ND",
 "1","U3","ATMEGA328P  AVR MCU","TQFP32-08","Digikey ATMEGA328P-15AZTR-ND",
 "1","X1","Resonator 16MHz with internal capacitors","1.3mm x 3.2mm","Digikey 490-1198-1-ND",

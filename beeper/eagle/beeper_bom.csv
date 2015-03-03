@@ -16,7 +16,7 @@
 1,"D6","Green LED","1206","Sparkfun PRT-12622","Low current high brightness green LED (used at 1ma forward current)."
 1,"X1","Resonator 16MHz with internal capacitors","1.3mm x 3.2mm","Digikey 490-1198-1-ND",
 1,"T1","MMBT3904 NPN transistor","SOT-23","Digikey MMBT3904FSCT-ND","general purpose NPN Transistor"
-1,"U1","ATA6631 LINBUS + LDO","SOIC 8","Digikey ATA6663-TAQYCT-ND","Prefer high temperature part."
+1,"U1","ATA6631 LINBUS + LDO","SOIC 8","Digikey ATA6631-TAQYCT-ND","Prefer high temperature part."
 1,"U2","ATMEGA328P  AVR MCU","TQFP 32","Digikey ATMEGA328P-15AZTR-ND","Prefer high temperature part."
 1,"SP1","CEM-1212S 0V-12Vp magnetic buzzer","12mm diameter, 6.5mm spacing.","Digikey 102-1156-ND","12mm electro magnetic buzzer. Operated at 0-12V, 2400Hz."
 1,"PCB","LINBUS Beeper PCB Rev B",,"http://oshpark.com/shared_projects/skoN2gf1","OSHPark provides 3 boards for about $10 (as of Feb 2014). alternatively, order from the PCB house of your choice (2 layer)."
