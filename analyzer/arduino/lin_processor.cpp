@@ -273,8 +273,8 @@ namespace lin_processor {
 
   // ----- Error Flag. -----
 
-  // Written from ISR. Read/Write from main.
-  static volatile boolean error_flags;
+  // Written from ISR. Read/Write from main. Bit mask of pending errors.
+  static volatile uint8 error_flags;
 
   // Private. Called from ISR and from setup (beofe starting the ISR).
   static inline void setErrorFlags(uint8 flags) {
@@ -286,11 +286,11 @@ namespace lin_processor {
 
   // Called from main. Public. Assumed interrupts are enabled. 
   // Do not call from ISR.
-  boolean getAndClearErrorFlags() {
+  uint8 getAndClearErrorFlags() {
     // Disabling interrupts for a brief for atomicity. Need to pay attention to
     // ISR jitter due to disabled interrupts.
     cli();
-    const boolean result = error_flags;
+    const uint8 result = error_flags;
     error_flags = 0;
     sei();
     return result;
