@@ -14,7 +14,7 @@
 
 #include <avr/eeprom.h>
 
-#include "custom_signals.h""
+#include "custom_signals.h"
 #include "passive_timer.h"
 #include "sio.h"
 
