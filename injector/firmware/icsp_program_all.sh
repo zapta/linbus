@@ -7,6 +7,8 @@
 
 # Set this to the code of the programmer you have. See above link for programmer codes.
 #
+# set efuse to -U efuse:w:0xfd:m if you have an issue burning it
+
 PROGRAMMER_CODE="avrispmkII"
 
 avrdude \
