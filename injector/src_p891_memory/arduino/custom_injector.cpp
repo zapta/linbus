@@ -23,6 +23,7 @@ namespace custom_injector {
 
     byte sport_inject_action = injector_actions::COPY_BIT;
     byte PSE_inject_action = injector_actions::COPY_BIT;
+    byte ASS_inject_action = injector_actions::COPY_BIT;
     
     // True if the current linbus frame is transformed by the injector. Othrwise, the 
     // frame is passed as is.
