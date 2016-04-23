@@ -34,9 +34,12 @@ namespace custom_injector {
     static const uint8 kSportBitIndex = 2;
     static const uint8 kPSEByteIndex = 1;
     static const uint8 kPSEBitIndex = 7;
+    static const uint8 kASSByteIndex = 3;
+    static const uint8 kASSBitIndex = 2;
     
     extern byte sport_inject_action;
     extern byte PSE_inject_action;
+    extern byte ASS_inject_action;
     
     // True if the current linbus frame is transformed by the injector. Othrwise, the 
     // frame is passed as is.
@@ -59,6 +62,10 @@ namespace custom_injector {
     private_::PSE_inject_action = injector_actions::COPY_BIT;
   }
 
+  inline void disableASSInject(void) {
+    private_::ASS_inject_action = injector_actions::COPY_BIT;
+  }
+
   inline void setSportInject(boolean on) {
     private_::sport_inject_action = on ? injector_actions::FORCE_BIT_1 : injector_actions::FORCE_BIT_0;
   }
@@ -66,6 +73,10 @@ namespace custom_injector {
   inline void setPSEInject(boolean on) {
     private_::PSE_inject_action = on ? injector_actions::FORCE_BIT_1 : injector_actions::FORCE_BIT_0;
   }
+
+  inline void setASSInject(boolean on) {
+    private_::ASS_inject_action = on ? injector_actions::FORCE_BIT_1 : injector_actions::FORCE_BIT_0;
+  }  
 
   // ====== These function should be called from lib_processor ISR only =============
 
@@ -84,6 +95,10 @@ namespace custom_injector {
          {
          private_::frame_id_matches = true;
          }
+      else if (private_::ASS_inject_action != injector_actions::COPY_BIT)
+         {
+         private_::frame_id_matches = true;
+         }   
       }
     // Linbus checksum V2 includes also the ID byte. 
     private_::sum = custom_defs::kUseLinChecksumVersion2 ? id : 0;
@@ -133,6 +148,8 @@ namespace custom_injector {
          return private_::sport_inject_action;
       else if ((byte_index == private_::kPSEByteIndex) && (bit_index == private_::kPSEBitIndex))
          return private_::PSE_inject_action;
+      else if ((byte_index == private_::kASSByteIndex) && (bit_index == private_::kASSBitIndex))
+         return private_::ASS_inject_action;   
       else 
          return injector_actions::COPY_BIT;
     }

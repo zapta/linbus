@@ -30,12 +30,14 @@ namespace custom_module {
 // (0 and 1 are the 16-bit word for config enable/disable)
 uint8_t *EEPROM_SPORT_BYTE_ADDR = (uint8_t *) 2;
 uint8_t *EEPROM_PSE_BYTE_ADDR   = (uint8_t *) 3;
+uint8_t *EEPROM_ASS_BYTE_ADDR   = (uint8_t *) 4;
   
 namespace states {
   static const uint8 WAIT_IGNITION = 0;
   static const uint8 POLL          = 1;
   static const uint8 INJECT_SPORT  = 2;
   static const uint8 INJECT_PSE    = 3;
+  static const uint8 INJECT_ASS    = 4;
 }
 
 // The current state. One of states:: values. 
@@ -86,6 +88,7 @@ static inline void updateState()
          {
          custom_injector::disableSportInject();
          custom_injector::disablePSEInject();
+         custom_injector::disableASSInject();
 
          if (custom_config::is_enabled() && custom_signals::ignition_state().isOnForAtLeastMillis(1000))
             {
@@ -139,6 +142,25 @@ static inline void updateState()
                }
             }
 
+         boolean ASS_remembered  = eeprom_read_byte(EEPROM_ASS_BYTE_ADDR);
+         boolean ASS_active      = custom_signals::autostart_LED().isOn();
+         boolean ASS_button_down = custom_signals::autostart_switch().isOn() || (custom_signals::autostart_switch().timeInStateMillis() < 250); 
+
+         if (ASS_active != ASS_remembered)
+            {
+            if (ASS_button_down)
+               {
+               eeprom_write_byte(EEPROM_ASS_BYTE_ADDR, ASS_active);
+               }
+            else
+               {
+               sio::printf(F("ASS inject\n"));
+               custom_injector::setASSInject(true);
+               changeToState(states::INJECT_ASS);
+               break;
+               }
+            }
+
          break;
          }
 
@@ -164,6 +186,20 @@ static inline void updateState()
             {
             sio::printf(F("PSE release after %d ms\n"), btime);
             custom_injector::disablePSEInject();
+            changeToState(states::POLL);
+            }
+
+         break;
+         }
+
+      case states::INJECT_ASS:
+         {
+         uint32 btime = time_in_state.timeMillis();
+
+         if (btime > 500)
+            {
+            sio::printf(F("ASS release after %d ms\n"), btime);
+            custom_injector::disableASSInject();
             changeToState(states::POLL);
             }
 
