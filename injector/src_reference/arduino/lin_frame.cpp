@@ -16,8 +16,10 @@
 
 // Compute the checksum of the frame. For now using LIN checksum V2 only.
 uint8 LinFrame::computeChecksum() const {
+  // diagnostic frames always use classic checksum
+  const boolean diagnostic = ((bytes_[0] & 0x3f) == 0x3c || (bytes_[0] & 0x3f) == 0x3d) ? true : false;
   // LIN V2 checksum includes the ID byte, V1 does not.
-  const uint8 startByteIndex = custom_defs::kUseLinChecksumVersion2 ? 0 : 1;
+  const uint8 startByteIndex = (custom_defs::kUseLinChecksumVersion2 && !diagnostic) ? 0 : 1;
   const uint8* p = &bytes_[startByteIndex];
   
   // Exclude the checksum byte at the end of the frame.
